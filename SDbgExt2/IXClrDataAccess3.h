@@ -37,23 +37,25 @@ struct ClrMethodTableData
 	CLRDATA_ADDRESS Module;
 	CLRDATA_ADDRESS EEClass;
 	CLRDATA_ADDRESS ParentMT;
-	WORD NumSlotsInVTable;
 	WORD NumInterfaces;
-	PAD_DWORD(1);
+	WORD NumSlotsInVTable;
+	WORD TotalMethodSlots;
+	WORD VTableSlots;
 	DWORD BaseSize;
 	DWORD ComponentSize;
 	DWORD mdToken;
-	PAD_DWORD(5);
+	DWORD ClassAttributes;
+	PAD_DWORD(4);
 };
 
 struct ClrFieldDescData
 {
 	CorElementType FieldType;
-	PAD_DWORD(1);
+	CorElementType SigFieldType;
 	CLRDATA_ADDRESS FieldMethodTable;
 	CLRDATA_ADDRESS Module;
-	PAD_DWORD(1);
-	DWORD Field;
+	mdTypeDef FieldTypeDefOrRef;
+	mdFieldDef Field;
 	CLRDATA_ADDRESS MethodTableOfEnclosingClass;
 	DWORD Offset;
 	BOOL IsThreadLocal;
@@ -69,8 +71,8 @@ struct ClrMTToEEClassData
 
 struct ClrMethodTableFieldData
 {
-	WORD NumStaticFields;
 	WORD NumInstanceFields;
+	WORD NumStaticFields;
 	WORD NumThreadStaticFields;
 	WORD NumContextStaticFields;
 	CLRDATA_ADDRESS FirstField;
@@ -97,10 +99,78 @@ struct ClrThreadPoolData
 	DWORD MinCompPortLimit;
 };
 
+struct ClrModuleData
+{
+	CLRDATA_ADDRESS Unknown01;
+	CLRDATA_ADDRESS Unknown02;
+	CLRDATA_ADDRESS Unknown03;
+	CLRDATA_ADDRESS MetaDataStart;
+	DWORD MetaDataLength;
+	DWORD Padding_0;
+	CLRDATA_ADDRESS Assembly;
+	CLRDATA_ADDRESS Unknown07;
+	CLRDATA_ADDRESS Unknown08;
+	CLRDATA_ADDRESS Unknown09;
+	CLRDATA_ADDRESS Unknown10;
+	CLRDATA_ADDRESS TypeDefToMethodTableMap;
+	CLRDATA_ADDRESS TypeRefToMethodTableMap;
+	CLRDATA_ADDRESS MethodDefToDescMap;
+	CLRDATA_ADDRESS FieldDefToDescMap;
+	CLRDATA_ADDRESS MemberRefToDescMap;
+	CLRDATA_ADDRESS FileReferencesMap;
+	CLRDATA_ADDRESS AssemblyReferencesMap;
+	CLRDATA_ADDRESS Unknown18;
+	CLRDATA_ADDRESS Unknown19;
+	CLRDATA_ADDRESS Unknown20;
+};
+
+#pragma pack(8)
+struct ClrThreadData
+{
+	DWORD CorThreadId;
+	DWORD OSThreadId;
+	DWORD State;
+	DWORD PreemptiveGCDisabled;
+
+	CLRDATA_ADDRESS GCAllocContext;
+	CLRDATA_ADDRESS GCAllocContextLimit;
+	CLRDATA_ADDRESS Unknown05;
+	CLRDATA_ADDRESS Domain;
+	CLRDATA_ADDRESS SharedStaticData;
+	DWORD LockCount;
+	DWORD unused;
+	CLRDATA_ADDRESS Unknown10;
+	CLRDATA_ADDRESS FirstNestedException;
+	CLRDATA_ADDRESS FiberData;
+	CLRDATA_ADDRESS LastThrownObjectHandle;
+	CLRDATA_ADDRESS NextThread;
+};
+#pragma pop
+
+struct ClrNestedExceptionData
+{
+	CLRDATA_ADDRESS ExceptionObject;
+    CLRDATA_ADDRESS NextNestedException;
+};
+
+struct ClrThreadStoreData
+{
+	DWORD ThreadCount;
+	DWORD UnstartedThreadCount;
+	DWORD BackgroundThreadCount;
+	DWORD PendingThreadCount;
+	DWORD DeadThreadCount;
+
+	CLRDATA_ADDRESS FirstThreadObj;
+	CLRDATA_ADDRESS FinalizerThreadObj;
+	CLRDATA_ADDRESS GCThread;
+	CLRDATA_ADDRESS HostedRuntime;
+};
+
 MIDL_INTERFACE("5c552ab6-fc09-4cb3-8e36-22fa03c798b7")
 IXClrDataProcess4 : public IUnknown
 {
-	virtual HRESULT STDMETHODCALLTYPE GetThreadStoreData() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetThreadStoreData(ClrThreadStoreData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainStoreData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainList() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainData() = 0;
@@ -109,18 +179,18 @@ IXClrDataProcess4 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetAssemblyList() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAssemblyData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAssemblyName() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetModule() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetModuleData() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetModule(CLRDATA_ADDRESS addr, void **pUnk) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetModuleData(CLRDATA_ADDRESS addr, ClrModuleData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE TraverseModuleMap() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAssemblyModuleList() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetILForModule() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetThreadData() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetThreadData(CLRDATA_ADDRESS threadAddr, ClrThreadData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetThreadFromThinlockID() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetStackLimits() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodDescData() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetMethodDescPtrFromIP() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetMethodDescName() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetMethodDescPtrFromFrame() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetMethodDescPtrFromIP(CLRDATA_ADDRESS ip, CLRDATA_ADDRESS *methodDescPtr) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetMethodDescName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetMethodDescPtrFromFrame(CLRDATA_ADDRESS frameAddr, CLRDATA_ADDRESS *methodDescPtr) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodDescFromToken() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodDescTransparencyData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetCodeHeaderData() = 0;
@@ -140,7 +210,7 @@ IXClrDataProcess4 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetMethodTableTransparencyData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodTableForEEClass(CLRDATA_ADDRESS mtAddr, ClrMTToEEClassData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetFieldDescData(CLRDATA_ADDRESS fieldAddr, ClrFieldDescData *ret) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetFrameName() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetFrameName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetPEFileBase() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetPEFileName() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetGCHeapData() = 0;
@@ -162,7 +232,8 @@ IXClrDataProcess4 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetHandleEnumForTypes() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetHandleEnumForGC() = 0;
 	virtual HRESULT STDMETHODCALLTYPE TraverseEHInfo() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetNestedExceptionData() = 0;
+	// Doesn't work yet
+	virtual HRESULT STDMETHODCALLTYPE GetNestedExceptionData(CLRDATA_ADDRESS addr, ClrNestedExceptionData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetStressLogAddress() = 0;
 	virtual HRESULT STDMETHODCALLTYPE TraverseLoaderHeap() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetCodeHeapList() = 0;
