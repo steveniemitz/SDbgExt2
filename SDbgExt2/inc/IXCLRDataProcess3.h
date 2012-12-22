@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stdafx.h"
+#include <clrdata.h>
 #include <cor.h>
 
 #define PADIMPL(prefix,bytes)	BYTE padding##prefix[##bytes]
@@ -22,6 +22,7 @@ struct ClrArrayData
 	PAD_DWORD(6);
 };
 
+enum DacpObjectType { OBJ_STRING=0,OBJ_FREE,OBJ_OBJECT,OBJ_ARRAY,OBJ_OTHER };
 struct ClrObjectData
 {
 	CLRDATA_ADDRESS MethodTable;
@@ -124,7 +125,6 @@ struct ClrModuleData
 	CLRDATA_ADDRESS Unknown20;
 };
 
-#pragma pack(8)
 struct ClrThreadData
 {
 	DWORD CorThreadId;
@@ -145,7 +145,6 @@ struct ClrThreadData
 	CLRDATA_ADDRESS LastThrownObjectHandle;
 	CLRDATA_ADDRESS NextThread;
 };
-#pragma pop
 
 struct ClrNestedExceptionData
 {
@@ -167,8 +166,10 @@ struct ClrThreadStoreData
 	CLRDATA_ADDRESS HostedRuntime;
 };
 
-MIDL_INTERFACE("5c552ab6-fc09-4cb3-8e36-22fa03c798b7")
-IXClrDataProcess4 : public IUnknown
+//{FF25CA8B-C31D-4929-9DFD-FCDC42F5D955}
+//0x436f00f2, 0xb42a, 0x4b9f, {0x87,0x0c,0xe7,0x3d,0xb6,0x6a,0xe9,0x30
+MIDL_INTERFACE("436f00f2-b42a-4b9f-870c-e73db66ae930")
+IXCLRDataProcess3 : public IUnknown
 {
 	virtual HRESULT STDMETHODCALLTYPE GetThreadStoreData(ClrThreadStoreData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainStoreData() = 0;

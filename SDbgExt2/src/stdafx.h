@@ -5,11 +5,13 @@
 
 #pragma once
 
-#include "targetver.h"
+#include "..\inc\targetver.h"
 
 #include <stdio.h>
 #include <tchar.h>
+#include <Windows.h>
 
+#define NO_WDBG_EXT
 
 
 // TODO: reference additional headers your program requires here

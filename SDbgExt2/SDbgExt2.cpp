@@ -6,6 +6,8 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	DebugInterfaces 
+
 	return 0;
 }
 
