@@ -53,9 +53,6 @@
     <ClCompile Include="src\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\DbgEngDacMemoryAccess.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\DbgEngCLRDataTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

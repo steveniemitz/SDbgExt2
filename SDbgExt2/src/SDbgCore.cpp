@@ -5,6 +5,7 @@
 #include "..\inc\IDacMemoryAccess.h"
 #include "..\inc\DbgEngMemoryAccess.h"
 #include <DbgHelp.h>
+
 #ifndef NO_WDBG_EXT
 #include <wdbgexts.h>
 #endif
@@ -63,22 +64,24 @@ HRESULT InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 
 HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma)
 {
-	IDebugClient *cli;
-	ComHolder<IDebugControl> ctrl;
-	
+	CComPtr<IDebugClient> cli;
+	CComPtr<IDebugControl> ctrl;
+		
 	RETURN_IF_FAILED(DebugCreate(__uuidof(IDebugClient), (PVOID*)&cli));
 	RETURN_IF_FAILED(cli->AttachProcess(NULL, dwProcessId, DEBUG_ATTACH_NONINVASIVE | DEBUG_ATTACH_NONINVASIVE_NO_SUSPEND));
-	RETURN_IF_FAILED(ctrl.QueryInterface(cli));
+	cli->QueryInterface(__uuidof(IDebugControl), (PVOID*)&ctrl);
+
+	//RETURN_IF_FAILED(ctrl.QueryInterface(cli));
 	RETURN_IF_FAILED(ctrl->WaitForEvent(DEBUG_WAIT_DEFAULT, INFINITE));	
 
 	IXCLRDataProcess3 *pcdp;
 	RETURN_IF_FAILED(InitIXCLRData(cli, &pcdp));
 	*ppDac = pcdp;
 
-	ComHolder<IDebugDataSpaces> dds;
-	dds.QueryInterface(cli);
+	CComPtr<IDebugDataSpaces> dds;
+	cli.QueryInterface<IDebugDataSpaces>(&dds);
 
-	*ppDcma = new DbgEngMemoryAccess(dds.GetObject_NoRef());
+	*ppDcma = new DbgEngMemoryAccess(dds);
 
 	return S_OK;
 }

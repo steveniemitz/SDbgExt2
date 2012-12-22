@@ -4,7 +4,7 @@
 #include "SDbgCore.h"
 #include "IDacMemoryAccess.h"
 
-struct DECLSPEC_NOVTABLE ClrProcess : public IUnknown
+class ClrProcess : public IUnknown
 {
 public:
 	ClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *pDcma)
@@ -14,6 +14,8 @@ public:
 
 		m_dcma = pDcma;
 		m_dcma->AddRef();
+
+		m_dwRef = 0;
 	}
 
 	~ClrProcess()
@@ -31,7 +33,6 @@ public:
 		}
 	}
 
-	STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject);
 	STDMETHODIMP_(ULONG) AddRef() { return ++m_dwRef; }
 	STDMETHODIMP_(ULONG) Release()
 	{
@@ -41,7 +42,46 @@ public:
 		return newRef;
 	}
 
+	STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject)
+    {
+        IUnknown *punk = nullptr;
 
+        if (riid == IID_IUnknown)
+            punk = static_cast<IUnknown*>(this);
+		
+        *ppvObject = punk;
+        if (!punk)
+            return E_NOINTERFACE;
+
+        punk->AddRef();
+        return S_OK;
+    }
+
+
+	STDMETHODIMP GetProcess(IXCLRDataProcess3 **ppDac)
+	{
+		m_pDac->AddRef();
+		*ppDac = m_pDac;
+
+		return S_OK;
+	}
+
+	STDMETHODIMP GetDataAccess(IDacMemoryAccess **ppDcma)
+	{
+		m_dcma->AddRef();
+		*ppDcma = m_dcma;
+	}
+
+	STDMETHODIMP_(ComHolder<IXCLRDataProcess3>) GetProcess()
+	{
+		return ComHolder<IXCLRDataProcess3>(m_pDac);
+	}
+
+	STDMETHODIMP_(ComHolder<IDacMemoryAccess>) GetDataAccess()
+	{
+		return ComHolder<IDacMemoryAccess>(m_dcma);
+	}
+	
 private:
 	ULONG m_dwRef;
 	IXCLRDataProcess3 *m_pDac;

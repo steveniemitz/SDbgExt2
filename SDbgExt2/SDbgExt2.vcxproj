@@ -152,7 +152,6 @@
     <ClInclude Include="src\stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\DbgEngDacMemoryAccess.cpp" />
     <ClCompile Include="src\DbgEngCLRDataTarget.cpp" />
     <ClCompile Include="src\SDbgCore.cpp" />
     <ClCompile Include="src\SDbgExt2.cpp" />
