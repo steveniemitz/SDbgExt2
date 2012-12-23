@@ -150,6 +150,7 @@
     <ClInclude Include="inc\IXCLRDataProcess3.h" />
     <ClInclude Include="inc\targetver.h" />
     <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="Test.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DbgEngCLRDataTarget.cpp" />

@@ -34,13 +34,13 @@
 
 HRESULT InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 {
-	ComHolder<IDebugSymbols3> dSym;
-	ComHolder<IDebugDataSpaces> dds;
-	ComHolder<IDebugSystemObjects> dso;
+	CComPtr<IDebugSymbols3> dSym;
+	CComPtr<IDebugDataSpaces> dds;
+	CComPtr<IDebugSystemObjects> dso;
 
-	RETURN_IF_FAILED(dSym.QueryInterface(cli));
-	RETURN_IF_FAILED(dds.QueryInterface(cli));
-	RETURN_IF_FAILED(dso.QueryInterface(cli));
+	RETURN_IF_FAILED(cli->QueryInterface(__uuidof(IDebugSymbols3), (PVOID*)&dSym));
+	RETURN_IF_FAILED(cli->QueryInterface(__uuidof(IDebugDataSpaces), (PVOID*)&dds));
+	RETURN_IF_FAILED(cli->QueryInterface(__uuidof(IDebugSystemObjects), (PVOID*)&dso));
 
 	// Init CORDAC
 	WCHAR winDirBuffer[MAX_PATH] = { 0 };
@@ -55,7 +55,7 @@ HRESULT InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 		return FALSE;
 	}
 	CLRDataCreateInstancePtr clrData = (CLRDataCreateInstancePtr)GetProcAddress(hCorDac, "CLRDataCreateInstance");
-	DbgEngCLRDataTarget *dataTarget = new DbgEngCLRDataTarget(dSym.GetObject_NoRef(), dds.GetObject_NoRef(), dso.GetObject_NoRef());
+	DbgEngCLRDataTarget *dataTarget = new DbgEngCLRDataTarget(dSym, dds, dso);
 	
 	RETURN_IF_FAILED(clrData(__uuidof(IXCLRDataProcess3), dataTarget, (PVOID*)ppDac));
 		

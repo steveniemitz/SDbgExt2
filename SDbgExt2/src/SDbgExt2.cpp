@@ -5,16 +5,9 @@
 #include "..\inc\SDbgCore.h"
 #include "..\inc\ClrProcess.h"
 
-void RunTests(CComPtr<IXCLRDataProcess3> clrData)
-{
-	ClrThreadStoreData tsData = {};
-	auto result = clrData->GetThreadStoreData(&tsData);
-	
-}
-
 int _tmain(int argc, _TCHAR* argv[])
 {
-	const DWORD dwProcessId = 5036;
+	DWORD dwProcessId = 4000; //StartTestsProcess();
 
 	CoInitialize(NULL);
 
@@ -24,8 +17,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	CComPtr<ClrProcess> p = new ClrProcess(chDac, chDcma);
 
-	RunTests(chDac);
-	RunTests(chDac);
+	//RunTests(chDac);
+	//RunTests(chDac);
 		
 	return 0;
 }
