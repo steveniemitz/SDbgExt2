@@ -82,8 +82,21 @@ public:
 		return CComPtr<IDacMemoryAccess>(m_dcma);
 	}
 
+	STDMETHODIMP FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPCWSTR pwszField, CLRDATA_ADDRESS **pValues, ULONG32 *iValues, CLRDATA_ADDRESS *pFieldTypeMT);
+	STDMETHODIMP FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, ClrFieldDescData *field);
+
 private:
 	ULONG m_dwRef;
 	IXCLRDataProcess3 *m_pDac;
 	IDacMemoryAccess *m_dcma;
+
+	BOOL EnumerateAssemblyInDomain(CLRDATA_ADDRESS assembly, CLRDATA_ADDRESS appDomain
+		, LPCWSTR pwszClass, LPCWSTR pwszfield
+		, std::vector<CLRDATA_ADDRESS> *foundValues, CLRDATA_ADDRESS *fieldTypeMT);
+
+	BOOL SearchModule(CLRDATA_ADDRESS module, CLRDATA_ADDRESS appDomain
+		, LPCWSTR pwszClass, LPCWSTR pwszfield
+		, std::vector<CLRDATA_ADDRESS> *foundValues, CLRDATA_ADDRESS *fieldTypeMT);
+
+	BOOL FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, ClrFieldDescData *field, UINT32 *numInstanceFieldsSeen);
 };

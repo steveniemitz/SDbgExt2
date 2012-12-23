@@ -143,9 +143,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\SDbgExt2\src\ClrProcess.cpp" />
     <ClCompile Include="..\SDbgExt2\src\DbgEngCLRDataTarget.cpp" />
     <ClCompile Include="..\SDbgExt2\src\SDbgCore.cpp" />
     <ClCompile Include="src\AppDomainTests.cpp" />
+    <ClCompile Include="src\AssemblyModuleTests.cpp" />
     <ClCompile Include="src\TestRunner.cpp" />
     <ClCompile Include="src\ThreadTests.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -154,6 +156,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\SDbgExt2\inc\IXCLRDataProcess3.h" />
     <ClInclude Include="inc\Tests.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

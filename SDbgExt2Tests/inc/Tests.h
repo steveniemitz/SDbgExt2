@@ -24,3 +24,11 @@ STANDARD_TEST(ClrAppDomainStoreData_Basic);
 STANDARD_TEST(ClrAppDomainList_Basic);
 STANDARD_TEST(ClrAssemblyList_Basic);
 STANDARD_TEST(ClrAppDomainData_Basic);
+
+/// ------- Assemblies & Modules ------
+STANDARD_TEST(ClrAssemblyData_Basic);
+STANDARD_TEST(GetAssemblyModuleList_Basic);
+STANDARD_TEST(GetModuleData_Basic);
+STANDARD_TEST(GetAssemblyName_Basic);
+STANDARD_TEST(FindStaticField_Basic);
+STANDARD_TEST(FindFieldByName_Basic);

@@ -39,12 +39,21 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\SDbgExt2\src\ClrProcess.cpp">
+      <Filter>Source Files\SDbgExtFiles</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AssemblyModuleTests.cpp">
+      <Filter>Source Files\Tests</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\Tests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDbgExt2\inc\IXCLRDataProcess3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -102,7 +102,7 @@ struct ClrThreadPoolData
 
 struct ClrModuleData
 {
-	CLRDATA_ADDRESS Unknown01;
+	CLRDATA_ADDRESS File;
 	CLRDATA_ADDRESS Unknown02;
 	CLRDATA_ADDRESS Unknown03;
 	CLRDATA_ADDRESS MetaDataStart;
@@ -204,6 +204,20 @@ struct ClrAppDomainData
 	DacpAppDomainDataStage AppDomainStage;
 };
 
+struct ClrAssemblyData
+{
+	CLRDATA_ADDRESS AssemblyPtr;
+	CLRDATA_ADDRESS ClassLoader;
+	CLRDATA_ADDRESS ParentDomain;
+	CLRDATA_ADDRESS AppDomainPtr;
+	CLRDATA_ADDRESS AssemblySecurityDescriptor;
+	BOOL IsDynamic;
+	UINT ModuleCount;
+	UINT LoadContext;
+	BOOL IsDomainNeutral;
+	DWORD LocationFlags;
+};
+
 //{FF25CA8B-C31D-4929-9DFD-FCDC42F5D955}
 //0x436f00f2, 0xb42a, 0x4b9f, {0x87,0x0c,0xe7,0x3d,0xb6,0x6a,0xe9,0x30
 MIDL_INTERFACE("436f00f2-b42a-4b9f-870c-e73db66ae930")
@@ -215,13 +229,13 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainData(CLRDATA_ADDRESS domain, ClrAppDomainData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainName() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetDomainFromContext() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetAssemblyList(CLRDATA_ADDRESS domain, ULONG iArraySize, __out_ecount(iArraySize) CLRDATA_ADDRESS *assemblies, DWORD flags) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetAssemblyData() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetAssemblyName() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetModule(CLRDATA_ADDRESS addr, void **pUnk) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAssemblyList(CLRDATA_ADDRESS domain, ULONG32 iArraySize, __out_ecount(iArraySize) CLRDATA_ADDRESS *assemblies, DWORD flags) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAssemblyData(CLRDATA_ADDRESS domain, CLRDATA_ADDRESS assembly, ClrAssemblyData *ret) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAssemblyName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetModule(CLRDATA_ADDRESS addr, IUnknown **pUnk) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetModuleData(CLRDATA_ADDRESS addr, ClrModuleData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE TraverseModuleMap() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetAssemblyModuleList() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAssemblyModuleList(CLRDATA_ADDRESS assembly, ULONG32 iArraySize, __out_ecount(iArraySize) CLRDATA_ADDRESS *modules, DWORD flags) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetILForModule() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetThreadData(CLRDATA_ADDRESS threadAddr, ClrThreadData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetThreadFromThinlockID() = 0;
@@ -251,7 +265,7 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetFieldDescData(CLRDATA_ADDRESS fieldAddr, ClrFieldDescData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetFrameName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetPEFileBase() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetPEFileName() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetPEFileName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetGCHeapData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetGCHeapList() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetGCHeapDetails() = 0;
