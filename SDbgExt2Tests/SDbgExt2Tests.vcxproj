@@ -148,6 +148,7 @@
     <ClCompile Include="..\SDbgExt2\src\SDbgCore.cpp" />
     <ClCompile Include="src\AppDomainTests.cpp" />
     <ClCompile Include="src\AssemblyModuleTests.cpp" />
+    <ClCompile Include="src\HeapTests.cpp" />
     <ClCompile Include="src\TestRunner.cpp" />
     <ClCompile Include="src\ThreadTests.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -29,6 +29,55 @@ public:
 		return m_pData->ReadVirtual(Offset, Buffer, BufferSize, BytesRead);
 	}
 
+	HRESULT GetThreadStack(DWORD osThreadId, CLRDATA_ADDRESS *stackBase, CLRDATA_ADDRESS *stackLimit)
+	{
+		struct CurrentThreadHolder
+		{
+			ULONG _origThread;
+			CComPtr<IDebugSystemObjects> _dso;
+
+			CurrentThreadHolder(ULONG origThread, CComPtr<IDebugSystemObjects> dso)
+			{
+				_origThread = origThread;
+				_dso = dso;
+			}
+			~CurrentThreadHolder()
+			{
+				_dso->SetCurrentThreadId(_origThread);
+			}
+		};
+
+		CComPtr<IDebugSystemObjects> dso;
+		HRESULT hr;
+		RETURN_IF_FAILED(m_pData->QueryInterface(__uuidof(IDebugSystemObjects), (PVOID*)&dso));
+
+		ULONG currThread = 0;
+		dso->GetCurrentThreadId(&currThread);
+		auto threadHolder = CurrentThreadHolder(currThread, dso);
+
+		ULONG newThreadId = 0;
+		RETURN_IF_FAILED(dso->GetThreadIdBySystemId(osThreadId, &newThreadId));
+		RETURN_IF_FAILED(dso->SetCurrentThreadId(newThreadId));
+		
+		struct TEB_IMP
+		{
+			void *junk;
+			void *stackBase;
+			void *stackLimit;
+		};
+
+		ULONG64 threadTebAddr = 0;
+		dso->GetCurrentThreadTeb(&threadTebAddr);
+		
+		TEB_IMP threadTeb = {};
+		RETURN_IF_FAILED(m_pData->ReadVirtual(threadTebAddr, (PVOID)&threadTeb, sizeof(TEB_IMP), NULL));
+
+		*stackBase = (CLRDATA_ADDRESS)(threadTeb.stackBase);
+		*stackLimit = (CLRDATA_ADDRESS)(threadTeb.stackLimit);
+
+		return S_OK;
+	}
+
 	STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject)
     {
         IUnknown *punk = nullptr;

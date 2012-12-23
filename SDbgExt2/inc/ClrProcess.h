@@ -4,6 +4,9 @@
 #include "SDbgCore.h"
 #include "IDacMemoryAccess.h"
 
+typedef BOOL (CALLBACK *EnumStackObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
+typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
+
 class ClrProcess : public IUnknown
 {
 public:
@@ -84,6 +87,14 @@ public:
 
 	STDMETHODIMP FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPCWSTR pwszField, CLRDATA_ADDRESS **pValues, ULONG32 *iValues, CLRDATA_ADDRESS *pFieldTypeMT);
 	STDMETHODIMP FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, ClrFieldDescData *field);
+
+	STDMETHODIMP EnumThreads(EnumThreadsCallback cb, PVOID state);
+	STDMETHODIMP FindThreadByCorThreadId(DWORD corThreadId, CLRDATA_ADDRESS *threadObj);
+
+	STDMETHODIMP EnumStackObjects(DWORD corThreadId, EnumStackObjectsCallback cb, PVOID state);
+	STDMETHODIMP EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumStackObjectsCallback cb, PVOID state);
+
+	BOOL IsValidObject(CLRDATA_ADDRESS obj);
 
 private:
 	ULONG m_dwRef;

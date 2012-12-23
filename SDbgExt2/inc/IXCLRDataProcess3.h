@@ -229,6 +229,59 @@ struct ClrDomainLocalModuleData
     CLRDATA_ADDRESS NonGCStaticDataStart; 
 };
 
+struct ClrGcHeapData
+{
+	BOOL ServerMode;
+	BOOL HeapsValid;
+	UINT HeapCount;
+	UINT MaxGeneration;
+};
+
+struct GcGenerationData
+{    
+    CLRDATA_ADDRESS start_segment;
+    CLRDATA_ADDRESS allocation_start;
+
+    // These are examined only for generation 0, otherwise NULL
+    CLRDATA_ADDRESS allocContextPtr;
+    CLRDATA_ADDRESS allocContextLimit;
+};
+
+#define DAC_NUM_GENERATIONS 4
+
+struct ClrGcHeapStaticData
+{
+	CLRDATA_ADDRESS HeapAddress;
+	CLRDATA_ADDRESS AllocAllocated;
+	CLRDATA_ADDRESS Padding[7];
+
+	GcGenerationData Generations[DAC_NUM_GENERATIONS];
+	CLRDATA_ADDRESS EphemeralHeapSegment;
+
+	CLRDATA_ADDRESS FinalizationFillPointers[DAC_NUM_GENERATIONS + 2];
+	
+	CLRDATA_ADDRESS LowestAddress;
+    CLRDATA_ADDRESS HighestAddress;
+    CLRDATA_ADDRESS CardTable;
+
+	CLRDATA_ADDRESS MoreData[10];
+};
+
+struct ClrGcHeapSegmentData
+{
+	CLRDATA_ADDRESS Unknown1;
+	CLRDATA_ADDRESS Unknown2;
+	CLRDATA_ADDRESS Unknown3;
+	CLRDATA_ADDRESS Unknown4;
+	CLRDATA_ADDRESS Unknown5;
+	CLRDATA_ADDRESS Unknown6;
+	CLRDATA_ADDRESS Unknown7;
+	CLRDATA_ADDRESS Unknown8;
+	CLRDATA_ADDRESS Unknown9;
+	CLRDATA_ADDRESS Unknown10;
+	CLRDATA_ADDRESS Unknown11;
+};
+
 //{FF25CA8B-C31D-4929-9DFD-FCDC42F5D955}
 //0x436f00f2, 0xb42a, 0x4b9f, {0x87,0x0c,0xe7,0x3d,0xb6,0x6a,0xe9,0x30
 MIDL_INTERFACE("436f00f2-b42a-4b9f-870c-e73db66ae930")
@@ -277,11 +330,11 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetFrameName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetPEFileBase() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetPEFileName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetGCHeapData() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetGCHeapList() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetGCHeapData(ClrGcHeapData *ret) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetGCHeapList(ULONG32 iArraySize, CLRDATA_ADDRESS *heaps, void* flags) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetGCHeapDetails() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetGCHeapStaticData() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetHeapSegmentData() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetGCHeapStaticData(ClrGcHeapStaticData *ret) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetHeapSegmentData(CLRDATA_ADDRESS segment, ClrGcHeapSegmentData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetOOMData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetOOMStaticData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetHeapAnalyzeData() = 0;

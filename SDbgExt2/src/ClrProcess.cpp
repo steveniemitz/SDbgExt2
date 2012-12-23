@@ -212,4 +212,111 @@ BOOL ClrProcess::FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, LPCWSTR pwszFi
 	}
 
 	*numInstanceFieldsSeen = numInstanceFields;
+	return FALSE;
+}
+
+HRESULT ClrProcess::EnumThreads(EnumThreadsCallback cb, PVOID state)
+{
+	ClrThreadStoreData tsData = {};
+	HRESULT hr = S_OK;
+	RETURN_IF_FAILED(m_pDac->GetThreadStoreData(&tsData));	
+	
+	CLRDATA_ADDRESS currThreadObj = tsData.FirstThreadObj;
+	do
+	{
+		ClrThreadData tData = {};
+		RETURN_IF_FAILED(m_pDac->GetThreadData(currThreadObj, &tData));
+
+		if (!cb(currThreadObj, tData, state))
+			return S_OK;
+
+		currThreadObj = tData.NextThread;		
+	} while(currThreadObj != NULL);
+
+	return S_OK;
+}
+
+HRESULT ClrProcess::FindThreadByCorThreadId(DWORD corThreadId, CLRDATA_ADDRESS *threadObj)
+{
+	struct FindThreadState
+	{
+		DWORD SearchThreadId;
+		CLRDATA_ADDRESS FoundThread;
+	};
+	
+	FindThreadState fts = { corThreadId, 0 };
+
+	auto cb = [](CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state)->BOOL {
+		auto fts = ((FindThreadState*)state);
+
+		if (threadData.CorThreadId == fts->SearchThreadId)
+		{
+			fts->FoundThread = threadObj;
+			return FALSE;
+		}	
+		
+		return TRUE;
+	};
+
+	EnumThreads(cb, (PVOID)&fts);
+	*threadObj = fts.FoundThread;
+
+	return fts.FoundThread != NULL ? S_OK : E_INVALIDARG;
+}
+
+BOOL ClrProcess::IsValidObject(CLRDATA_ADDRESS obj)
+{
+	if (!obj)
+		return FALSE;
+
+	ClrObjectData od = {};
+	if (SUCCEEDED(m_pDac->GetObjectData(obj, &od)) && od.MethodTable != NULL)
+	{
+		ClrMethodTableData mtData = {};
+		if (SUCCEEDED(m_pDac->GetMethodTableData(od.MethodTable, &mtData)))
+		{
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+HRESULT ClrProcess::EnumStackObjects(DWORD corThreadId, EnumStackObjectsCallback cb, PVOID state)
+{
+	CLRDATA_ADDRESS threadObj = 0;
+	HRESULT hr = S_OK;
+	RETURN_IF_FAILED(FindThreadByCorThreadId(corThreadId, &threadObj));
+
+	return EnumStackObjects(threadObj, cb, state);
+}
+
+HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumStackObjectsCallback cb, PVOID state)
+{
+	ClrThreadData td = {};
+	HRESULT hr = S_OK;
+	RETURN_IF_FAILED(m_pDac->GetThreadData(threadObj, &td));
+
+	CLRDATA_ADDRESS stackBase = 0, stackLimit = 0;
+	RETURN_IF_FAILED(m_dcma->GetThreadStack(td.OSThreadId, &stackBase, &stackLimit));
+
+	for (CLRDATA_ADDRESS addr = stackLimit; addr < stackBase; addr += sizeof(void*))
+	{
+		CLRDATA_ADDRESS stackPtr = 0;
+		if (SUCCEEDED(m_dcma->ReadVirtual(addr, &stackPtr, sizeof(void*), NULL)) && stackPtr != 0)
+		{
+			if (IsValidObject(stackPtr))
+			{
+				ClrObjectData od = {};
+				m_pDac->GetObjectData(stackPtr, &od);
+
+				if (!cb(stackPtr, od, state))
+				{
+					return S_OK;
+				}
+			}	
+		}
+	}
+	
+	return S_OK;
 }

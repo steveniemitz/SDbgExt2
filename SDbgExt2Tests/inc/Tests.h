@@ -18,6 +18,10 @@
 STANDARD_TEST(ClrThreadStoreData_Basic);
 STANDARD_TEST(ClrThreadData_Basic);
 STANDARD_TEST(ClrThreadData_Iterator);
+STANDARD_TEST(EnumThreads_Basic);
+STANDARD_TEST(FindThreadByCorThreadId_Basic);
+STANDARD_TEST(GetThreadStackInfo_Basic);
+STANDARD_TEST(EnumStackObjects_Basic);
 
 /// ------------ AppDomain Store Tests -----
 STANDARD_TEST(ClrAppDomainStoreData_Basic);
@@ -34,3 +38,7 @@ STANDARD_TEST(FindStaticField_Primitive);
 STANDARD_TEST(FindStaticField_Class);
 STANDARD_TEST(FindFieldByName_Instance);
 STANDARD_TEST(GetDomainLocalModuleDataFromModule_Basic);
+
+/// --------- Heaps -------
+STANDARD_TEST(ClrGcHeapData_Basic);
+STANDARD_TEST(ClrGcHeapList_Basic);

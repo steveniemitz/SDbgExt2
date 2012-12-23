@@ -10,6 +10,10 @@ int RunAllTests(ClrProcess *p)
 	RUN_STANDARD_TEST(ClrThreadStoreData_Basic);
 	RUN_STANDARD_TEST(ClrThreadData_Basic);
 	RUN_STANDARD_TEST(ClrThreadData_Iterator);
+	RUN_STANDARD_TEST(EnumThreads_Basic);
+	RUN_STANDARD_TEST(FindThreadByCorThreadId_Basic);
+	RUN_STANDARD_TEST(GetThreadStackInfo_Basic);
+	//RUN_STANDARD_TEST(EnumStackObjects_Basic);
 
 	RUN_STANDARD_TEST(ClrAppDomainStoreData_Basic);
 	RUN_STANDARD_TEST(ClrAppDomainList_Basic);
@@ -24,6 +28,9 @@ int RunAllTests(ClrProcess *p)
 	RUN_STANDARD_TEST(FindStaticField_Class);
 	RUN_STANDARD_TEST(FindFieldByName_Instance);
 	RUN_STANDARD_TEST(GetDomainLocalModuleDataFromModule_Basic);
+
+	RUN_STANDARD_TEST(ClrGcHeapData_Basic);
+	RUN_STANDARD_TEST(ClrGcHeapList_Basic);
 
 	printf("\r\n%d succeeded, %d failed\r\n", numSuccess, numFailures);
 

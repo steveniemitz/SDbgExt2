@@ -10,4 +10,6 @@ struct DECLSPEC_NOVTABLE IDacMemoryAccess : public IUnknown
         ULONG BufferSize,
         PULONG BytesRead
         ) = 0;
+
+	virtual HRESULT GetThreadStack(DWORD osThreadId, CLRDATA_ADDRESS *stackBase, CLRDATA_ADDRESS *stackLimit) = 0;
 };
