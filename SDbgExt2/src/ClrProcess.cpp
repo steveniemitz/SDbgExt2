@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "..\inc\ClrProcess.h"
+#include <iterator>
 
-HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPCWSTR pwszField, CLRDATA_ADDRESS **pValues, ULONG32 *iValues, CLRDATA_ADDRESS *pFieldTypeMT)
+HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPCWSTR pwszField, CLRDATA_ADDRESS **ppValues, ULONG32 *iValues, CLRDATA_ADDRESS *pFieldTypeMT)
 {
 	ClrAppDomainStoreData ads = {};
 	HRESULT hr = S_OK;
@@ -47,6 +48,19 @@ HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPC
 		}
 	}
 
+	if (foundValues.size() > 0)
+	{
+		CLRDATA_ADDRESS *tmpValues = new CLRDATA_ADDRESS[foundValues.size()];
+		std::copy(foundValues.begin(), foundValues.end(), stdext::checked_array_iterator<CLRDATA_ADDRESS*>(tmpValues, foundValues.size()));
+		*ppValues = tmpValues;
+		*iValues = (ULONG)foundValues.size();
+	}
+	else
+	{
+		ppValues = nullptr;
+		iValues = 0;
+	}
+
 	return hr;
 }
 
@@ -74,7 +88,7 @@ BOOL ClrProcess::EnumerateAssemblyInDomain(CLRDATA_ADDRESS assembly, CLRDATA_ADD
 }
 
 BOOL ClrProcess::SearchModule(CLRDATA_ADDRESS module, CLRDATA_ADDRESS appDomain
-		, LPCWSTR pwszClass, LPCWSTR pwszfield
+		, LPCWSTR pwszClass, LPCWSTR pwszField
 		, std::vector<CLRDATA_ADDRESS> *foundValues, CLRDATA_ADDRESS *fieldTypeMT)
 {
 	CComPtr<IMetaDataImport> metaData;
@@ -91,7 +105,38 @@ BOOL ClrProcess::SearchModule(CLRDATA_ADDRESS module, CLRDATA_ADDRESS appDomain
 	if (FAILED(metaData->FindTypeDefByName(pwszClass, NULL, &classToken)))
 		return FALSE;
 
-	return FALSE;	
+	CLRDATA_ADDRESS mtAddr = 0;
+	if (FAILED(m_pDac->GetMethodDescFromToken(module, classToken, &mtAddr)) || mtAddr == 0)
+		return FALSE;
+
+	ClrFieldDescData fdData;
+	if (FAILED(this->FindFieldByName(mtAddr, pwszField, &fdData)))
+		return FALSE;
+
+	*fieldTypeMT = fdData.FieldMethodTable;
+
+	ClrDomainLocalModuleData dlmData = {};
+	if (FAILED(m_pDac->GetDomainLocalModuleDataFromModule(module, &dlmData)))
+		return FALSE;
+
+	CLRDATA_ADDRESS dataPtr = 0;
+	if (fdData.FieldType == ELEMENT_TYPE_VALUETYPE || fdData.FieldType == ELEMENT_TYPE_CLASS)
+	{
+		dataPtr = dlmData.GCStaticDataStart + fdData.Offset;
+	}
+	else
+	{
+		dataPtr = dlmData.NonGCStaticDataStart + fdData.Offset;
+	}
+	ULONG readSize = GetSizeForType(fdData.FieldType);
+	CLRDATA_ADDRESS tmpVal = 0;
+	if (SUCCEEDED(m_dcma->ReadVirtual(dataPtr, &tmpVal, readSize, &readSize)) && tmpVal)
+	{
+		foundValues->push_back(tmpVal);
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, ClrFieldDescData *field)

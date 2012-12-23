@@ -20,8 +20,10 @@ int RunAllTests(ClrProcess *p)
 	RUN_STANDARD_TEST(GetAssemblyModuleList_Basic);
 	RUN_STANDARD_TEST(GetModuleData_Basic);
 	RUN_STANDARD_TEST(GetAssemblyName_Basic);
-	RUN_STANDARD_TEST(FindStaticField_Basic);
-	RUN_STANDARD_TEST(FindFieldByName_Basic);
+	RUN_STANDARD_TEST(FindStaticField_Primitive);
+	RUN_STANDARD_TEST(FindStaticField_Class);
+	RUN_STANDARD_TEST(FindFieldByName_Instance);
+	RUN_STANDARD_TEST(GetDomainLocalModuleDataFromModule_Basic);
 
 	printf("\r\n%d succeeded, %d failed\r\n", numSuccess, numFailures);
 
@@ -30,7 +32,7 @@ int RunAllTests(ClrProcess *p)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	const DWORD dwProcessId = 6696;
+	const DWORD dwProcessId = 2212;
 
 	CoInitialize(NULL);
 

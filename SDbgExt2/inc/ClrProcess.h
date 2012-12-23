@@ -99,4 +99,27 @@ private:
 		, std::vector<CLRDATA_ADDRESS> *foundValues, CLRDATA_ADDRESS *fieldTypeMT);
 
 	BOOL FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, ClrFieldDescData *field, UINT32 *numInstanceFieldsSeen);
+	ULONG GetSizeForType(CorElementType cet)
+	{
+		switch (cet)
+		{
+			case ELEMENT_TYPE_I1:   
+			case ELEMENT_TYPE_U1:   
+				return 1;
+			case ELEMENT_TYPE_CHAR:
+			case ELEMENT_TYPE_I2:   
+			case ELEMENT_TYPE_U2:   
+				return 2;
+			case ELEMENT_TYPE_I4:   
+			case ELEMENT_TYPE_U4:   	
+			case ELEMENT_TYPE_R4:   
+				return 4;
+			case ELEMENT_TYPE_I8:   
+			case ELEMENT_TYPE_U8:   
+			case ELEMENT_TYPE_R8:   
+				return 8;
+			default:
+				return sizeof(PVOID);
+		}
+	}
 };

@@ -3,7 +3,7 @@
 #include "..\..\SDbgExt2\inc\ClrProcess.h"
 #define STANDARD_TEST(name) BOOL name(ClrProcess *p);
 
-#define BEGIN_TEST { BOOL __t_imp_success = TRUE; { printf("[%-30s] ", __FUNCTION__); }
+#define BEGIN_TEST { BOOL __t_imp_success = TRUE; { printf("[%-50s] ", __FUNCTION__); }
 #define END_TEST  { end: printf(" %s\r\n", __t_imp_success ? "success" : "failure"); return __t_imp_success; } }
 
 #define _IMPL_ASSERT_FAIL_CONDITION __t_imp_success = FALSE; goto end; }
@@ -30,5 +30,7 @@ STANDARD_TEST(ClrAssemblyData_Basic);
 STANDARD_TEST(GetAssemblyModuleList_Basic);
 STANDARD_TEST(GetModuleData_Basic);
 STANDARD_TEST(GetAssemblyName_Basic);
-STANDARD_TEST(FindStaticField_Basic);
-STANDARD_TEST(FindFieldByName_Basic);
+STANDARD_TEST(FindStaticField_Primitive);
+STANDARD_TEST(FindStaticField_Class);
+STANDARD_TEST(FindFieldByName_Instance);
+STANDARD_TEST(GetDomainLocalModuleDataFromModule_Basic);

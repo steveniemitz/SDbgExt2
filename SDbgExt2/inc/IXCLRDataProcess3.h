@@ -218,6 +218,17 @@ struct ClrAssemblyData
 	DWORD LocationFlags;
 };
 
+struct ClrDomainLocalModuleData
+{
+	CLRDATA_ADDRESS Unused1;
+	CLRDATA_ADDRESS Unused2;
+	    
+    CLRDATA_ADDRESS ClassData;   
+    CLRDATA_ADDRESS DynamicClassTable;   
+    CLRDATA_ADDRESS GCStaticDataStart;
+    CLRDATA_ADDRESS NonGCStaticDataStart; 
+};
+
 //{FF25CA8B-C31D-4929-9DFD-FCDC42F5D955}
 //0x436f00f2, 0xb42a, 0x4b9f, {0x87,0x0c,0xe7,0x3d,0xb6,0x6a,0xe9,0x30
 MIDL_INTERFACE("436f00f2-b42a-4b9f-870c-e73db66ae930")
@@ -244,7 +255,7 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetMethodDescPtrFromIP(CLRDATA_ADDRESS ip, CLRDATA_ADDRESS *methodDescPtr) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodDescName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodDescPtrFromFrame(CLRDATA_ADDRESS frameAddr, CLRDATA_ADDRESS *methodDescPtr) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetMethodDescFromToken() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetMethodDescFromToken(CLRDATA_ADDRESS module, mdToken token, CLRDATA_ADDRESS *mdAddr) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodDescTransparencyData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetCodeHeaderData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetJitManagerList() = 0;
@@ -277,7 +288,7 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetHeapAnalyzeStaticData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetDomainLocalModuleData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetDomainLocalModuleDataFromAppDomain() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetDomainLocalModuleDataFromModule() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetDomainLocalModuleDataFromModule(CLRDATA_ADDRESS moduleAddr, ClrDomainLocalModuleData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetThreadLocalModuleData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetSyncBlockData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetSyncBlockCleanupData() = 0;
