@@ -5,21 +5,25 @@
 #include "..\inc\SDbgCore.h"
 #include "..\inc\ClrProcess.h"
 
+void RunSomeTests(CComPtr<ClrProcess> p)
+{
+	ClrThreadStoreData tsData = {0};
+	auto hr = p->GetProcess()->GetThreadStoreData(&tsData);
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
-	DWORD dwProcessId = 4000; //StartTestsProcess();
+	const DWORD dwProcessId = 5036;
 
 	CoInitialize(NULL);
 
 	CComPtr<IXCLRDataProcess3> chDac; CComPtr<IDacMemoryAccess> chDcma;
-	
 	InitRemoteProcess(dwProcessId, &chDac, &chDcma);
 
-	CComPtr<ClrProcess> p = new ClrProcess(chDac, chDcma);
-
-	//RunTests(chDac);
-	//RunTests(chDac);
-		
+	ClrProcess *p = new ClrProcess(chDac, chDcma);
+	
+	p->Release();
+	
 	return 0;
 }
 

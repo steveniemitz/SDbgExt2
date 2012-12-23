@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\src\stdafx.h"
+#include "stdafx.h"
 #include "SDbgCore.h"
 #include "IDacMemoryAccess.h"
 
@@ -15,7 +15,7 @@ public:
 		m_dcma = pDcma;
 		m_dcma->AddRef();
 
-		m_dwRef = 0;
+		m_dwRef = 1;
 	}
 
 	~ClrProcess()
@@ -72,16 +72,16 @@ public:
 		*ppDcma = m_dcma;
 	}
 
-	STDMETHODIMP_(ComHolder<IXCLRDataProcess3>) GetProcess()
+	STDMETHODIMP_(CComPtr<IXCLRDataProcess3>) GetProcess()
 	{
-		return ComHolder<IXCLRDataProcess3>(m_pDac);
+		return CComPtr<IXCLRDataProcess3>(m_pDac);
 	}
 
-	STDMETHODIMP_(ComHolder<IDacMemoryAccess>) GetDataAccess()
+	STDMETHODIMP_(CComPtr<IDacMemoryAccess>) GetDataAccess()
 	{
-		return ComHolder<IDacMemoryAccess>(m_dcma);
+		return CComPtr<IDacMemoryAccess>(m_dcma);
 	}
-	
+
 private:
 	ULONG m_dwRef;
 	IXCLRDataProcess3 *m_pDac;

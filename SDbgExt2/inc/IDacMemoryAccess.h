@@ -1,6 +1,6 @@
 #pragma once
 
-#include "..\src\stdafx.h"
+#include "stdafx.h"
 
 struct DECLSPEC_NOVTABLE IDacMemoryAccess : public IUnknown
 {

@@ -166,18 +166,56 @@ struct ClrThreadStoreData
 	CLRDATA_ADDRESS HostedRuntime;
 };
 
+struct ClrAppDomainStoreData
+{
+	CLRDATA_ADDRESS SharedDomain;
+	CLRDATA_ADDRESS SystemDomain;
+	LONG DomainCount;
+};
+
+enum DacpAppDomainDataStage {
+    STAGE_CREATING,
+    STAGE_READYFORMANAGEDCODE,
+    STAGE_ACTIVE,
+    STAGE_OPEN,
+    STAGE_UNLOAD_REQUESTED,
+    STAGE_EXITING,
+    STAGE_EXITED,
+    STAGE_FINALIZING,
+    STAGE_FINALIZED,
+    STAGE_HANDLETABLE_NOACCESS,
+    STAGE_CLEARED,
+    STAGE_COLLECTED,
+    STAGE_CLOSED
+};
+
+struct ClrAppDomainData
+{
+	CLRDATA_ADDRESS AppDomainPtr;
+	CLRDATA_ADDRESS SecurityDescriptor;
+	CLRDATA_ADDRESS LowFrequencyHeap;
+	CLRDATA_ADDRESS HighFrequencyHeap;
+	CLRDATA_ADDRESS StubHeap;
+	CLRDATA_ADDRESS DomainLocalBlock;
+	CLRDATA_ADDRESS DomainLocalModules;
+	DWORD Id;
+	LONG AssemblyCount;
+	LONG FailedAssemblyCount;
+	DacpAppDomainDataStage AppDomainStage;
+};
+
 //{FF25CA8B-C31D-4929-9DFD-FCDC42F5D955}
 //0x436f00f2, 0xb42a, 0x4b9f, {0x87,0x0c,0xe7,0x3d,0xb6,0x6a,0xe9,0x30
 MIDL_INTERFACE("436f00f2-b42a-4b9f-870c-e73db66ae930")
 IXCLRDataProcess3 : public IUnknown
 {
 	virtual HRESULT STDMETHODCALLTYPE GetThreadStoreData(ClrThreadStoreData *ret) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetAppDomainStoreData() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetAppDomainList() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetAppDomainData() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAppDomainStoreData(ClrAppDomainStoreData *ret) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAppDomainList(ULONG32 iArraySize, __out_ecount(iArraySize) CLRDATA_ADDRESS *domains, DWORD flags) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAppDomainData(CLRDATA_ADDRESS domain, ClrAppDomainData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainName() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetDomainFromContext() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetAssemblyList() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAssemblyList(CLRDATA_ADDRESS domain, ULONG iArraySize, __out_ecount(iArraySize) CLRDATA_ADDRESS *assemblies, DWORD flags) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAssemblyData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAssemblyName() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetModule(CLRDATA_ADDRESS addr, void **pUnk) = 0;

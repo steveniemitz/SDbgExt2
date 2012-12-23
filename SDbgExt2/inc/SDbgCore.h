@@ -8,7 +8,7 @@
 
 typedef HRESULT (__stdcall *CLRDataCreateInstancePtr)(REFIID iid, ICLRDataTarget* target, void** iface);
 
-#define RETURN_IF_FAILED(hr) if (FAILED(hr)) return hr;
+#define RETURN_IF_FAILED(exp) if (FAILED(hr = (exp))) return hr;
 
 inline LPWSTR AllocString(size_t len)
 {
@@ -46,62 +46,6 @@ inline void DeleteVector(std::vector<T*> *x)
 	}
 	delete x;
 }
-
-template < typename T >
-class ComHolder
-{
-private:
-	T* m_val;
-
-public:
-	void Bind(T* val)
-	{
-		m_val = val;
-	}
-
-	ComHolder() 
-		: m_val(nullptr)
-	{
-	}
-
-	ComHolder(T* val)
-	{
-		m_val = val;
-		val->AddRef();
-	}
-
-	ComHolder(const ComHolder& other)
-	{
-		m_val = other.m_val;
-		m_val->AddRef();
-	}
-
-	~ComHolder()
-	{
-		if (m_val)
-			m_val->Release();
-	}
-
-	T* operator->()
-	{
-		return m_val;
-	}	
-
-	T* GetObject_NoRef()
-	{
-		return m_val;
-	}
-
-	T** AddrOfObject()
-	{
-		return &m_val;
-	}
-	
-	HRESULT QueryInterface(IUnknown *source)
-	{
-		return source->QueryInterface(__uuidof(T), (PVOID*)&m_val);
-	}
-};
 
 HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma);
 

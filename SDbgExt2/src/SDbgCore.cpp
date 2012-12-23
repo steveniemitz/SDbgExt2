@@ -28,15 +28,13 @@
 
 #define SYMBOL_PATH "srv*c:\\symcache*http://msdl.microsoft.com/download/symbols"
 
-
-//IID IID_IXCLRDataProcess = {0x5c552ab6, 0xfc09, 0x4cb3, {0x8e,0x36,0x22,0xfa,0x03,0xc7,0x98,0xb7} };
-//HRESULT InitIXCLRDataFromWinDBG(IXCLRDataProcess3 **ppDac);
-
 HRESULT InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 {
 	CComPtr<IDebugSymbols3> dSym;
 	CComPtr<IDebugDataSpaces> dds;
 	CComPtr<IDebugSystemObjects> dso;
+
+	HRESULT hr = S_OK;
 
 	RETURN_IF_FAILED(cli->QueryInterface(__uuidof(IDebugSymbols3), (PVOID*)&dSym));
 	RETURN_IF_FAILED(cli->QueryInterface(__uuidof(IDebugDataSpaces), (PVOID*)&dds));
@@ -67,11 +65,12 @@ HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemo
 	CComPtr<IDebugClient> cli;
 	CComPtr<IDebugControl> ctrl;
 		
+	HRESULT hr = S_OK;
+
 	RETURN_IF_FAILED(DebugCreate(__uuidof(IDebugClient), (PVOID*)&cli));
 	RETURN_IF_FAILED(cli->AttachProcess(NULL, dwProcessId, DEBUG_ATTACH_NONINVASIVE | DEBUG_ATTACH_NONINVASIVE_NO_SUSPEND));
-	cli->QueryInterface(__uuidof(IDebugControl), (PVOID*)&ctrl);
+	RETURN_IF_FAILED(cli->QueryInterface(__uuidof(IDebugControl), (PVOID*)&ctrl));
 
-	//RETURN_IF_FAILED(ctrl.QueryInterface(cli));
 	RETURN_IF_FAILED(ctrl->WaitForEvent(DEBUG_WAIT_DEFAULT, INFINITE));	
 
 	IXCLRDataProcess3 *pcdp;
