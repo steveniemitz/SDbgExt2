@@ -143,4 +143,6 @@ private:
 
 	HRESULT EnumHeapSegmentsWorkstation(EnumHeapSegmentsCallback cb, PVOID state);
 	HRESULT EnumHeapSegmentsServer(EnumHeapSegmentsCallback cb, PVOID state);
+	HRESULT EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, EnumHeapSegmentsCallback cb, PVOID state);
 };
+

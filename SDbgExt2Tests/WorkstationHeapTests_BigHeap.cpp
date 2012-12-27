@@ -23,7 +23,7 @@ namespace SDbgExt2Tests2
 			
 			p->EnumHeapObjects(cb, &n);
 
-			Assert::AreEqual(547, n);
+			Assert::AreEqual(1000322, n);
 		}
 
 	};

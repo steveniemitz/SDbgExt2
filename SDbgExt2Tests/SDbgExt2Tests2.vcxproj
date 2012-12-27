@@ -160,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyModuleTests.cpp" />
+    <ClCompile Include="ServerHeapTests.cpp" />
     <ClCompile Include="ThreadTests.cpp" />
     <ClCompile Include="WorkstationHeapTests.cpp" />
     <ClCompile Include="stdafx.cpp">

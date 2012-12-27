@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\inc\ClrProcess.h"
 #include <iterator>
+#include <algorithm>
 #include <unordered_set>
 
 HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPCWSTR pwszField, CLRDATA_ADDRESS **ppValues, ULONG32 *iValues, CLRDATA_ADDRESS *pFieldTypeMT)
@@ -375,12 +376,31 @@ HRESULT ClrProcess::EnumHeapSegments(EnumHeapSegmentsCallback cb, PVOID state)
 	std::vector<ClrGcHeapSegmentData> segments;
 	if (gcData.ServerMode)
 	{
-		return E_NOTIMPL;
+		return EnumHeapSegmentsServer(cb, state);
 	}
 	else
 	{
 		return EnumHeapSegmentsWorkstation(cb, state);
 	}
+}
+
+HRESULT ClrProcess::EnumHeapSegmentsServer(EnumHeapSegmentsCallback cb, PVOID state)
+{
+	ClrGcHeapData gcData = {};
+	m_pDac->GetGCHeapData(&gcData);
+
+	std::vector<CLRDATA_ADDRESS> heaps(gcData.HeapCount);
+	auto hr = m_pDac->GetGCHeapList(gcData.HeapCount, heaps.data(), 0);	
+
+	for (auto heap : heaps)
+	{
+		ClrGcHeapStaticData gchData = {};
+		RETURN_IF_FAILED(m_pDac->GetGCHeapDetails(heap, &gchData));
+
+		EnumHeapSegmentsImpl(gchData, cb, state);
+	}
+
+	return E_NOTIMPL;	
 }
 
 HRESULT ClrProcess::EnumHeapSegmentsWorkstation(EnumHeapSegmentsCallback cb, PVOID state)
@@ -389,8 +409,13 @@ HRESULT ClrProcess::EnumHeapSegmentsWorkstation(EnumHeapSegmentsCallback cb, PVO
 	HRESULT hr = S_OK;
 	RETURN_IF_FAILED(m_pDac->GetGCHeapStaticData(&gcsData));
 
+	return EnumHeapSegmentsImpl(gcsData, cb, state);
+}
+
+HRESULT ClrProcess::EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, EnumHeapSegmentsCallback cb, PVOID state)
+{
 	CLRDATA_ADDRESS currSegment = gcsData.Generations[2].start_segment;
-	
+	HRESULT hr = S_OK;
 	BOOL visitedLOHSegment = FALSE;
 	while (currSegment != NULL)
 	{
@@ -410,8 +435,5 @@ HRESULT ClrProcess::EnumHeapSegmentsWorkstation(EnumHeapSegmentsCallback cb, PVO
 			visitedLOHSegment = TRUE;
 		}
 	}
-
-
-
 	return S_OK;
 }

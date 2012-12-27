@@ -331,8 +331,8 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetPEFileBase() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetPEFileName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetGCHeapData(ClrGcHeapData *ret) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetGCHeapList(ULONG32 iArraySize, CLRDATA_ADDRESS *heaps, void* flags) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetGCHeapDetails() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetGCHeapList(ULONG32 iArraySize, CLRDATA_ADDRESS *heaps, DWORD flags) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetGCHeapDetails(CLRDATA_ADDRESS heap, ClrGcHeapStaticData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetGCHeapStaticData(ClrGcHeapStaticData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetHeapSegmentData(CLRDATA_ADDRESS segment, ClrGcHeapSegmentData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetOOMData() = 0;
