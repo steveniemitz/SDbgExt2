@@ -28,7 +28,7 @@
 
 #define SYMBOL_PATH "srv*c:\\symcache*http://msdl.microsoft.com/download/symbols"
 
-HRESULT InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
+HRESULT SDBGAPI InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 {
 	CComPtr<IDebugSymbols3> dSym;
 	CComPtr<IDebugDataSpaces> dds;

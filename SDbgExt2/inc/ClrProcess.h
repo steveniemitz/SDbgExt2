@@ -3,11 +3,13 @@
 #include "stdafx.h"
 #include "SDbgCore.h"
 #include "IDacMemoryAccess.h"
+#include "IClrProcess.h"
+#include <atlbase.h>
 
 typedef BOOL (CALLBACK *EnumStackObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
 typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
 
-class ClrProcess : public IUnknown
+class SDBGAPI ClrProcess : public IClrProcess
 {
 public:
 	ClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *pDcma)
@@ -73,6 +75,8 @@ public:
 	{
 		m_dcma->AddRef();
 		*ppDcma = m_dcma;
+
+		return S_OK;
 	}
 
 	STDMETHODIMP_(CComPtr<IXCLRDataProcess3>) GetProcess()

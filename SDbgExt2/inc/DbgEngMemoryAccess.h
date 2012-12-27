@@ -2,7 +2,7 @@
 #include "..\inc\IDacMemoryAccess.h"
 #include <DbgEng.h>
 
-class DbgEngMemoryAccess : public IDacMemoryAccess
+class SDBGAPI DbgEngMemoryAccess : public IDacMemoryAccess
 {
 public:
 
