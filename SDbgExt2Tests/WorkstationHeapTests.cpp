@@ -33,9 +33,24 @@ namespace SDbgExt2Tests2
 			auto hr = proc->GetGCHeapStaticData(&gcsData);
 
 			ClrGcHeapSegmentData segData = {};
-			proc->GetHeapSegmentData((CLRDATA_ADDRESS)0x02ec0000, &segData);
+			proc->GetHeapSegmentData(gcsData.Generations[0].start_segment, &segData);
 
 			ASSERT_SOK(hr);
 		}
+
+		TEST_METHOD(ClrGcHeap_EnumerateObjects)
+		{
+			int n = 0;
+
+			auto cb = [](CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state)->BOOL {
+				(*((int*)state))++;
+				return TRUE;
+			};
+			
+			p->EnumHeapObjects(cb, &n);
+
+			Assert::AreEqual(547, n);
+		}
+
 	};
 }

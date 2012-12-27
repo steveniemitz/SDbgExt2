@@ -7,8 +7,9 @@
 
 HRESULT SDBGAPI InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac);
 
-typedef BOOL (CALLBACK *EnumStackObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
+typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
 typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
+typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
 
 struct DECLSPEC_NOVTABLE IClrProcess : public IUnknown
 {
@@ -23,9 +24,10 @@ struct DECLSPEC_NOVTABLE IClrProcess : public IUnknown
 	virtual STDMETHODIMP EnumThreads(EnumThreadsCallback cb, PVOID state) = 0;
 	virtual STDMETHODIMP FindThreadByCorThreadId(DWORD corThreadId, CLRDATA_ADDRESS *threadObj) = 0;
 	
-	virtual STDMETHODIMP EnumStackObjects(DWORD corThreadId, EnumStackObjectsCallback cb, PVOID state) = 0;
-	virtual STDMETHODIMP EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumStackObjectsCallback cb, PVOID state) = 0;
+	virtual STDMETHODIMP EnumStackObjects(DWORD corThreadId, EnumObjectsCallback cb, PVOID state) = 0;
+	virtual STDMETHODIMP EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallback cb, PVOID state) = 0;
 	
 	virtual BOOL IsValidObject(CLRDATA_ADDRESS obj) = 0;
 
+	virtual STDMETHODIMP EnumHeapObjects(EnumObjectsCallback cb, PVOID state) = 0;
 };

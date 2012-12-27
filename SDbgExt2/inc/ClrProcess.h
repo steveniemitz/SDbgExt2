@@ -6,9 +6,6 @@
 #include "IClrProcess.h"
 #include <atlbase.h>
 
-typedef BOOL (CALLBACK *EnumStackObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
-typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
-
 class SDBGAPI ClrProcess : public IClrProcess
 {
 public:
@@ -95,10 +92,12 @@ public:
 	STDMETHODIMP EnumThreads(EnumThreadsCallback cb, PVOID state);
 	STDMETHODIMP FindThreadByCorThreadId(DWORD corThreadId, CLRDATA_ADDRESS *threadObj);
 
-	STDMETHODIMP EnumStackObjects(DWORD corThreadId, EnumStackObjectsCallback cb, PVOID state);
-	STDMETHODIMP EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumStackObjectsCallback cb, PVOID state);
+	STDMETHODIMP EnumStackObjects(DWORD corThreadId, EnumObjectsCallback cb, PVOID state);
+	STDMETHODIMP EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallback cb, PVOID state);
 
 	BOOL IsValidObject(CLRDATA_ADDRESS obj);
+
+	STDMETHODIMP EnumHeapObjects(EnumObjectsCallback cb, PVOID state);
 
 private:
 	ULONG m_dwRef;
@@ -137,4 +136,11 @@ private:
 				return sizeof(PVOID);
 		}
 	}
+
+	typedef BOOL (CALLBACK *EnumHeapSegmentsCallback)(const CLRDATA_ADDRESS segment, const ClrGcHeapSegmentData &segData, PVOID state);
+
+	HRESULT EnumHeapSegments(EnumHeapSegmentsCallback cb, PVOID state);
+
+	HRESULT EnumHeapSegmentsWorkstation(EnumHeapSegmentsCallback cb, PVOID state);
+	HRESULT EnumHeapSegmentsServer(EnumHeapSegmentsCallback cb, PVOID state);
 };

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\inc\ClrProcess.h"
 #include <iterator>
+#include <unordered_set>
 
 HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPCWSTR pwszField, CLRDATA_ADDRESS **ppValues, ULONG32 *iValues, CLRDATA_ADDRESS *pFieldTypeMT)
 {
@@ -282,7 +283,7 @@ BOOL ClrProcess::IsValidObject(CLRDATA_ADDRESS obj)
 	return FALSE;
 }
 
-HRESULT ClrProcess::EnumStackObjects(DWORD corThreadId, EnumStackObjectsCallback cb, PVOID state)
+HRESULT ClrProcess::EnumStackObjects(DWORD corThreadId, EnumObjectsCallback cb, PVOID state)
 {
 	CLRDATA_ADDRESS threadObj = 0;
 	HRESULT hr = S_OK;
@@ -291,7 +292,7 @@ HRESULT ClrProcess::EnumStackObjects(DWORD corThreadId, EnumStackObjectsCallback
 	return EnumStackObjects(threadObj, cb, state);
 }
 
-HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumStackObjectsCallback cb, PVOID state)
+HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallback cb, PVOID state)
 {
 	ClrThreadData td = {};
 	HRESULT hr = S_OK;
@@ -318,5 +319,99 @@ HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumStackObjects
 		}
 	}
 	
+	return S_OK;
+}
+
+CLRDATA_ADDRESS Align(CLRDATA_ADDRESS addr)
+{
+	return (addr + (sizeof(void*) - 1)) & ~(sizeof(void*) - 1);
+}
+
+
+HRESULT ClrProcess::EnumHeapObjects(EnumObjectsCallback cb, PVOID state)
+{
+	struct EnumSegmentsState
+	{
+		EnumObjectsCallback wrappedCb;
+		PVOID wrappedState;
+		IXCLRDataProcess3 *pDac;
+	};
+	EnumSegmentsState outerState = { cb, state, m_pDac };
+	HRESULT hr = S_OK;
+
+	auto heapCb = [](const CLRDATA_ADDRESS segmentAddr, const ClrGcHeapSegmentData &segment, PVOID innerState)->BOOL {
+		auto *ess = static_cast<EnumSegmentsState *>(innerState);
+		
+		CLRDATA_ADDRESS currObj = segment.AllocBegin;
+		while(currObj < segment.Allocated)
+		{
+			ClrObjectData od = {};
+			HRESULT hr = ess->pDac->GetObjectData(currObj, &od);
+			if (FAILED(hr))
+			{
+				currObj += sizeof(void*);
+			}
+			else
+			{
+				ess->wrappedCb(currObj, od, ess->wrappedState);
+				currObj = Align(currObj + od.Size);
+			}
+		}
+
+		return TRUE;
+	};
+
+	RETURN_IF_FAILED(EnumHeapSegments(heapCb, &outerState));
+
+	return S_OK;
+}
+
+HRESULT ClrProcess::EnumHeapSegments(EnumHeapSegmentsCallback cb, PVOID state)
+{
+	ClrGcHeapData gcData = {};
+	HRESULT hr = S_OK;
+	RETURN_IF_FAILED(m_pDac->GetGCHeapData(&gcData));
+
+	std::vector<ClrGcHeapSegmentData> segments;
+	if (gcData.ServerMode)
+	{
+		return E_NOTIMPL;
+	}
+	else
+	{
+		return EnumHeapSegmentsWorkstation(cb, state);
+	}
+}
+
+HRESULT ClrProcess::EnumHeapSegmentsWorkstation(EnumHeapSegmentsCallback cb, PVOID state)
+{
+	ClrGcHeapStaticData gcsData = {};
+	HRESULT hr = S_OK;
+	RETURN_IF_FAILED(m_pDac->GetGCHeapStaticData(&gcsData));
+
+	CLRDATA_ADDRESS currSegment = gcsData.Generations[2].start_segment;
+	
+	BOOL visitedLOHSegment = FALSE;
+	while (currSegment != NULL)
+	{
+		ClrGcHeapSegmentData segData = {};
+		RETURN_IF_FAILED(m_pDac->GetHeapSegmentData(currSegment, &segData));
+
+		if (segData.NextSegment == NULL && !visitedLOHSegment)
+		{
+			segData.Allocated = gcsData.AllocAllocated;
+		}
+		cb(currSegment, segData, state);
+
+		currSegment = segData.NextSegment;	
+		if (currSegment == NULL && !visitedLOHSegment)
+		{
+			currSegment = gcsData.Generations[3].start_segment;
+			visitedLOHSegment = TRUE;
+		}
+	}
+
+
+
 	return S_OK;
 }

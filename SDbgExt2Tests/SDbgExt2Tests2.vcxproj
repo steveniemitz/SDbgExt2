@@ -170,6 +170,7 @@
     </ClCompile>
     <ClCompile Include="AppDomainTests.cpp" />
     <ClCompile Include="TestCommon.cpp" />
+    <ClCompile Include="WorkstationHeapTests_BigHeap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SDbgExt2\SDbgExt2.vcxproj">
