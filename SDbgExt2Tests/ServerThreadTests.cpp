@@ -48,7 +48,7 @@ namespace SDbgExt2Tests2
 			auto hr = p->GetProcess()->GetModuleData(modAddr, &modData);
 
 			ASSERT_SOK(hr);
-			Assert::AreEqual((SIZE_T)3, modData.DomainNeutralIndex);
+			Assert::AreEqual((SIZE_T)3, (SIZE_T)modData.DomainNeutralIndex);
 		}
 /*
 		TEST_METHOD(GetModuleData_Server2)

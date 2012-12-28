@@ -133,7 +133,7 @@ BOOL ClrProcess::SearchModule(CLRDATA_ADDRESS module, CLRDATA_ADDRESS appDomain
 	// If that fails, attempt to get it from the domain neutral store
 	if (hr == E_INVALIDARG)
 	{
-		if (FAILED(m_pDac->GetDomainLocalModuleDataFromAppDomain(appDomain, modData.DomainNeutralIndex, &dlmData)))
+		if (FAILED(m_pDac->GetDomainLocalModuleDataFromAppDomain(appDomain, (SIZE_T)modData.DomainNeutralIndex, &dlmData)))
 			return FALSE;
 	}
 	

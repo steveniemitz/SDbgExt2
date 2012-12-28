@@ -101,39 +101,6 @@ struct ClrThreadPoolData
 	DWORD MinCompPortLimit;
 };
 
-#define MODULE_DOMAINNEUTRAL 
-
-// TODO: Figure out how to generalize this across x86/x64
-#ifndef _WIN64
-struct ClrModuleData
-{
-	CLRDATA_ADDRESS File;
-	CLRDATA_ADDRESS Unknown02;
-	CLRDATA_ADDRESS ModuleBase;
-	CLRDATA_ADDRESS MetaDataStart;
-	SIZE_T MetaDataLength;
-	CLRDATA_ADDRESS Assembly;
-	BOOL IsReflection;
-	BOOL IsPEFile;
-	// Note: these SIZE_T's might be wrong, TODO: test this on x64;
-	DWORD BaseClassIndex;
-	//DWORD Unknown9;
-	DWORD DomainNeutralIndex;
-	// This is null if there are multiple appdomains
-	CLRDATA_ADDRESS NonGCStaticDataStart;
-	CLRDATA_ADDRESS Unknown10;
-	CLRDATA_ADDRESS TypeDefToMethodTableMap;
-	CLRDATA_ADDRESS TypeRefToMethodTableMap;
-	CLRDATA_ADDRESS MethodDefToDescMap;
-	CLRDATA_ADDRESS FieldDefToDescMap;
-	CLRDATA_ADDRESS MemberRefToDescMap;
-	CLRDATA_ADDRESS FileReferencesMap;
-	CLRDATA_ADDRESS AssemblyReferencesMap;
-	CLRDATA_ADDRESS Unknown18;
-	CLRDATA_ADDRESS Unknown19;
-	CLRDATA_ADDRESS Unknown20;
-};
-#else
 struct ClrModuleData
 {
 	CLRDATA_ADDRESS PEFile;
@@ -145,12 +112,10 @@ struct ClrModuleData
 	BOOL IsReflection;
 	BOOL IsPEFile;
 	// Note: these SIZE_T's might be wrong, TODO: test this on x64;
-	SIZE_T BaseClassIndex;
-	//DWORD Unknown9;
-	SIZE_T DomainNeutralIndex;
-	// This is null if there are multiple appdomains
-	//CLRDATA_ADDRESS NonGCStaticDataStart;
-	CLRDATA_ADDRESS Unknown10;
+	ULONG64 BaseClassIndex;
+	ULONG64 DomainNeutralIndex;
+
+	CLRDATA_ADDRESS TransientFlags;
 	CLRDATA_ADDRESS TypeDefToMethodTableMap;
 	CLRDATA_ADDRESS TypeRefToMethodTableMap;
 	CLRDATA_ADDRESS MethodDefToDescMap;
@@ -161,8 +126,8 @@ struct ClrModuleData
 	CLRDATA_ADDRESS Unknown18;
 	CLRDATA_ADDRESS Unknown19;
 	CLRDATA_ADDRESS Unknown20;
+	CLRDATA_ADDRESS Unknown21;
 };
-#endif
 
 struct ClrThreadData
 {
