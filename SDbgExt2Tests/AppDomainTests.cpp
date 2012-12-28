@@ -48,7 +48,7 @@ namespace SDbgExt2Tests2
 			hr = proc->GetAppDomainData(domain, &adData);
 
 			auto asms = std::vector<CLRDATA_ADDRESS>(adData.AssemblyCount);
-			hr = proc->GetAssemblyList(domain, adData.AssemblyCount, asms.data(), 0);
+			hr = proc->GetAssemblyList(domain, adData.AssemblyCount, asms.data(), NULL);
 
 			ASSERT_SOK(hr);
 			ASSERT_NOT_ZERO(asms[0]);

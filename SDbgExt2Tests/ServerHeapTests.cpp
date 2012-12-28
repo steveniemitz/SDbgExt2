@@ -9,7 +9,11 @@ namespace SDbgExt2Tests2
 	TEST_CLASS(ServerHeapTests)
 	{
 	public:
-		ADD_TEST_INIT(L"q:\\dev\\sosrevhelper\\dumps\\iis_small.dmp")
+#ifndef _WIN64
+		ADD_TEST_INIT(L"..\\dumps\\x86\\iis_small.dmp")
+#else
+		ADD_TEST_INIT(L"..\\..\\dumps\\x64\\iis_small_2.dmp")
+#endif
 
 		TEST_METHOD(ClrGcHeapList_Server)
 		{
@@ -54,7 +58,7 @@ namespace SDbgExt2Tests2
 			
 			p->EnumHeapObjects(cb, &n);
 
-			Assert::AreEqual(50475, n);
+			Assert::AreEqual(BITNESS_CONDITIONAL(50475, 52100), n);
 		}
 
 	};

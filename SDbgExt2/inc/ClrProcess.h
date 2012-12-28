@@ -86,7 +86,7 @@ public:
 		return CComPtr<IDacMemoryAccess>(m_dcma);
 	}
 
-	STDMETHODIMP FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPCWSTR pwszField, CLRDATA_ADDRESS **pValues, ULONG32 *iValues, CLRDATA_ADDRESS *pFieldTypeMT);
+	STDMETHODIMP FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPCWSTR pwszField, AppDomainAndValue **pValues, ULONG32 *iValues, CLRDATA_ADDRESS *pFieldTypeMT);
 	STDMETHODIMP FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, ClrFieldDescData *field);
 
 	STDMETHODIMP EnumThreads(EnumThreadsCallback cb, PVOID state);
@@ -106,11 +106,11 @@ private:
 
 	BOOL EnumerateAssemblyInDomain(CLRDATA_ADDRESS assembly, CLRDATA_ADDRESS appDomain
 		, LPCWSTR pwszClass, LPCWSTR pwszfield
-		, std::vector<CLRDATA_ADDRESS> *foundValues, CLRDATA_ADDRESS *fieldTypeMT);
+		, std::vector<AppDomainAndValue> *foundValues, CLRDATA_ADDRESS *fieldTypeMT);
 
 	BOOL SearchModule(CLRDATA_ADDRESS module, CLRDATA_ADDRESS appDomain
 		, LPCWSTR pwszClass, LPCWSTR pwszfield
-		, std::vector<CLRDATA_ADDRESS> *foundValues, CLRDATA_ADDRESS *fieldTypeMT);
+		, std::vector<AppDomainAndValue> *foundValues, CLRDATA_ADDRESS *fieldTypeMT);
 
 	BOOL FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, ClrFieldDescData *field, UINT32 *numInstanceFieldsSeen);
 	ULONG GetSizeForType(CorElementType cet)

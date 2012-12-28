@@ -2,6 +2,7 @@
 
 #include <clrdata.h>
 #include <cor.h>
+#include <CorHdr.h>
 
 #define PADIMPL(prefix,bytes)	BYTE padding##prefix[##bytes]
 #define PAD(prefix,bytes)	PADIMPL(prefix,bytes)
@@ -100,18 +101,26 @@ struct ClrThreadPoolData
 	DWORD MinCompPortLimit;
 };
 
+#define MODULE_DOMAINNEUTRAL 
+
+// TODO: Figure out how to generalize this across x86/x64
+#ifndef _WIN64
 struct ClrModuleData
 {
 	CLRDATA_ADDRESS File;
 	CLRDATA_ADDRESS Unknown02;
-	CLRDATA_ADDRESS Unknown03;
+	CLRDATA_ADDRESS ModuleBase;
 	CLRDATA_ADDRESS MetaDataStart;
-	DWORD MetaDataLength;
-	DWORD Padding_0;
+	SIZE_T MetaDataLength;
 	CLRDATA_ADDRESS Assembly;
-	CLRDATA_ADDRESS Unknown07;
-	CLRDATA_ADDRESS Unknown08;
-	CLRDATA_ADDRESS Unknown09;
+	BOOL IsReflection;
+	BOOL IsPEFile;
+	// Note: these SIZE_T's might be wrong, TODO: test this on x64;
+	DWORD BaseClassIndex;
+	//DWORD Unknown9;
+	DWORD DomainNeutralIndex;
+	// This is null if there are multiple appdomains
+	CLRDATA_ADDRESS NonGCStaticDataStart;
 	CLRDATA_ADDRESS Unknown10;
 	CLRDATA_ADDRESS TypeDefToMethodTableMap;
 	CLRDATA_ADDRESS TypeRefToMethodTableMap;
@@ -124,6 +133,36 @@ struct ClrModuleData
 	CLRDATA_ADDRESS Unknown19;
 	CLRDATA_ADDRESS Unknown20;
 };
+#else
+struct ClrModuleData
+{
+	CLRDATA_ADDRESS PEFile;
+	CLRDATA_ADDRESS Unknown02;
+	CLRDATA_ADDRESS ModuleBase;
+	CLRDATA_ADDRESS MetaDataStart;
+	SIZE_T MetaDataLength;
+	CLRDATA_ADDRESS Assembly;
+	BOOL IsReflection;
+	BOOL IsPEFile;
+	// Note: these SIZE_T's might be wrong, TODO: test this on x64;
+	SIZE_T BaseClassIndex;
+	//DWORD Unknown9;
+	SIZE_T DomainNeutralIndex;
+	// This is null if there are multiple appdomains
+	//CLRDATA_ADDRESS NonGCStaticDataStart;
+	CLRDATA_ADDRESS Unknown10;
+	CLRDATA_ADDRESS TypeDefToMethodTableMap;
+	CLRDATA_ADDRESS TypeRefToMethodTableMap;
+	CLRDATA_ADDRESS MethodDefToDescMap;
+	CLRDATA_ADDRESS FieldDefToDescMap;
+	CLRDATA_ADDRESS MemberRefToDescMap;
+	CLRDATA_ADDRESS FileReferencesMap;
+	CLRDATA_ADDRESS AssemblyReferencesMap;
+	CLRDATA_ADDRESS Unknown18;
+	CLRDATA_ADDRESS Unknown19;
+	CLRDATA_ADDRESS Unknown20;
+};
+#endif
 
 struct ClrThreadData
 {
@@ -220,9 +259,8 @@ struct ClrAssemblyData
 
 struct ClrDomainLocalModuleData
 {
-	CLRDATA_ADDRESS Unused1;
-	CLRDATA_ADDRESS Unused2;
-	    
+	CLRDATA_ADDRESS AppDomain;
+	CLRDATA_ADDRESS Unused2;	    
     CLRDATA_ADDRESS ClassData;   
     CLRDATA_ADDRESS DynamicClassTable;   
     CLRDATA_ADDRESS GCStaticDataStart;
@@ -293,13 +331,13 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainData(CLRDATA_ADDRESS domain, ClrAppDomainData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainName() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetDomainFromContext() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetAssemblyList(CLRDATA_ADDRESS domain, ULONG32 iArraySize, __out_ecount(iArraySize) CLRDATA_ADDRESS *assemblies, DWORD flags) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAssemblyList(CLRDATA_ADDRESS domain, ULONG32 iArraySize, __out_ecount(iArraySize) CLRDATA_ADDRESS *assembliess, DWORD *numAssemblies) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAssemblyData(CLRDATA_ADDRESS domain, CLRDATA_ADDRESS assembly, ClrAssemblyData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAssemblyName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetModule(CLRDATA_ADDRESS addr, IUnknown **pUnk) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetModuleData(CLRDATA_ADDRESS addr, ClrModuleData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE TraverseModuleMap() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetAssemblyModuleList(CLRDATA_ADDRESS assembly, ULONG32 iArraySize, __out_ecount(iArraySize) CLRDATA_ADDRESS *modules, DWORD flags) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAssemblyModuleList(CLRDATA_ADDRESS assembly, ULONG32 iArraySize, __out_ecount(iArraySize) CLRDATA_ADDRESS *modules, DWORD *numModules) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetILForModule() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetThreadData(CLRDATA_ADDRESS threadAddr, ClrThreadData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetThreadFromThinlockID() = 0;
@@ -331,7 +369,7 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetPEFileBase() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetPEFileName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetGCHeapData(ClrGcHeapData *ret) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetGCHeapList(ULONG32 iArraySize, CLRDATA_ADDRESS *heaps, DWORD flags) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetGCHeapList(ULONG32 iArraySize, CLRDATA_ADDRESS *heaps, DWORD *numHeaps) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetGCHeapDetails(CLRDATA_ADDRESS heap, ClrGcHeapStaticData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetGCHeapStaticData(ClrGcHeapStaticData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetHeapSegmentData(CLRDATA_ADDRESS segment, ClrGcHeapSegmentData *ret) = 0;
@@ -340,7 +378,7 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetHeapAnalyzeData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetHeapAnalyzeStaticData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetDomainLocalModuleData() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetDomainLocalModuleDataFromAppDomain() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetDomainLocalModuleDataFromAppDomain(CLRDATA_ADDRESS domainAddr, SIZE_T moduleDomainNeutralIndex, ClrDomainLocalModuleData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetDomainLocalModuleDataFromModule(CLRDATA_ADDRESS moduleAddr, ClrDomainLocalModuleData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetThreadLocalModuleData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetSyncBlockData() = 0;

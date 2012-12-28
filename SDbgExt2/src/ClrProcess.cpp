@@ -4,8 +4,11 @@
 #include <algorithm>
 #include <unordered_set>
 
-HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPCWSTR pwszField, CLRDATA_ADDRESS **ppValues, ULONG32 *iValues, CLRDATA_ADDRESS *pFieldTypeMT)
+HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPCWSTR pwszField, AppDomainAndValue **ppValues, ULONG32 *iValues, CLRDATA_ADDRESS *pFieldTypeMT)
 {
+	*iValues = 0;
+	*ppValues = nullptr;
+
 	ClrAppDomainStoreData ads = {};
 	HRESULT hr = S_OK;
 
@@ -18,7 +21,7 @@ HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPC
 
 	RETURN_IF_FAILED(m_pDac->GetAppDomainList(numDomains, domains.data() + 2, 0));
 
-	auto foundValues = std::vector<CLRDATA_ADDRESS>();
+	auto foundValues = std::vector<AppDomainAndValue>();
 
 	for (CLRDATA_ADDRESS domain : domains)
 	{
@@ -27,7 +30,7 @@ HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPC
 			continue;
 
 		auto assemblies = std::vector<CLRDATA_ADDRESS>(adData.AssemblyCount);
-		if (FAILED(m_pDac->GetAssemblyList(domain, adData.AssemblyCount, assemblies.data(), 0)))
+		if (FAILED(m_pDac->GetAssemblyList(domain, adData.AssemblyCount, assemblies.data(), NULL)))
 			continue;
 
 		WCHAR asmNameBuffer[MAX_PATH];
@@ -52,8 +55,8 @@ HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPC
 
 	if (foundValues.size() > 0)
 	{
-		CLRDATA_ADDRESS *tmpValues = new CLRDATA_ADDRESS[foundValues.size()];
-		std::copy(foundValues.begin(), foundValues.end(), stdext::checked_array_iterator<CLRDATA_ADDRESS*>(tmpValues, foundValues.size()));
+		AppDomainAndValue *tmpValues = new AppDomainAndValue[foundValues.size()];
+		std::copy(foundValues.begin(), foundValues.end(), stdext::checked_array_iterator<AppDomainAndValue*>(tmpValues, foundValues.size()));
 		*ppValues = tmpValues;
 		*iValues = (ULONG)foundValues.size();
 	}
@@ -68,7 +71,7 @@ HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPC
 
 BOOL ClrProcess::EnumerateAssemblyInDomain(CLRDATA_ADDRESS assembly, CLRDATA_ADDRESS appDomain
 		, LPCWSTR pwszClass, LPCWSTR pwszField
-		, std::vector<CLRDATA_ADDRESS> *foundValues, CLRDATA_ADDRESS *fieldTypeMT)
+		, std::vector<AppDomainAndValue> *foundValues, CLRDATA_ADDRESS *fieldTypeMT)
 {
 	ClrAssemblyData asmData = {};
 	if (FAILED(m_pDac->GetAssemblyData(appDomain, assembly, &asmData)) || asmData.ModuleCount == 0)
@@ -91,7 +94,7 @@ BOOL ClrProcess::EnumerateAssemblyInDomain(CLRDATA_ADDRESS assembly, CLRDATA_ADD
 
 BOOL ClrProcess::SearchModule(CLRDATA_ADDRESS module, CLRDATA_ADDRESS appDomain
 		, LPCWSTR pwszClass, LPCWSTR pwszField
-		, std::vector<CLRDATA_ADDRESS> *foundValues, CLRDATA_ADDRESS *fieldTypeMT)
+		, std::vector<AppDomainAndValue> *foundValues, CLRDATA_ADDRESS *fieldTypeMT)
 {
 	CComPtr<IMetaDataImport> metaData;
 	{
@@ -115,12 +118,25 @@ BOOL ClrProcess::SearchModule(CLRDATA_ADDRESS module, CLRDATA_ADDRESS appDomain
 	if (FAILED(this->FindFieldByName(mtAddr, pwszField, &fdData)))
 		return FALSE;
 
-	*fieldTypeMT = fdData.FieldMethodTable;
+	if (fieldTypeMT != NULL)
+	{
+		*fieldTypeMT = fdData.FieldMethodTable;
+	}
 
-	ClrDomainLocalModuleData dlmData = {};
-	if (FAILED(m_pDac->GetDomainLocalModuleDataFromModule(module, &dlmData)))
+	ClrModuleData modData = {};
+	if (FAILED(m_pDac->GetModuleData(module, &modData)))
 		return FALSE;
 
+	ClrDomainLocalModuleData dlmData = {};
+	// Try to get the value from the module first, this will fail if the module has been loaded domain-neutrally
+	auto hr = m_pDac->GetDomainLocalModuleDataFromModule(module, &dlmData);
+	// If that fails, attempt to get it from the domain neutral store
+	if (hr == E_INVALIDARG)
+	{
+		if (FAILED(m_pDac->GetDomainLocalModuleDataFromAppDomain(appDomain, modData.DomainNeutralIndex, &dlmData)))
+			return FALSE;
+	}
+	
 	CLRDATA_ADDRESS dataPtr = 0;
 	if (fdData.FieldType == ELEMENT_TYPE_VALUETYPE || fdData.FieldType == ELEMENT_TYPE_CLASS)
 	{
@@ -134,7 +150,7 @@ BOOL ClrProcess::SearchModule(CLRDATA_ADDRESS module, CLRDATA_ADDRESS appDomain
 	CLRDATA_ADDRESS tmpVal = 0;
 	if (SUCCEEDED(m_dcma->ReadVirtual(dataPtr, &tmpVal, readSize, &readSize)) && tmpVal)
 	{
-		foundValues->push_back(tmpVal);
+		foundValues->emplace_back(appDomain, tmpVal);
 		return TRUE;
 	}
 
@@ -314,7 +330,7 @@ HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallb
 
 				if (!cb(stackPtr, od, state))
 				{
-					return S_OK;
+					return S_FALSE;
 				}
 			}	
 		}
@@ -354,7 +370,10 @@ HRESULT ClrProcess::EnumHeapObjects(EnumObjectsCallback cb, PVOID state)
 			}
 			else
 			{
-				ess->wrappedCb(currObj, od, ess->wrappedState);
+				if (!ess->wrappedCb(currObj, od, ess->wrappedState))
+				{
+					return FALSE;
+				}
 				currObj = Align(currObj + od.Size);
 			}
 		}
@@ -397,7 +416,9 @@ HRESULT ClrProcess::EnumHeapSegmentsServer(EnumHeapSegmentsCallback cb, PVOID st
 		ClrGcHeapStaticData gchData = {};
 		RETURN_IF_FAILED(m_pDac->GetGCHeapDetails(heap, &gchData));
 
-		EnumHeapSegmentsImpl(gchData, cb, state);
+		hr = EnumHeapSegmentsImpl(gchData, cb, state);
+		if (hr == S_FALSE)
+			return S_FALSE;
 	}
 
 	return E_NOTIMPL;	
@@ -426,7 +447,10 @@ HRESULT ClrProcess::EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, EnumHeapS
 		{
 			segData.Allocated = gcsData.AllocAllocated;
 		}
-		cb(currSegment, segData, state);
+		if (!cb(currSegment, segData, state))
+		{
+			return S_FALSE;
+		}
 
 		currSegment = segData.NextSegment;	
 		if (currSegment == NULL && !visitedLOHSegment)

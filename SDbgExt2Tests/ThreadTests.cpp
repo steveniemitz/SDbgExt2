@@ -17,7 +17,7 @@ namespace SDbgExt2Tests2
 			auto hr = p->GetProcess()->GetThreadStoreData(&tsData);
 
 			ASSERT_SOK(hr);
-			ASSERT_EQUAL((DWORD)3, tsData.ThreadCount);
+			ASSERT_EQUAL((DWORD)BITNESS_CONDITIONAL(3, 2), tsData.ThreadCount);
 			ASSERT_NOT_ZERO(tsData.FirstThreadObj);
 		}
 
@@ -55,7 +55,7 @@ namespace SDbgExt2Tests2
 				threads++;
 			} while (tData.NextThread != 0);
 
-			ASSERT_EQUAL(3, threads);
+			ASSERT_EQUAL(BITNESS_CONDITIONAL(3, 2), threads);
 		}
 
 		TEST_METHOD(EnumThreads_Basic)
@@ -74,7 +74,7 @@ namespace SDbgExt2Tests2
 
 			p->EnumThreads(func, &state);
 
-			ASSERT_EQUAL(3, state.NumTimesCalled);
+			ASSERT_EQUAL(BITNESS_CONDITIONAL(3,2), state.NumTimesCalled);
 		}
 
 		TEST_METHOD(FindThreadByCorThreadId_Basic)

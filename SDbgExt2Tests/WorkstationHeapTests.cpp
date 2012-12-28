@@ -49,7 +49,12 @@ namespace SDbgExt2Tests2
 			
 			p->EnumHeapObjects(cb, &n);
 
-			Assert::AreEqual(547, n);
+#ifndef _WIN64
+	#define ExpectedHeapObjects 547
+#else
+	#define ExpectedHeapObjects 355
+#endif
+			Assert::AreEqual(ExpectedHeapObjects, n);
 		}
 
 	};
