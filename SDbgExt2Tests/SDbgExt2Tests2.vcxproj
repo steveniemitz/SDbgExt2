@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="AssemblyModuleTests.cpp" />
     <ClCompile Include="DictionaryTests.cpp" />
+    <ClCompile Include="ExpressionTests.cpp" />
     <ClCompile Include="FieldTests.cpp" />
     <ClCompile Include="ServerHeapTests.cpp" />
     <ClCompile Include="ServerThreadTests.cpp" />

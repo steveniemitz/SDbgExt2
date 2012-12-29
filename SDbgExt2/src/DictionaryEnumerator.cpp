@@ -205,3 +205,66 @@ HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, DctEn
 
 	return S_OK;
 }
+
+HRESULT DctEnumerator::FindDctEntryByKey(CLRDATA_ADDRESS dctObj, LPCWSTR key, CLRDATA_ADDRESS *targetAddr)
+{
+	HRESULT hr = S_OK;
+
+	struct DctKeySearchState
+	{
+		CComPtr<IXCLRDataProcess3> pDac;
+		LPCWSTR TargetKey;
+		size_t TargetKeyLen;
+		CLRDATA_ADDRESS TargetValuePtr;
+	};
+
+	DctKeySearchState dkss = { m_dac->GetProcess(), key, wcslen(key), NULL };
+	auto cb = [](DctEntry entry, PVOID state)->BOOL {
+		BOOL ret = TRUE;
+		DctKeySearchState *ds = reinterpret_cast<DctKeySearchState *>(state);
+		std::wstring keyStr(ds->TargetKeyLen + 1, '\0');
+
+		if (SUCCEEDED(ds->pDac->GetObjectStringData(entry.KeyPtr, ds->TargetKeyLen + 1, &keyStr[0], NULL)))
+		{
+			if (keyStr.compare(0, ds->TargetKeyLen, ds->TargetKey) == 0)
+			{
+				ds->TargetValuePtr = entry.ValuePtr;
+				return FALSE;
+			}
+		}
+		
+		return TRUE;
+	};
+	
+	EnumerateDctEntries(dctObj, cb, &dkss);
+	*targetAddr = dkss.TargetValuePtr;
+
+	return dkss.TargetValuePtr != NULL ? S_OK : E_FAIL;
+}
+
+HRESULT DctEnumerator::FindDctEntryByHash(CLRDATA_ADDRESS dctObj, UINT32 hash, CLRDATA_ADDRESS *targetAddr)
+{
+	HRESULT hr = S_OK;
+	
+	struct DctHashSearchState
+	{
+		UINT32 TargetHash;
+		CLRDATA_ADDRESS TargetValuePtr;
+	};
+
+	DctHashSearchState dhss = { hash, NULL };
+	auto cb = [](DctEntry entry, PVOID state)->BOOL {
+		DctHashSearchState *ds = reinterpret_cast<DctHashSearchState *>(state);
+		if (entry.HashCode == ds->TargetHash)
+		{
+			ds->TargetValuePtr = entry.ValuePtr;
+			return FALSE;
+		}
+		return TRUE;
+	};
+
+	EnumerateDctEntries(dctObj, cb, &dhss);
+	*targetAddr = dhss.TargetValuePtr;
+
+	return dhss.TargetValuePtr != NULL ? S_OK : E_FAIL;
+}

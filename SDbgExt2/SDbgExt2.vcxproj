@@ -164,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ClrProcess.cpp" />
+    <ClCompile Include="src\ClrProcess_Expressions.cpp" />
     <ClCompile Include="src\ClrProcess_Fields.cpp" />
     <ClCompile Include="src\ClrProcess_Heap.cpp" />
     <ClCompile Include="src\ClrProcess_Threading.cpp" />

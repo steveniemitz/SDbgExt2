@@ -10,6 +10,8 @@ public:
 	}
 
 	HRESULT EnumerateDctEntries(CLRDATA_ADDRESS dctObj, DctEntryCallback callback, PVOID state);
+	HRESULT FindDctEntryByKey(CLRDATA_ADDRESS dctObj, LPCWSTR key, CLRDATA_ADDRESS *targetAddr);
+	HRESULT FindDctEntryByHash(CLRDATA_ADDRESS dctObj, UINT32 hash, CLRDATA_ADDRESS *targetAddr);
 	
 private:
 	CComPtr<IClrProcess> m_dac;

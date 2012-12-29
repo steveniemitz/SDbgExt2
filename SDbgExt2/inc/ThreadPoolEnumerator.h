@@ -126,8 +126,7 @@ private:
 			if (FAILED(nodesArr->GetItem(a, &workItem)))
 				continue;
 
-			WCHAR methodName[512];
-			wcscpy_s(methodName, 512, L"<unknown>");
+			WCHAR methodName[512] = {0};
 
 			CLRDATA_ADDRESS statePtr = NULL;
 			LPWSTR stateTypeName = nullptr;
@@ -180,4 +179,6 @@ private:
 	}
 		
 	CComPtr<IClrProcess> m_dac;
+	CLRDATA_ADDRESS m_asyncWorkItemFinishAsyncWork;
+	CLRDATA_ADDRESS m_adAsyncWorkItemFinishAsyncWork;
 };

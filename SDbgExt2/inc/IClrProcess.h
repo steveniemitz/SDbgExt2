@@ -107,6 +107,8 @@ struct DECLSPEC_NOVTABLE IClrProcess : public IUnknown
 
 	virtual STDMETHODIMP EnumerateKeyValuePairs(CLRDATA_ADDRESS dctObj, DctEntryCallback callback, PVOID state) = 0;
 	virtual STDMETHODIMP EnumerateThreadPools(ThreadPoolQueueCallback tpQueueCb) = 0;
+
+	virtual STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPCWSTR expression, CLRDATA_ADDRESS *result) = 0;
 };
 
 HRESULT SDBGAPI __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret);

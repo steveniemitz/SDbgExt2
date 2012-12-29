@@ -116,6 +116,8 @@ public:
 	STDMETHODIMP EnumerateKeyValuePairs(CLRDATA_ADDRESS dctObj, DctEntryCallback callback, PVOID state);
 	STDMETHODIMP EnumerateThreadPools(ThreadPoolQueueCallback tpQueueCb);
 
+	STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPCWSTR expression, CLRDATA_ADDRESS *result);
+
 private:
 	ULONG m_dwRef;
 	IXCLRDataProcess3 *m_pDac;
