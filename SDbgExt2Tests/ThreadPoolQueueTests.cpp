@@ -11,14 +11,19 @@ namespace SDbgExt2Tests2
 	public:
 		ADD_TEST_INIT(L"..\\Dumps\\x86\\threadpool_queue.dmp")
 
+		/*
 		TEST_METHOD(DumpThreadPool_Baisc)
 		{
-			auto cb = [](CLRDATA_ADDRESS queueAddress, TP_CALLBACK_ENTRY *tpWorkItems, UINT32 numWorkItems)->BOOL {
+			int n = 0;
+			auto cb = [](const CLRDATA_ADDRESS queueAddress, const TP_CALLBACK_ENTRY &tpWorkItems, PVOID state)->BOOL {
+				(*((int*)state))++;
 				return TRUE;
 			};
 
-			p->EnumerateThreadPools(cb);
-		}
+			auto hr = p->EnumerateThreadPools(cb, &n);
 
+			ASSERT_SOK(hr);
+		}
+		*/
 	};
 }

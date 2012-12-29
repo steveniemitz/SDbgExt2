@@ -163,6 +163,7 @@
     <ClCompile Include="DictionaryTests.cpp" />
     <ClCompile Include="ExpressionTests.cpp" />
     <ClCompile Include="FieldTests.cpp" />
+    <ClCompile Include="MethodDescTests.cpp" />
     <ClCompile Include="ServerHeapTests.cpp" />
     <ClCompile Include="ServerThreadTests.cpp" />
     <ClCompile Include="StaticFieldTests.cpp" />

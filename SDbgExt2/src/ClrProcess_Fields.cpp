@@ -183,94 +183,19 @@ BOOL ClrProcess::SearchModule(CLRDATA_ADDRESS module, CLRDATA_ADDRESS appDomain
 	}
 }
 
-HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData)
-{
-	UINT32 instanceFields = 0, staticFields = 0;
-	BOOL found = FindFieldByNameImpl(methodTable, pwszField, field, fieldData, &instanceFields);
-
-	if (!found)
-		return E_INVALIDARG;
-	else
-		return S_OK;
-}
-
-BOOL ClrProcess::FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen)
-{
-	ClrMethodTableData mtData = {};
-	if (FAILED(m_pDac->GetMethodTableData(methodTable, &mtData)))
-		return FALSE;
-
-	if (mtData.ParentMT != NULL)
-	{
-		if (FindFieldByNameImpl(mtData.ParentMT, pwszField, field, fieldData, numInstanceFieldsSeen))
-			return TRUE;
-	}
-
-	int numInstanceFields = *numInstanceFieldsSeen, numStaticFields = 0;
-	ClrMethodTableFieldData mtfData = {};
-	if (FAILED(m_pDac->GetMethodTableFieldData(methodTable, &mtfData)) || mtfData.FirstField == NULL)
-		return FALSE;
-
-	CComPtr<IMetaDataImport> metaData;
-	{
-		CComPtr<IUnknown> unk;
-		if (FAILED(m_pDac->GetModule(mtData.Module, &unk)))
-			return FALSE;
-
-		unk->QueryInterface(IID_IMetaDataImport, (PVOID*)&metaData);
-	}
-
-	CLRDATA_ADDRESS currFieldAddr = mtfData.FirstField;
-
-	WCHAR fieldName[1024];
-
-	while(numInstanceFields < mtfData.NumInstanceFields
-		|| numStaticFields < mtfData.NumStaticFields)
-	{
-		ClrFieldDescData fdData = {};
-		if (FAILED(m_pDac->GetFieldDescData(currFieldAddr, &fdData)))
-			return FALSE;
-
-		if (fdData.IsStatic || fdData.IsContextLocal || fdData.IsThreadLocal)
-			numStaticFields++;
-		else
-			numInstanceFields++;
-	
-		mdTypeDef mdClass;
-		ULONG size = 0;		
-		if (FAILED(metaData->GetMemberProps(fdData.Field, &mdClass, fieldName, ARRAYSIZE(fieldName), &size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)))
-		{
-			currFieldAddr = fdData.NextField;
-			continue;
-		}
-		
-		if (wcscmp(fieldName, pwszField) == 0)
-		{
-			if (fieldData)
-				*fieldData = fdData;
-			if (field)
-				*field = currFieldAddr;
-			return TRUE;
-		}
-		else
-		{
-			currFieldAddr = fdData.NextField;			
-		}
-	}
-
-	*numInstanceFieldsSeen = numInstanceFields;
-	return FALSE;
-}
-
 HRESULT ClrProcess::GetFieldValueBuffer(const CLRDATA_ADDRESS obj, LPCWSTR fieldName, ULONG32 numBytes, PVOID buffer, PULONG iBytesRead)
 {
 	ClrObjectData od = {};
 	ClrFieldDescData fd = {};
 	HRESULT hr = S_OK;
-
 	RETURN_IF_FAILED(m_pDac->GetObjectData(obj, &od));
 	RETURN_IF_FAILED(FindFieldByName(od.MethodTable, fieldName, NULL, &fd));
 	
+	return ReadFieldValueBuffer(obj, fd, numBytes, buffer, iBytesRead);
+}
+
+HRESULT ClrProcess::ReadFieldValueBuffer(const CLRDATA_ADDRESS obj, const ClrFieldDescData &fd, ULONG32 numBytes, PVOID buffer, PULONG bytesRead)
+{
 	if (numBytes == 0)
 	{
 		numBytes = GetSizeForType(fd.FieldType);
@@ -284,12 +209,12 @@ HRESULT ClrProcess::GetFieldValueBuffer(const CLRDATA_ADDRESS obj, LPCWSTR field
 	}
 	else if (buffer)
 	{
-		return m_dcma->ReadVirtual(obj + fd.Offset + sizeof(PVOID), buffer, numBytes, iBytesRead);
+		return m_dcma->ReadVirtual(obj + fd.Offset + sizeof(PVOID), buffer, numBytes, bytesRead);
 	}
 	else
 	{
-		if (iBytesRead)
-			*iBytesRead = numBytes;
+		if (bytesRead)
+			*bytesRead = numBytes;
 
 		return E_OUTOFMEMORY;
 	}

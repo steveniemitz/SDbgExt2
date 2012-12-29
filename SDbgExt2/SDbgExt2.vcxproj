@@ -168,6 +168,7 @@
     <ClCompile Include="src\ClrProcess_Fields.cpp" />
     <ClCompile Include="src\ClrProcess_Heap.cpp" />
     <ClCompile Include="src\ClrProcess_Threading.cpp" />
+    <ClCompile Include="src\ClrProcess_Reflection.cpp" />
     <ClCompile Include="src\DbgEngCLRDataTarget.cpp" />
     <ClCompile Include="src\DictionaryEnumerator.cpp" />
     <ClCompile Include="src\SDbgCore.cpp" />

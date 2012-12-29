@@ -41,8 +41,8 @@ struct ClrMethodTableData
 	CLRDATA_ADDRESS ParentMT;
 	WORD NumInterfaces;
 	WORD NumSlotsInVTable;
-	WORD TotalMethodSlots;
-	WORD VTableSlots;
+	WORD EEClass_TotalMethodSlots;
+	WORD EEClass_VTableSlots;
 	DWORD BaseSize;
 	DWORD ComponentSize;
 	DWORD mdToken;
@@ -339,7 +339,11 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetObjectClassName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodTableName(CLRDATA_ADDRESS mtAddr, ULONG32 iNameChars, __out_ecount (iNameChars) LPWSTR pwszName, ULONG32 *strLen) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodTableData(CLRDATA_ADDRESS mtAddr, ClrMethodTableData *ret) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetMethodTableSlot() = 0;
+	/// <summary>
+    /// Gets an IP (either a jump stub or the method) from a MethodTable slot index.
+	/// This address can be resolved to a MethodDesc with GetCodeHeaderData
+    /// </summary>
+	virtual HRESULT STDMETHODCALLTYPE GetMethodTableSlot(CLRDATA_ADDRESS mtAddr, UINT32 slotNumber, CLRDATA_ADDRESS *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodTableFieldData(CLRDATA_ADDRESS mtAddr, ClrMethodTableFieldData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodTableTransparencyData() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodTableForEEClass(CLRDATA_ADDRESS mtAddr, ClrMTToEEClassData *ret) = 0;

@@ -161,8 +161,8 @@ HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallb
 	return S_OK;
 }
 
-STDMETHODIMP ClrProcess::EnumerateThreadPools(ThreadPoolQueueCallback tpQueueCb)
+STDMETHODIMP ClrProcess::EnumerateThreadPools(EnumThreadPoolItemsCallback tpQueueCb, PVOID state)
 {
-	ThreadPoolEnumerator tp(this);
-	return tp.DumpThreadPools(tpQueueCb);
+	ThreadPoolEnumerator tp(this, tpQueueCb, state);
+	return tp.DumpThreadPools();
 }

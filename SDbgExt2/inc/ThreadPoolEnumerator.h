@@ -7,12 +7,12 @@
 class ThreadPoolEnumerator
 {
 public:
-	ThreadPoolEnumerator(CComPtr<IClrProcess> dac)
-		: m_dac(dac)
+	ThreadPoolEnumerator(CComPtr<IClrProcess> dac, EnumThreadPoolItemsCallback tpQueueCb, PVOID state)
+		: m_dac(dac), m_tpQueueCb(tpQueueCb), m_state(state)
 	{
 	}
 
-	HRESULT DumpThreadPools(ThreadPoolQueueCallback tpQueueCb)
+	HRESULT DumpThreadPools()
 	{
 		// Dump the global threadpool queue
 	
@@ -32,12 +32,7 @@ public:
 				{
 					TP_CALLBACK_ENTRY *entries = NULL;
 					UINT32 numEntries = 0;
-					hr = DumpThreadPool(addr, &entries, &numEntries);
-					if (SUCCEEDED(hr))
-					{
-						tpQueueCb(addr, entries, numEntries);
-						delete [] entries;
-					}
+					hr = DumpThreadPool(addr);
 				}
 			}
 		}
@@ -58,8 +53,6 @@ public:
 					UINT32 numEntries = 0;
 					// TODO: Implement this
 					hr = E_FAIL; //DumpWorkStealingQueueList(queueAddr, &entries, &numEntries);
-					if (SUCCEEDED(hr))
-						tpQueueCb(queueAddr, entries, numEntries);
 				}
 			}
 		}
@@ -68,7 +61,7 @@ public:
 	}
 
 private:
-	HRESULT DumpThreadPool(CLRDATA_ADDRESS tpWorkQueueAddr, TP_CALLBACK_ENTRY **entries, UINT32 *numEntries)
+	HRESULT DumpThreadPool(CLRDATA_ADDRESS tpWorkQueueAddr)
 	{
 		CComPtr<IClrObject> tpWorkQueue; 
 		m_dac->GetClrObject(tpWorkQueueAddr, &tpWorkQueue);
@@ -84,13 +77,15 @@ private:
 		}
 
 		CComPtr<IClrObject> queueNode;
-		tpWorkQueue->GetFieldValue(L"queueHead", &queueNode);
+		tpWorkQueue->GetFieldValue(L"queueTail", &queueNode);
+		if (!queueNode->IsValid())
+		{
+			tpWorkQueue->GetFieldValue(L"queueHead", &queueNode);
+		}
 
-		if (!queueNode || !queueNode->IsValid())
+		if (!queueNode->IsValid())
 			return E_INVALIDARG;
-
-		std::vector<TP_CALLBACK_ENTRY> vents;
-
+		
 		while (queueNode)
 		{
 			UINT32 indexes = 0;
@@ -104,21 +99,19 @@ private:
 				CComPtr<IClrObjectArray> nodesArr;
 				queueNode->GetFieldValue(L"nodes", &nodesArr);
 			
-				IterateNodes(nodesArr, bottom, top, &vents);
+				IterateNodes(tpWorkQueueAddr, nodesArr, bottom, top);
 			}
 		
-			queueNode->GetFieldValue(L"Next", &queueNode);
+			CComPtr<IClrObject> nextQueueNode;
+			queueNode->GetFieldValue(L"Next", &nextQueueNode);
+			queueNode = nextQueueNode;
 		}
-
-		*numEntries = (UINT32)vents.size();
-		*entries = new TP_CALLBACK_ENTRY[*numEntries];
-		memcpy(*entries, vents.data(), sizeof(TP_CALLBACK_ENTRY) * *numEntries);
 
 		return S_OK;
 	}
 
 
-	void IterateNodes(CComPtr<IClrObjectArray> nodesArr, UINT32 bottom, UINT32 top, std::vector<TP_CALLBACK_ENTRY> *entries)
+	void IterateNodes(CLRDATA_ADDRESS queueAddr, CComPtr<IClrObjectArray> nodesArr, UINT32 bottom, UINT32 top)
 	{
 		for (UINT32 a = bottom; a < top; a++)
 		{
@@ -129,6 +122,9 @@ private:
 			WCHAR methodName[512] = {0};
 
 			CLRDATA_ADDRESS statePtr = NULL;
+			CLRDATA_ADDRESS delegatePtr = NULL;
+			TP_CALLBACK_TYPE cbType;
+
 			LPWSTR stateTypeName = nullptr;
 			LPWSTR l2methodName = nullptr;
 			BOOL isTask = FALSE;
@@ -139,7 +135,7 @@ private:
 				workItem->GetFieldValue(L"m_action", &cb);
 				isTask = TRUE;
 			}
-			if (cb)
+			if (cb->IsValid())
 			{			
 				CLRDATA_ADDRESS cbMethod;
 				m_dac->GetDelegateInfo(cb->Address(), NULL, &cbMethod);
@@ -149,20 +145,17 @@ private:
 					|| wcscmp(methodName, L"System.Runtime.Remoting.Channels.ADAsyncWorkItem.FinishAsyncWork(System.Object)") == 0)
 				{
 					//// Get the target of the method via _reqMsg
-					//CLRDATA_ADDRESS l2Delegate = 0;
-					//if (SUCCEEDED(DacpCore::EvaluateExpression(pDac, dcma, (CLRDATA_ADDRESS)(*cb), L"_target._reqMsg.MI.m_handle", &l2Delegate)) && l2Delegate)
-					//{
-					//	l2methodName = AllocString(512);
-					//	DacpMethodDescData md = {};
-					//	wcscpy_s(l2methodName, 512, L"[AW]");
-					//	if (FAILED(md.GetMethodName(pDac, l2Delegate, 507, l2methodName + 4)))
-					//	{
-					//		FreeString(l2methodName);
-					//		l2methodName = nullptr;
-					//	}
-					//}		
-					// TODO: Implement this
-					continue;
+					CLRDATA_ADDRESS l2Delegate = 0;
+					if (SUCCEEDED(m_dac->EvaluateExpression(cb->Address(), L"_target._reqMsg.MI.m_handle", &l2Delegate)) && l2Delegate)
+					{
+						cbType = CB_TYPE_ASYNC_WORKITEM;
+						delegatePtr = l2Delegate;
+					}		
+				}
+				else	
+				{
+					cbType = CB_TYPE_QUEUEUSERWORKITEM;
+					delegatePtr = cbMethod;
 				}
 
 				CComPtr<IClrObject> state;
@@ -173,12 +166,17 @@ private:
 				}
 			}
 
-			TP_CALLBACK_ENTRY ent = { workItem->Address(), statePtr };
-			entries->push_back(ent);
+			TP_CALLBACK_ENTRY ent = { workItem->Address(), statePtr, delegatePtr };
+			if (cbType != CB_TYPE_INVALID)
+			{
+				m_tpQueueCb(queueAddr, ent, m_state);
+			}
 		}
 	}
 		
 	CComPtr<IClrProcess> m_dac;
 	CLRDATA_ADDRESS m_asyncWorkItemFinishAsyncWork;
 	CLRDATA_ADDRESS m_adAsyncWorkItemFinishAsyncWork;
+	EnumThreadPoolItemsCallback m_tpQueueCb;
+	PVOID m_state;
 };

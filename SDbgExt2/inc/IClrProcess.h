@@ -7,16 +7,19 @@
 
 HRESULT SDBGAPI InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac);
 
+enum TP_CALLBACK_TYPE { CB_TYPE_INVALID, CB_TYPE_QUEUEUSERWORKITEM, CB_TYPE_ASYNC_WORKITEM  };
+
 struct TP_CALLBACK_ENTRY
 {
 	CLRDATA_ADDRESS WorkItemPtr;
 	CLRDATA_ADDRESS StatePtr;
+	CLRDATA_ADDRESS DelegatePtr;
 };
 
 typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
 typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
 typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
-typedef BOOL (CALLBACK *ThreadPoolQueueCallback)(CLRDATA_ADDRESS queueAddress, TP_CALLBACK_ENTRY *tpWorkItems, UINT32 numWorkItems);
+typedef BOOL (CALLBACK *EnumThreadPoolItemsCallback)(const CLRDATA_ADDRESS queueAddress, const TP_CALLBACK_ENTRY &workItems, PVOID state);
 
 struct IClrObject;
 
@@ -86,7 +89,8 @@ struct DECLSPEC_NOVTABLE IClrProcess : public IUnknown
 	virtual STDMETHODIMP GetFieldValuePtr(const CLRDATA_ADDRESS obj, LPCWSTR fieldName, CLRDATA_ADDRESS *addr) = 0;
 	virtual STDMETHODIMP GetFieldValueBuffer(const CLRDATA_ADDRESS obj, LPCWSTR fieldName, ULONG32 bufferSize, PVOID buffer, PULONG bytesRead) = 0;
 	virtual STDMETHODIMP GetFieldValueString(const CLRDATA_ADDRESS obj, LPCWSTR fieldName, ULONG32 bufferSize, WCHAR *buffer, PULONG bytesRead) = 0;
-	 
+	virtual STDMETHODIMP ReadFieldValueBuffer(const CLRDATA_ADDRESS obj, const ClrFieldDescData &fd, ULONG32 numBytes, PVOID buffer, PULONG bytesRead) = 0; 
+
 	virtual STDMETHODIMP EnumThreads(EnumThreadsCallback cb, PVOID state) = 0;
 	virtual STDMETHODIMP FindThreadByCorThreadId(DWORD corThreadId, CLRDATA_ADDRESS *unmanagedThreadObj) = 0;
 	virtual STDMETHODIMP FindThreadByOsThreadId(DWORD osThreadId, CLRDATA_ADDRESS *unmanagedThreadObj) = 0;
@@ -106,7 +110,7 @@ struct DECLSPEC_NOVTABLE IClrProcess : public IUnknown
 	virtual STDMETHODIMP GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc) = 0;
 
 	virtual STDMETHODIMP EnumerateKeyValuePairs(CLRDATA_ADDRESS dctObj, DctEntryCallback callback, PVOID state) = 0;
-	virtual STDMETHODIMP EnumerateThreadPools(ThreadPoolQueueCallback tpQueueCb) = 0;
+	virtual STDMETHODIMP EnumerateThreadPools(EnumThreadPoolItemsCallback tpQueueCb, PVOID state) = 0;
 
 	virtual STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPCWSTR expression, CLRDATA_ADDRESS *result) = 0;
 };
