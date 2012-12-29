@@ -26,11 +26,13 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(FindStaticField_HttpRuntime)
 		{
 			AppDomainAndValue expectedValues[2] = ExpectedHttpRuntimeStatics;
-
 			AppDomainAndValue values[3] = {  };
 			ULONG32 numValues;
-			p->FindStaticField(L"System.Web.dll", L"System.Web.HttpRuntime", L"_theRuntime", 3, values, &numValues, NULL);
 
+			CLRDATA_ADDRESS methodTable, field;
+			p->FindTypeByName(L"System.Web.dll", L"System.Web.HttpRuntime", &methodTable);
+			p->FindFieldByName(methodTable, L"_theRuntime", &field, NULL);
+			p->GetStaticFieldValues(field, 3, values, &numValues);
 			Assert::AreEqual((ULONG32)2, numValues);
 
 			for (ULONG32 a = 0; a < numValues; a++)

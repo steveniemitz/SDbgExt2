@@ -15,15 +15,18 @@ public:
 	HRESULT DumpThreadPools()
 	{
 		// Dump the global threadpool queue
-	
+		HRESULT hr = S_OK;
+
 		ClrAppDomainStoreData ads = {};
 		m_dac->GetProcess()->GetAppDomainStoreData(&ads);
 	
 		std::vector<AppDomainAndValue> values(ads.DomainCount + 2);
 		ULONG32 numValues;
-	
-		HRESULT hr = m_dac->FindStaticField(L"mscorlib.dll", L"System.Threading.ThreadPoolGlobals", L"workQueue", values.size(), values.data(), &numValues, NULL);
-		if (SUCCEEDED(hr) && numValues > 0)
+		CLRDATA_ADDRESS tpGlobalsMT, workQueueField;
+		if (SUCCEEDED(m_dac->FindTypeByName(L"mscorlib.dll", L"System.Threading.ThreadPoolGlobals", &tpGlobalsMT)) 
+			&& SUCCEEDED(m_dac->FindFieldByName(tpGlobalsMT, L"workQueue", &workQueueField, NULL))
+			&& SUCCEEDED(m_dac->GetStaticFieldValues(workQueueField, values.size(), values.data(), &numValues))
+			&& numValues > 0)
 		{
 			for (UINT a = 0; a < numValues; a++)
 			{			
@@ -39,9 +42,13 @@ public:
 
 		// Dump the thread-local queues as well
 		values = std::vector<AppDomainAndValue>(ads.DomainCount + 2);
-		hr = m_dac->FindStaticField(L"mscorlib.dll", L"System.Threading.ThreadPoolWorkQueue", L"allThreadQueues",  values.size(), values.data(), &numValues, NULL);
-	
+		CLRDATA_ADDRESS localQueuesMT, allThreadQueuesField;
+
 		std::set<CLRDATA_ADDRESS> seenQueues;
+		if (SUCCEEDED(m_dac->FindTypeByName(L"mscorlib.dll", L"System.Threading.ThreadPoolWorkQueue", &localQueuesMT)) 
+			&& SUCCEEDED(m_dac->FindFieldByName(localQueuesMT, L"allThreadQueues", &allThreadQueuesField, NULL))
+			&& SUCCEEDED(m_dac->GetStaticFieldValues(allThreadQueuesField, values.size(), values.data(), &numValues))
+			&& numValues > 0)
 		if (SUCCEEDED(hr) && numValues > 0)
 		{
 			for (UINT a = 0; a < numValues; a++)
@@ -113,6 +120,8 @@ private:
 
 	void IterateNodes(CLRDATA_ADDRESS queueAddr, CComPtr<IClrObjectArray> nodesArr, UINT32 bottom, UINT32 top)
 	{
+		CLRDATA_ADDRESS callbackField, actionField;
+
 		for (UINT32 a = bottom; a < top; a++)
 		{
 			CComPtr<IClrObject> workItem;
@@ -129,6 +138,11 @@ private:
 			LPWSTR l2methodName = nullptr;
 			BOOL isTask = FALSE;
 			CComPtr<IClrObject> cb;
+
+			if (callbackField == NULL)
+			{
+				
+			}
 
 			if (FAILED(workItem->GetFieldValue(L"callback", &cb)) || !(cb->Address())) //It might also be a Task, check m_action
 			{

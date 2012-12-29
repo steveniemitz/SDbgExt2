@@ -178,3 +178,25 @@ CLRDATA_ADDRESS ClrProcess::SearchModule(CLRDATA_ADDRESS module, LPCWSTR typeNam
 
 	return mtAddr;
 }
+
+STDMETHODIMP ClrProcess::FindMethodByName(CLRDATA_ADDRESS methodTable, LPCWSTR methodSig, CLRDATA_ADDRESS *methodDesc)
+{
+	HRESULT hr = S_OK;
+	ClrMethodTableData mtd = {};
+	RETURN_IF_FAILED(m_pDac->GetMethodTableData(methodTable, &mtd));
+
+	for (int a = 0; a < mtd.NumSlotsInVTable; a++)
+	{
+		CLRDATA_ADDRESS ret;
+		if (FAILED(m_pDac->GetMethodTableSlot(methodTable, 8, &ret)))
+			continue;
+
+		ClrCodeHeaderData chd = {};
+		if (FAILED(m_pDac->GetCodeHeaderData(ret, &chd)))
+			continue;
+
+
+	}
+
+	return E_INVALIDARG;	
+}

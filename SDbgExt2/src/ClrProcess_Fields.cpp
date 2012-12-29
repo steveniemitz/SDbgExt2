@@ -56,57 +56,30 @@ HRESULT ClrProcess::GetStaticFieldValue(CLRDATA_ADDRESS field, CLRDATA_ADDRESS a
 	}
 }
 
-HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPCWSTR pwszField, ULONG32 iValues, AppDomainAndValue *pValues, ULONG32 *numValues, CLRDATA_ADDRESS *pFieldTypeMT)
+HRESULT ClrProcess::GetStaticFieldValues(CLRDATA_ADDRESS field, ULONG32 cValues, AppDomainAndValue *values, ULONG32 *numValues)
 {
-	*numValues = 0;
-	
-	ClrAppDomainStoreData ads = {};
 	HRESULT hr = S_OK;
-
+	ClrAppDomainStoreData ads = {};
 	RETURN_IF_FAILED(m_pDac->GetAppDomainStoreData(&ads));
 
-	int numDomains = ads.DomainCount + 2;
+	int numDomains = ads.DomainCount;
 	auto domains = std::vector<CLRDATA_ADDRESS>(numDomains);
-	domains[0] = ads.SystemDomain;
-	domains[1] = ads.SharedDomain;
-
-	RETURN_IF_FAILED(m_pDac->GetAppDomainList(numDomains, domains.data() + 2, 0));
+	RETURN_IF_FAILED(m_pDac->GetAppDomainList(numDomains, domains.data(), 0));
 
 	auto foundValues = std::vector<AppDomainAndValue>();
 
 	for (CLRDATA_ADDRESS domain : domains)
 	{
-		ClrAppDomainData adData = {};
-		if (FAILED(m_pDac->GetAppDomainData(domain, &adData)) || adData.AssemblyCount == 0 || adData.DomainLocalBlock == 0)
-			continue;
-
-		auto assemblies = std::vector<CLRDATA_ADDRESS>(adData.AssemblyCount);
-		if (FAILED(m_pDac->GetAssemblyList(domain, adData.AssemblyCount, assemblies.data(), NULL)))
-			continue;
-
-		WCHAR asmNameBuffer[MAX_PATH];
-
-		for (CLRDATA_ADDRESS assembly : assemblies)
+		AppDomainAndValue adv;
+		if (SUCCEEDED(GetStaticFieldValue(field, domain, &adv)))
 		{
-			ZeroMemory(asmNameBuffer, sizeof(WCHAR) * ARRAYSIZE(asmNameBuffer));
-			m_pDac->GetAssemblyName(assembly, ARRAYSIZE(asmNameBuffer), asmNameBuffer, nullptr);
-			
-			size_t peBufferOffset = wcslen(asmNameBuffer) - wcslen(pwszAssembly);
-			BOOL match = _wcsicmp(asmNameBuffer + peBufferOffset, pwszAssembly) == 0;
-
-			if (match)
-			{
-				if (EnumerateAssemblyInDomain(assembly, domain, pwszClass, pwszField, &foundValues, pFieldTypeMT))
-				{
-					break;
-				}
-			}
+			foundValues.push_back(adv);
 		}
 	}
 
 	if (foundValues.size() > 0)
 	{
-		std::copy(foundValues.begin(), foundValues.end(), stdext::checked_array_iterator<AppDomainAndValue*>(pValues, iValues));	
+		std::copy(foundValues.begin(), foundValues.end(), stdext::checked_array_iterator<AppDomainAndValue*>(values, cValues));	
 		*numValues = (ULONG)foundValues.size();
 	}
 	else
@@ -115,72 +88,6 @@ HRESULT ClrProcess::FindStaticField(LPCWSTR pwszAssembly, LPCWSTR pwszClass, LPC
 	}
 
 	return hr;
-}
-
-BOOL ClrProcess::EnumerateAssemblyInDomain(CLRDATA_ADDRESS assembly, CLRDATA_ADDRESS appDomain
-		, LPCWSTR pwszClass, LPCWSTR pwszField
-		, std::vector<AppDomainAndValue> *foundValues, CLRDATA_ADDRESS *fieldTypeMT)
-{
-	ClrAssemblyData asmData = {};
-	if (FAILED(m_pDac->GetAssemblyData(appDomain, assembly, &asmData)) || asmData.ModuleCount == 0)
-		return TRUE;
-
-	auto modules = std::vector<CLRDATA_ADDRESS>(asmData.ModuleCount);
-	if (FAILED(m_pDac->GetAssemblyModuleList(assembly, asmData.ModuleCount, modules.data(), 0)))
-		return TRUE;
-
-	for (CLRDATA_ADDRESS module : modules)
-	{
-		if (SearchModule(module, appDomain, pwszClass, pwszField, foundValues, fieldTypeMT))
-		{
-			return TRUE;
-		}		
-	}
-
-	return FALSE;
-}
-
-BOOL ClrProcess::SearchModule(CLRDATA_ADDRESS module, CLRDATA_ADDRESS appDomain
-		, LPCWSTR pwszClass, LPCWSTR pwszField
-		, std::vector<AppDomainAndValue> *foundValues, CLRDATA_ADDRESS *fieldTypeMT)
-{
-	CComPtr<IMetaDataImport> metaData;
-	{
-		CComPtr<IUnknown> unk;
-
-		if (FAILED(m_pDac->GetModule(module, &unk)))
-			return FALSE;
-	
-		unk->QueryInterface(IID_IMetaDataImport, (PVOID*)&metaData);
-	}
-	
-	mdTypeDef classToken;
-	if (FAILED(metaData->FindTypeDefByName(pwszClass, NULL, &classToken)))
-		return FALSE;
-
-	CLRDATA_ADDRESS mtAddr = 0;
-	if (FAILED(m_pDac->GetMethodDescFromToken(module, classToken, &mtAddr)) || mtAddr == 0)
-		return FALSE;
-
-	ClrFieldDescData fdData;
-	CLRDATA_ADDRESS field;
-	if (FAILED(this->FindFieldByName(mtAddr, pwszField, &field, &fdData)))
-		return FALSE;
-
-	if (fieldTypeMT != NULL)
-	{
-		*fieldTypeMT = fdData.FieldMethodTable;
-	}
-	AppDomainAndValue adv;
-	if (GetStaticFieldValue(field, appDomain, &adv) == S_OK)
-	{
-		foundValues->push_back(adv);
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
 }
 
 HRESULT ClrProcess::GetFieldValueBuffer(const CLRDATA_ADDRESS obj, LPCWSTR fieldName, ULONG32 numBytes, PVOID buffer, PULONG iBytesRead)

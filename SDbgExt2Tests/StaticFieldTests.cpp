@@ -50,8 +50,10 @@ namespace SDbgExt2Tests2
 
 			AppDomainAndValue values;
 			ULONG32 iValues;
-			CLRDATA_ADDRESS fieldMT;
-			auto hr = p->FindStaticField(L"SOSRevHelper.exe", L"SOSRevHelper.TestStaticsClass", field, 1, &values, &iValues, &fieldMT);
+			CLRDATA_ADDRESS fieldAddr, methodTable;
+			p->FindTypeByName(L"SOSRevHelper.exe", L"SOSRevHelper.TestStaticsClass", &methodTable);
+			p->FindFieldByName(methodTable, field, &fieldAddr, NULL);
+			auto hr = p->GetStaticFieldValues(fieldAddr, 1, &values, &iValues);
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual((ULONG32)1, iValues);

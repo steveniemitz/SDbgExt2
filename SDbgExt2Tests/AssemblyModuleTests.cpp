@@ -104,15 +104,18 @@ namespace SDbgExt2Tests2
 		{
 			AppDomainAndValue values;
 			ULONG32 iValues;
-			CLRDATA_ADDRESS fieldMT;
-			auto hr = p->FindStaticField(L"SOSRevHelper.exe", L"SOSRevHelper.TestThreadLocal", L"_field1", 1, &values, &iValues, &fieldMT);
+			CLRDATA_ADDRESS field;
+			ClrFieldDescData fdData = {};
+			CLRDATA_ADDRESS typeMT;
+			auto hr = p->FindTypeByName(L"SOSRevHelper.exe", L"SOSRevHelper.TestThreadLocal", &typeMT);
+			hr = p->FindFieldByName(typeMT, L"_field1", &field, &fdData);
+			hr = p->GetStaticFieldValues(field, 1, &values, &iValues);
 
 			ASSERT_SOK(hr);
 			ASSERT_EQUAL((ULONG32)1, iValues);
-			ASSERT_NOT_ZERO(fieldMT);
-
+			
 			WCHAR mtName[200] = {0};
-			p->GetProcess()->GetMethodTableName(fieldMT, 200, mtName, NULL);
+			p->GetProcess()->GetMethodTableName(fdData.FieldMethodTable, 200, mtName, NULL);
 
 			Assert::AreEqual(L"System.Int32", mtName);
 			Assert::AreEqual(101, (int)values.Value);
@@ -122,15 +125,18 @@ namespace SDbgExt2Tests2
 		{
 			AppDomainAndValue values;
 			ULONG32 iValues;
-			CLRDATA_ADDRESS fieldMT = 0;
-			auto hr = p->FindStaticField(L"SOSRevHelper.exe", L"SOSRevHelper.TestThreadLocal", L"_field2", 1, &values, &iValues, &fieldMT);
+			CLRDATA_ADDRESS field;
+			ClrFieldDescData fdData = {};
+			CLRDATA_ADDRESS typeMT;
+			auto hr = p->FindTypeByName(L"SOSRevHelper.exe", L"SOSRevHelper.TestThreadLocal", &typeMT);
+			hr = p->FindFieldByName(typeMT, L"_field2", &field, &fdData);
+			hr = p->GetStaticFieldValues(field, 1, &values, &iValues);
 	
 			ASSERT_SOK(hr);
 			ASSERT_EQUAL((ULONG32)1, iValues);
-			ASSERT_NOT_ZERO(fieldMT);
-
+			
 			WCHAR mtName[200] = {0};
-			p->GetProcess()->GetMethodTableName(fieldMT, 200, mtName, NULL);
+			p->GetProcess()->GetMethodTableName(fdData.FieldMethodTable, 200, mtName, NULL);
 
 			Assert::AreEqual(L"SOSRevHelper.TestClass", mtName);
 			Assert::AreEqual(values.Value, (CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x02ec23f8, 0x0000000002ec2eb0));
