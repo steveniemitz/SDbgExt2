@@ -188,14 +188,23 @@ STDMETHODIMP ClrProcess::FindMethodByName(CLRDATA_ADDRESS methodTable, LPCWSTR m
 	for (int a = 0; a < mtd.NumSlotsInVTable; a++)
 	{
 		CLRDATA_ADDRESS ret;
-		if (FAILED(m_pDac->GetMethodTableSlot(methodTable, 8, &ret)))
+		if (FAILED(m_pDac->GetMethodTableSlot(methodTable, a, &ret)))
 			continue;
 
 		ClrCodeHeaderData chd = {};
 		if (FAILED(m_pDac->GetCodeHeaderData(ret, &chd)))
 			continue;
 
+		WCHAR buffer[512] = {0};
+		ULONG32 methodNameLen;
+		if (FAILED(m_pDac->GetMethodDescName(chd.MethodDescPtr, ARRAYSIZE(buffer), buffer, &methodNameLen)))
+			continue;
 
+		if (wcscmp(buffer, methodSig) == 0)
+		{
+			*methodDesc = chd.MethodDescPtr;
+			return S_OK;
+		}
 	}
 
 	return E_INVALIDARG;	

@@ -14,18 +14,12 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(FindMethodDesc)
 		{
 			CLRDATA_ADDRESS mtAddr = (CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x011539e4, "boom");
-			auto proc = p->GetProcess();
-
-			ClrMethodTableData mtd = {};
-			proc->GetMethodTableData(mtAddr, &mtd);
-
-			CLRDATA_ADDRESS ret;
-			auto hr = proc->GetMethodTableSlot(mtAddr, 8, &ret);
-
-			ClrCodeHeaderData chd = {};
-			hr = proc->GetCodeHeaderData(ret, &chd);
+			CLRDATA_ADDRESS mdAddr = NULL;
+			
+			auto hr = p->FindMethodByName(mtAddr, L"SOSRevHelper.TestThreadLocal.Method4()", &mdAddr);
 
 			ASSERT_SOK(hr);
+			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x011539c0, "boom"), mdAddr);
 		}
 
 	};
