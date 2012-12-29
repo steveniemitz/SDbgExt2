@@ -102,10 +102,10 @@ namespace SDbgExt2Tests2
 
 		TEST_METHOD(FindStaticField_Primitive)
 		{
-			AppDomainAndValue *values;
+			AppDomainAndValue values;
 			ULONG32 iValues;
 			CLRDATA_ADDRESS fieldMT;
-			auto hr = p->FindStaticField(L"SOSRevHelper.exe", L"SOSRevHelper.TestThreadLocal", L"_field1", &values, &iValues, &fieldMT);
+			auto hr = p->FindStaticField(L"SOSRevHelper.exe", L"SOSRevHelper.TestThreadLocal", L"_field1", 1, &values, &iValues, &fieldMT);
 
 			ASSERT_SOK(hr);
 			ASSERT_EQUAL((ULONG32)1, iValues);
@@ -115,17 +115,15 @@ namespace SDbgExt2Tests2
 			p->GetProcess()->GetMethodTableName(fieldMT, 200, mtName, NULL);
 
 			Assert::AreEqual(L"System.Int32", mtName);
-			Assert::AreEqual(101, (int)values[0].Value);
-
-			delete[] values;
+			Assert::AreEqual(101, (int)values.Value);
 		}
 
 		TEST_METHOD(FindStaticField_Class)
 		{
-			AppDomainAndValue *values;
+			AppDomainAndValue values;
 			ULONG32 iValues;
 			CLRDATA_ADDRESS fieldMT = 0;
-			auto hr = p->FindStaticField(L"SOSRevHelper.exe", L"SOSRevHelper.TestThreadLocal", L"_field2", &values, &iValues, &fieldMT);
+			auto hr = p->FindStaticField(L"SOSRevHelper.exe", L"SOSRevHelper.TestThreadLocal", L"_field2", 1, &values, &iValues, &fieldMT);
 	
 			ASSERT_SOK(hr);
 			ASSERT_EQUAL((ULONG32)1, iValues);
@@ -135,9 +133,7 @@ namespace SDbgExt2Tests2
 			p->GetProcess()->GetMethodTableName(fieldMT, 200, mtName, NULL);
 
 			Assert::AreEqual(L"SOSRevHelper.TestClass", mtName);
-			Assert::AreEqual(values[0].Value, (CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x02ec23f8, 0x0000000002ec2eb0));
-
-			delete[] values;
+			Assert::AreEqual(values.Value, (CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x02ec23f8, 0x0000000002ec2eb0));
 		}
 
 		TEST_METHOD(GetDomainLocalModuleDataFromModule_Basic)

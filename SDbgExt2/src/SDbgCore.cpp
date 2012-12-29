@@ -4,6 +4,7 @@
 #include "..\inc\IXCLRDataProcess3.h"
 #include "..\inc\IDacMemoryAccess.h"
 #include "..\inc\DbgEngMemoryAccess.h"
+#include "..\inc\ClrProcess.h"
 #include <DbgHelp.h>
 
 #ifndef NO_WDBG_EXT
@@ -82,5 +83,11 @@ HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemo
 
 	*ppDcma = new DbgEngMemoryAccess(dds);
 
+	return S_OK;
+}
+
+HRESULT __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret)
+{
+	*ret = new ClrProcess(pDac, dcma);
 	return S_OK;
 }

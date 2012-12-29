@@ -25,3 +25,28 @@ void SetupTests(WCHAR *dumpFile, IClrProcess **p);
 #else
 #define BITNESS_CONDITIONAL(_32bit, _64bit)  _64bit
 #endif
+
+namespace Microsoft
+{ 
+	namespace VisualStudio 
+	{
+		namespace CppUnitTestFramework
+		{
+			template<> static std::wstring ToString<AppDomainAndValue>(const AppDomainAndValue& t)				 
+			{ 
+				WCHAR buffer[18*2+8] = {0};
+				swprintf_s(buffer, L"(0x%016I64x, 0x%016I64x)", t.Domain, t.Value);
+
+				return std::wstring(buffer);
+			}
+
+			template<> static std::wstring ToString<DctEntry>(const DctEntry& t)				 
+			{ 
+				WCHAR buffer[24*2+16] = {0};
+				swprintf_s(buffer, L"(0x%016I64x, 0x%016I64x, 0x%016I64x)", t.EntryPtr, t.KeyPtr, t.ValuePtr);
+
+				return std::wstring(buffer);
+			}
+		}
+	}
+}

@@ -19,8 +19,8 @@ namespace SDbgExt2Tests2
 
 			Assert::AreEqual(S_OK, hr);
 			Assert::AreEqual((LONG)1, ads.DomainCount);
-			Assert::IsTrue(ads.SharedDomain != 0);
-			Assert::IsTrue(ads.SystemDomain != 0);
+			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x749174d8, 0x000007fd073166e0), ads.SystemDomain);
+			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x74917180, 0x000007fd07316100), ads.SharedDomain);
 		}
 
 		TEST_METHOD(ClrAppDomainList_Basic)
@@ -36,6 +36,7 @@ namespace SDbgExt2Tests2
 	
 			ASSERT_SOK(hr);
 			ASSERT_NOT_ZERO(domains[2]);
+			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x014972d0, 0x0000000000c317a0), domains[2]);
 		}
 
 		TEST_METHOD(ClrAssemblyList_Basic)

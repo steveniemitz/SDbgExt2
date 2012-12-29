@@ -11,7 +11,7 @@ namespace SDbgExt2Tests2
 	public:
 #ifndef _WIN64
 		#define SystemWebModule 0x000000005cf91000
-		#define ExpectedHttpRuntimeStatics { AppDomainAndValue(0x013a35d8, 0x0b946300), AppDomainAndValue(0x013f3570, 0x01a30c0c) }
+#define ExpectedHttpRuntimeStatics { AppDomainAndValue(0x013a35d8, 0x0b946300), AppDomainAndValue(0x013f3570, 0x01a30c0c) }
 
 		ADD_TEST_INIT(L"..\\dumps\\x86\\iis_small.dmp")
 #else
@@ -25,11 +25,11 @@ namespace SDbgExt2Tests2
 #endif
 		TEST_METHOD(FindStaticField_HttpRuntime)
 		{
-			AppDomainAndValue expectedValues[] = ExpectedHttpRuntimeStatics;
+			AppDomainAndValue expectedValues[2] = ExpectedHttpRuntimeStatics;
 
-			AppDomainAndValue *values;
+			AppDomainAndValue values[3] = {  };
 			ULONG32 numValues;
-			p->FindStaticField(L"System.Web.dll", L"System.Web.HttpRuntime", L"_theRuntime", &values, &numValues, NULL);
+			p->FindStaticField(L"System.Web.dll", L"System.Web.HttpRuntime", L"_theRuntime", 3, values, &numValues, NULL);
 
 			Assert::AreEqual((ULONG32)2, numValues);
 

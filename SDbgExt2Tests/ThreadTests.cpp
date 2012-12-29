@@ -84,6 +84,7 @@ namespace SDbgExt2Tests2
 
 			ASSERT_SOK(hr);
 			ASSERT_NOT_ZERO(threadObj);
+			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x0149de68, 0x0000000000c3e790), threadObj);
 		}
 
 		TEST_METHOD(GetThreadStackInfo_Basic)
@@ -118,6 +119,23 @@ namespace SDbgExt2Tests2
 			auto hr = p->EnumStackObjects((DWORD)1, cb, &seenObjects);
 
 			ASSERT_SOK(hr);
+		}
+
+		TEST_METHOD(GetThreadContext)
+		{
+			ClrThreadContext ctx;
+			auto hr = p->GetThreadExecutionContext((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x02ec4148, 0x0000000002ec5cd8), &ctx);
+
+			ASSERT_SOK(hr);
+		}
+
+		TEST_METHOD(GetManagedThreadObject)
+		{
+			CLRDATA_ADDRESS managedObj;
+			auto hr = p->GetManagedThreadObject((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x0149de68, 0x0000000000c3e790), &managedObj);
+
+			ASSERT_SOK(hr);
+			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x02ec4148, 0x0000000002ec5cd8), managedObj);
 		}
 
 	};

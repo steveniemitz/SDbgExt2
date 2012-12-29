@@ -285,6 +285,20 @@ struct ClrGcHeapSegmentData
 	CLRDATA_ADDRESS Unknown11;
 };
 
+typedef enum JITTypes {TYPE_UNKNOWN=0,TYPE_JIT,TYPE_EJIT,TYPE_PJIT};
+
+struct ClrCodeHeaderData
+{
+	CLRDATA_ADDRESS GCInfo;
+    JITTypes        JITType;
+    CLRDATA_ADDRESS MethodDescPtr;
+    CLRDATA_ADDRESS MethodStart;
+    DWORD           MethodSize;
+    CLRDATA_ADDRESS ColdRegionStart;
+    DWORD           ColdRegionSize;
+    DWORD           HotRegionSize;
+};
+
 //{FF25CA8B-C31D-4929-9DFD-FCDC42F5D955}
 //0x436f00f2, 0xb42a, 0x4b9f, {0x87,0x0c,0xe7,0x3d,0xb6,0x6a,0xe9,0x30
 MIDL_INTERFACE("436f00f2-b42a-4b9f-870c-e73db66ae930")
@@ -292,7 +306,7 @@ IXCLRDataProcess3 : public IUnknown
 {
 	virtual HRESULT STDMETHODCALLTYPE GetThreadStoreData(ClrThreadStoreData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainStoreData(ClrAppDomainStoreData *ret) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetAppDomainList(ULONG32 iArraySize, __out_ecount(iArraySize) CLRDATA_ADDRESS *domains, DWORD flags) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAppDomainList(ULONG32 iArraySize, __out_ecount(iArraySize) CLRDATA_ADDRESS *domains, DWORD *numDomains) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainData(CLRDATA_ADDRESS domain, ClrAppDomainData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetAppDomainName() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetDomainFromContext() = 0;
@@ -313,7 +327,7 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetMethodDescPtrFromFrame(CLRDATA_ADDRESS frameAddr, CLRDATA_ADDRESS *methodDescPtr) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodDescFromToken(CLRDATA_ADDRESS module, mdToken token, CLRDATA_ADDRESS *mdAddr) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetMethodDescTransparencyData() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetCodeHeaderData() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetCodeHeaderData(CLRDATA_ADDRESS ipAddr, ClrCodeHeaderData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetJitManagerList() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetJitHelperFunctionName() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetJumpThunkTarget() = 0;

@@ -54,3 +54,5 @@ inline void DeleteVector(std::vector<T*> *x)
 }
 
 HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma);
+
+#define Align(addr) (addr + (sizeof(void*) - 1)) & ~(sizeof(void*) - 1)

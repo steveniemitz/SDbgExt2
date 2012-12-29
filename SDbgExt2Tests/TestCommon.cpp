@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "TestCommon.h"
 #include "..\SDbgExt2\inc\DbgEngMemoryAccess.h"
+#include "..\SDbgExt2\inc\IClrProcess.h"
 
 HRESULT InitFromDump(WCHAR *dumpFile, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma)
 {
@@ -59,7 +60,7 @@ void SetupTestsFromProcess(DWORD pid, IClrProcess **p)
 	CComPtr<IXCLRDataProcess3> chDac; CComPtr<IDacMemoryAccess> chDcma;
 	InitFromProcess(pid, &chDac, &chDcma);
 
-	*p = new ClrProcess(chDac, chDcma);
+	CreateClrProcess(chDac, chDcma, p);
 }
 
 void SetupTests(WCHAR *dumpFile, IClrProcess **p)
@@ -70,5 +71,5 @@ void SetupTests(WCHAR *dumpFile, IClrProcess **p)
 	//InitRemoteProcess(0, &chDac, &chDcma);
 	InitFromDump(dumpFile, &chDac, &chDcma);
 
-	*p = new ClrProcess(chDac, chDcma);
+	CreateClrProcess(chDac, chDcma, p);
 }
