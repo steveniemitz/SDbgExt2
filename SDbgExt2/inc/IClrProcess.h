@@ -7,9 +7,16 @@
 
 HRESULT SDBGAPI InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac);
 
+struct TP_CALLBACK_ENTRY
+{
+	CLRDATA_ADDRESS WorkItemPtr;
+	CLRDATA_ADDRESS StatePtr;
+};
+
 typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
 typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
 typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
+typedef BOOL (CALLBACK *ThreadPoolQueueCallback)(CLRDATA_ADDRESS queueAddress, TP_CALLBACK_ENTRY *tpWorkItems, UINT32 numWorkItems);
 
 struct IClrObject;
 
@@ -99,6 +106,7 @@ struct DECLSPEC_NOVTABLE IClrProcess : public IUnknown
 	virtual STDMETHODIMP GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc) = 0;
 
 	virtual STDMETHODIMP EnumerateKeyValuePairs(CLRDATA_ADDRESS dctObj, DctEntryCallback callback, PVOID state) = 0;
+	virtual STDMETHODIMP EnumerateThreadPools(ThreadPoolQueueCallback tpQueueCb) = 0;
 };
 
 HRESULT SDBGAPI __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret);

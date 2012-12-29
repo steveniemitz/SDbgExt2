@@ -114,6 +114,7 @@ public:
 	STDMETHODIMP GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc);
 
 	STDMETHODIMP EnumerateKeyValuePairs(CLRDATA_ADDRESS dctObj, DctEntryCallback callback, PVOID state);
+	STDMETHODIMP EnumerateThreadPools(ThreadPoolQueueCallback tpQueueCb);
 
 private:
 	ULONG m_dwRef;

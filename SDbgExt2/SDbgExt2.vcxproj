@@ -147,9 +147,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\ClrObject.h" />
+    <ClInclude Include="inc\ClrObjectArray.h" />
     <ClInclude Include="inc\ClrProcess.h" />
     <ClInclude Include="inc\DbgEngMemoryAccess.h" />
     <ClInclude Include="inc\DictionaryEnumerator.h" />
+    <ClInclude Include="inc\IClrObjectArray.h" />
     <ClInclude Include="inc\IClrObject.h" />
     <ClInclude Include="inc\IClrProcess.h" />
     <ClInclude Include="inc\IDacMemoryAccess.h" />
@@ -157,6 +159,7 @@
     <ClInclude Include="inc\SDbgCore.h" />
     <ClInclude Include="inc\IXCLRDataProcess3.h" />
     <ClInclude Include="inc\targetver.h" />
+    <ClInclude Include="inc\ThreadPoolEnumerator.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>

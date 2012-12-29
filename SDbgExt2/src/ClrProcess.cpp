@@ -82,7 +82,9 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRES
 	CLRDATA_ADDRESS methodPtr = NULL;
 	CLRDATA_ADDRESS methodPtrAux = NULL;
 
-	hr = GetFieldValuePtr(delegateAddr, L"_target", target);
+	if (target)
+		hr = GetFieldValuePtr(delegateAddr, L"_target", target);
+
 	hr = GetFieldValuePtr(delegateAddr, L"_methodPtr", &methodPtr);
 	hr = GetFieldValuePtr(delegateAddr, L"_methodPtrAux", &methodPtrAux);
 					

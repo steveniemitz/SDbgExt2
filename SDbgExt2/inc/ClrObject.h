@@ -1,5 +1,6 @@
 #pragma once
 #include "IClrObject.h"
+#include "ClrObjectArray.h"
 #include <atlcom.h>
 
 class ClrObject : public IClrObject
@@ -33,6 +34,11 @@ public:
         punk->AddRef();
         return S_OK;
     }
+
+	STDMETHODIMP_(BOOL) IsValid() 
+	{
+		return m_addr != NULL && m_proc->IsValidObject(m_addr);
+	}
 
 	STDMETHODIMP Address(CLRDATA_ADDRESS *addr)
 	{
@@ -70,6 +76,25 @@ public:
 	{
 		HRESULT hr = S_OK;
 		return m_proc->GetFieldValueString(m_addr, field, iNumChars, buffer, bytesRead);
+	}
+
+	STDMETHODIMP GetFieldValue(LPCWSTR field, IClrObjectArray **ret)
+	{
+		HRESULT hr = S_OK;
+		CLRDATA_ADDRESS arrayObj;
+		RETURN_IF_FAILED(m_proc->GetFieldValuePtr(m_addr, field, &arrayObj));
+		/*if (arrayObj == NULL)
+		{
+			*ret = NULL;
+			return S_FALSE;
+		}
+		// TODO: Assert this is a real array?
+		ClrObjectData od = {};
+		m_proc->GetProcess()->GetObjectData(arrayObj, &od);
+		*/
+
+		*ret = new ClrObjectArray(m_proc, arrayObj);
+		return S_OK;
 	}
 
 	STDMETHODIMP GetTypeName(ULONG32 cchBuffer, LPWSTR buffer, PULONG nameLen)
