@@ -4,6 +4,7 @@
 //
 
 #pragma once
+#define SDBGCORE_USELIB
 
 #include "targetver.h"
 

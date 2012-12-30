@@ -170,10 +170,7 @@
     <ClCompile Include="src\ClrProcess_Heap.cpp" />
     <ClCompile Include="src\ClrProcess_Threading.cpp" />
     <ClCompile Include="src\ClrProcess_Reflection.cpp" />
-    <ClCompile Include="src\DbgEngCLRDataTarget.cpp" />
     <ClCompile Include="src\DictionaryEnumerator.cpp" />
-    <ClCompile Include="src\SDbgCore.cpp" />
-    <ClCompile Include="src\SDbgExt2.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

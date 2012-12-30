@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 #include <clrdata.h>
-#include "SDbgCore.h"
+#include <DbgEng.h>
 
 class DbgEngCLRDataTarget : public ICLRDataTarget
 {

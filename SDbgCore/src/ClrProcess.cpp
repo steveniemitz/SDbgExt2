@@ -5,6 +5,12 @@
 #include "..\inc\ClrObject.h"
 #include "..\inc\DictionaryEnumerator.h"
 
+HRESULT __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret)
+{
+	*ret = new ClrProcess(pDac, dcma);
+	return S_OK;
+}
+
 HRESULT ClrProcess::GetClrObject(CLRDATA_ADDRESS obj, IClrObject **ret)
 {
 	if (!IsValidObject(obj))

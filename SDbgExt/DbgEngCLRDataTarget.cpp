@@ -1,19 +1,9 @@
 #include "stdafx.h"
-#include "..\inc\SDbgCore.h"
-#include "..\inc\DbgEngCLRDataTarget.h"
+#include "DbgEngCLRDataTarget.h"
 #include <tlhelp32.h>
 #include <string>
 #include <WinBase.h>
 
-#pragma unmanaged
-/*
-#include <atlbase.h>
-#include <atlcom.h>
-
-BEGIN_COM_MAP(DbgEngCLRDataTarget)
-	COM_INTERFACE_ENTRY(ICLRDataTarget)
-END_COM_MAP()
-*/
 DbgEngCLRDataTarget::DbgEngCLRDataTarget(IDebugSymbols3 *sym, IDebugDataSpaces *ds, IDebugSystemObjects *sysobj)
 {
 	this->m_dwRef = 0;

@@ -1,5 +1,5 @@
 #pragma once
-#include "..\inc\IDacMemoryAccess.h"
+#include "..\SDbgCore\inc\IDacMemoryAccess.h"
 #include <DbgEng.h>
 
 class SDBGAPI DbgEngMemoryAccess : public IDacMemoryAccess

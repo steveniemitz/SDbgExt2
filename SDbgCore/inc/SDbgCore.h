@@ -9,14 +9,15 @@
 #ifdef SDBGAPIEXPORTS
 	#define SDBGAPI __declspec(dllexport)
 #else
+#ifdef SDBGCORE_USELIB
 	#define SDBGAPI
+#else
+	#define SDBGAPI __declspec(dllimport)
 #endif
-
+#endif
 
 typedef HRESULT (__stdcall *CLRDataCreateInstancePtr)(REFIID iid, ICLRDataTarget* target, void** iface);
 
 #define RETURN_IF_FAILED(exp) if (FAILED(hr = (exp))) return hr;
 #define Align(addr) (addr + (sizeof(void*) - 1)) & ~(sizeof(void*) - 1)
-
-HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma);
 

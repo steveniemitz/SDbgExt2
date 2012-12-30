@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "TestCommon.h"
-#include "..\SDbgCore\inc\DbgEngMemoryAccess.h"
+#include "..\SDbgCore\inc\IDacMemoryAccess.h"
 #include "..\SDbgCore\inc\IClrProcess.h"
+#include "..\SDbgExt\ISDbgExt.h"
 
 HRESULT InitFromDump(WCHAR *dumpFile, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma)
 {
@@ -23,7 +24,7 @@ HRESULT InitFromDump(WCHAR *dumpFile, IXCLRDataProcess3 **ppDac, IDacMemoryAcces
 	CComPtr<IDebugDataSpaces> dds;
 	cli.QueryInterface<IDebugDataSpaces>(&dds);
 
-	*ppDcma = new DbgEngMemoryAccess(dds);
+	CreateDbgEngMemoryAccess(dds, ppDcma);
 
 	return hr;
 }
@@ -48,7 +49,7 @@ HRESULT InitFromProcess(DWORD pid, IXCLRDataProcess3 **ppDac, IDacMemoryAccess *
 	CComPtr<IDebugDataSpaces> dds;
 	cli.QueryInterface<IDebugDataSpaces>(&dds);
 
-	*ppDcma = new DbgEngMemoryAccess(dds);
+	CreateDbgEngMemoryAccess(dds, ppDcma);
 
 	return S_OK;
 }

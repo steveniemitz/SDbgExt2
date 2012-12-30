@@ -5,8 +5,6 @@
 #include "IDacMemoryAccess.h"
 #include <atlbase.h>
 
-HRESULT SDBGAPI InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac);
-
 enum TP_CALLBACK_TYPE { CB_TYPE_INVALID, CB_TYPE_QUEUEUSERWORKITEM, CB_TYPE_ASYNC_WORKITEM  };
 
 struct TP_CALLBACK_ENTRY
