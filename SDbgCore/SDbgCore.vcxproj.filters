@@ -30,13 +30,7 @@
     <ClInclude Include="inc\IXCLRDataProcess3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\DbgEngCLRDataTarget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\ClrProcess.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\DbgEngMemoryAccess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
