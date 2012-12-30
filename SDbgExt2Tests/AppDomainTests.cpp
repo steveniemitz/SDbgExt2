@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "..\SDbgExt2\inc\ClrProcess.h"
 #include "TestCommon.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;

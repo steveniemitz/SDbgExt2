@@ -95,7 +95,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dbgeng.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbgeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -181,7 +181,7 @@
     <ClCompile Include="WorkstationHeapTests_BigHeap.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SDbgExt2\SDbgExt2.vcxproj">
+    <ProjectReference Include="..\SDbgCore\SDbgCore.vcxproj">
       <Project>{35663062-4dec-49f9-bf5f-3c3e34828010}</Project>
     </ProjectReference>
   </ItemGroup>

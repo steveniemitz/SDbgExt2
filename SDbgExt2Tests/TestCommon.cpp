@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "TestCommon.h"
-#include "..\SDbgExt2\inc\DbgEngMemoryAccess.h"
-#include "..\SDbgExt2\inc\IClrProcess.h"
+#include "..\SDbgCore\inc\DbgEngMemoryAccess.h"
+#include "..\SDbgCore\inc\IClrProcess.h"
 
 HRESULT InitFromDump(WCHAR *dumpFile, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma)
 {
