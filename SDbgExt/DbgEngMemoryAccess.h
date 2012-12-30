@@ -2,21 +2,13 @@
 #include "..\SDbgCore\inc\IDacMemoryAccess.h"
 #include <DbgEng.h>
 
-class SDBGAPI DbgEngMemoryAccess : public IDacMemoryAccess
+class DbgEngMemoryAccess : public IDacMemoryAccess
 {
 public:
 
 	DbgEngMemoryAccess(IDebugDataSpaces *data)
+		: m_pData(data), m_dwRef(1)
 	{
-		data->AddRef();
-		m_pData = data;
-		m_dwRef = 1;
-	}
-
-	~DbgEngMemoryAccess()
-	{
-		 if(m_pData != NULL)
-			m_pData->Release();
 	}
 
 	HRESULT ReadVirtual(
@@ -111,6 +103,6 @@ public:
     }
 
 private:
-	IDebugDataSpaces *m_pData;
+	CComPtr<IDebugDataSpaces> m_pData;
 	ULONG m_dwRef;
 };

@@ -4,31 +4,6 @@
 #include <string>
 #include <WinBase.h>
 
-DbgEngCLRDataTarget::DbgEngCLRDataTarget(IDebugSymbols3 *sym, IDebugDataSpaces *ds, IDebugSystemObjects *sysobj)
-{
-	this->m_dwRef = 0;
-
-	ds->AddRef();
-	sym->AddRef();
-	sysobj->AddRef();
-
-	this->m_pDs = ds;
-	this->m_pSym = sym;
-	this->m_sysobj = sysobj;
-}
-
-DbgEngCLRDataTarget::~DbgEngCLRDataTarget()
-{
-	if (this->m_pDs != NULL)
-		this->m_pDs->Release();
-
-	if (this->m_pSym != NULL)
-		this->m_pSym->Release();
-
-	if (this->m_sysobj != NULL)
-		this->m_sysobj->Release();
-}
-
 HRESULT DbgEngCLRDataTarget::GetMachineType(ULONG32 *machineType)
 {
 #if _M_IX86
