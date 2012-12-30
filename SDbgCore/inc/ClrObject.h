@@ -22,11 +22,13 @@ public:
 
 	STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject)
     {
-        IUnknown *punk = nullptr;
+		IUnknown *punk = nullptr;
 
         if (riid == IID_IUnknown)
             punk = static_cast<IUnknown*>(this);
-		
+		else if (riid == __uuidof(IClrObject))
+			punk = static_cast<IClrObject*>(this);
+
         *ppvObject = punk;
         if (!punk)
             return E_NOINTERFACE;

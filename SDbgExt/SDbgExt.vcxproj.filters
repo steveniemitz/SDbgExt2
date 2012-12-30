@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\WinDbg">
+      <UniqueIdentifier>{6c1ec6ea-8cb3-4290-a3e3-7e364aa87f77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -45,6 +48,12 @@
     <ClInclude Include="SDbgExtApi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WinDbgExt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -70,6 +79,12 @@
     </ClCompile>
     <ClCompile Include="SDbgExt_EvaluateExpression.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WinDbgExt.cpp">
+      <Filter>Source Files\WinDbg</Filter>
+    </ClCompile>
+    <ClCompile Include="GetDelegateMethod.cpp">
+      <Filter>Source Files\WinDbg</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

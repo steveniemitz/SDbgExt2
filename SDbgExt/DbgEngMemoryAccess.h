@@ -84,6 +84,8 @@ public:
 
         if (riid == IID_IUnknown)
             punk = static_cast<IUnknown*>(this);
+		else if (riid == __uuidof(IDacMemoryAccess))
+			punk = static_cast<IDacMemoryAccess*>(this);
 		
         *ppvObject = punk;
         if (!punk)

@@ -9,7 +9,7 @@ class CSDbgExt : public ISDbgExt
 {
 public:
 	CSDbgExt(IClrProcess *p)
-		: m_proc(p)
+		: m_proc(p), m_ref(1)
 	{	}
 
 	STDMETHODIMP_(ULONG) AddRef() { return ++m_ref; }

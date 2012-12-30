@@ -10,29 +10,9 @@ class ClrProcess : public IClrProcess
 {
 public:
 	ClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *pDcma)
+		: m_pDac(pDac), m_dcma(pDcma)
 	{
-		m_pDac = pDac;
-		m_pDac->AddRef();
-
-		m_dcma = pDcma;
-		m_dcma->AddRef();
-
 		m_dwRef = 1;
-	}
-
-	~ClrProcess()
-	{
-		if (m_pDac)
-		{
-			m_pDac->Release();
-			m_pDac = nullptr;
-		}
-
-		if (m_dcma)
-		{
-			m_dcma->Release();
-			m_dcma = nullptr;
-		}
 	}
 
 	STDMETHODIMP_(ULONG) AddRef() { return ++m_dwRef; }
@@ -50,7 +30,9 @@ public:
 
         if (riid == IID_IUnknown)
             punk = static_cast<IUnknown*>(this);
-		
+		else if (riid == __uuidof(IClrProcess))
+			punk = static_cast<IClrProcess*>(this);
+
         *ppvObject = punk;
         if (!punk)
             return E_NOINTERFACE;
@@ -62,7 +44,6 @@ public:
 
 	STDMETHODIMP GetProcess(IXCLRDataProcess3 **ppDac)
 	{
-		m_pDac->AddRef();
 		*ppDac = m_pDac;
 
 		return S_OK;
@@ -70,7 +51,6 @@ public:
 
 	STDMETHODIMP GetDataAccess(IDacMemoryAccess **ppDcma)
 	{
-		m_dcma->AddRef();
 		*ppDcma = m_dcma;
 
 		return S_OK;
@@ -117,8 +97,8 @@ public:
 
 private:
 	ULONG m_dwRef;
-	IXCLRDataProcess3 *m_pDac;
-	IDacMemoryAccess *m_dcma;
+	CComPtr<IXCLRDataProcess3> m_pDac;
+	CComPtr<IDacMemoryAccess> m_dcma;
 
 	STDMETHODIMP FindThreadById(DWORD id, DWORD fieldOffsetInClrThreadData, CLRDATA_ADDRESS *threadObj);
 	STDMETHODIMP GetManagedThreadObj(CLRDATA_ADDRESS unmanagedThreadObj, CLRDATA_ADDRESS *managedThreadObj);

@@ -24,7 +24,9 @@ public:
 
         if (riid == IID_IUnknown)
             punk = static_cast<IUnknown*>(this);
-		
+		else if (riid == __uuidof(IClrObjectArray))
+			punk = static_cast<IClrObjectArray*>(this);
+
         *ppvObject = punk;
         if (!punk)
             return E_NOINTERFACE;

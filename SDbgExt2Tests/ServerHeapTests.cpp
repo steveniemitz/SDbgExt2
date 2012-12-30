@@ -61,5 +61,13 @@ namespace SDbgExt2Tests2
 			Assert::AreEqual(BITNESS_CONDITIONAL(50475, 52100), n);
 		}
 
+		TEST_METHOD(GetDelegateInfo_MethodPtr)
+		{
+			CLRDATA_ADDRESS target, methodDesc;
+			auto hr = p->GetDelegateInfo((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x01a3630c, "boom"), &target, &methodDesc);
+
+			ASSERT_SOK(hr);
+		}
+
 	};
 }

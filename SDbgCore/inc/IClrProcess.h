@@ -45,7 +45,8 @@ struct ClrThreadContext
 	CLRDATA_ADDRESS HostContext;
 };
 
-struct DECLSPEC_NOVTABLE IClrProcess : public IUnknown
+MIDL_INTERFACE("C20A701D-82B7-498D-B35F-8C2874542A1C")
+IClrProcess : public IUnknown
 {
 	virtual STDMETHODIMP GetProcess(IXCLRDataProcess3 **ppDac) = 0;
 	virtual STDMETHODIMP GetDataAccess(IDacMemoryAccess **ppDcma) = 0;

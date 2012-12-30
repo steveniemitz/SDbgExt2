@@ -274,12 +274,12 @@ struct ClrGcHeapSegmentData
 {
 	CLRDATA_ADDRESS Segment;
 	CLRDATA_ADDRESS Allocated;
-	CLRDATA_ADDRESS Unknown3;
-	CLRDATA_ADDRESS Unknown4;
-	CLRDATA_ADDRESS Unknown5;
+	CLRDATA_ADDRESS Committed;
+	CLRDATA_ADDRESS Reserved;
+	CLRDATA_ADDRESS Used;
 	CLRDATA_ADDRESS AllocBegin;
 	CLRDATA_ADDRESS NextSegment;
-	CLRDATA_ADDRESS Unknown8;
+	CLRDATA_ADDRESS GCHeap;
 	CLRDATA_ADDRESS Unknown9;
 	CLRDATA_ADDRESS Unknown10;
 	CLRDATA_ADDRESS Unknown11;
@@ -299,8 +299,15 @@ struct ClrCodeHeaderData
     DWORD           HotRegionSize;
 };
 
-//{FF25CA8B-C31D-4929-9DFD-FCDC42F5D955}
-//0x436f00f2, 0xb42a, 0x4b9f, {0x87,0x0c,0xe7,0x3d,0xb6,0x6a,0xe9,0x30
+struct ClrUsefulGlobalsData
+{
+	CLRDATA_ADDRESS ArrayMethodTable;
+    CLRDATA_ADDRESS StringMethodTable;
+    CLRDATA_ADDRESS ObjectMethodTable;
+    CLRDATA_ADDRESS ExceptionMethodTable;
+    CLRDATA_ADDRESS FreeMethodTable;
+};
+
 MIDL_INTERFACE("436f00f2-b42a-4b9f-870c-e73db66ae930")
 IXCLRDataProcess3 : public IUnknown
 {
@@ -376,7 +383,7 @@ IXCLRDataProcess3 : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE TraverseLoaderHeap() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetCodeHeapList() = 0;
 	virtual HRESULT STDMETHODCALLTYPE TraverseVirtCallStubHeap() = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetUsefulGlobals() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetUsefulGlobals(ClrUsefulGlobalsData *ret) = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetClrWatsonBuckets() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetTLSIndex() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetDacModuleHandle() = 0;

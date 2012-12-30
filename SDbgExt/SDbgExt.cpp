@@ -38,6 +38,8 @@ HRESULT __stdcall CreateSDbgExt(IClrProcess *p, ISDbgExt **ext)
 	return S_OK;
 }
 
+typedef HRESULT (__stdcall *CLRDataCreateInstancePtr)(REFIID iid, ICLRDataTarget* target, void** iface);
+
 HRESULT InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 {
 	CComPtr<IDebugSymbols3> dSym;

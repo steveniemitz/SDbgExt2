@@ -11,10 +11,16 @@ HRESULT ClrProcess::EnumHeapObjects(EnumObjectsCallback cb, PVOID state)
 		EnumObjectsCallback wrappedCb;
 		PVOID wrappedState;
 		IXCLRDataProcess3 *pDac;
+		CLRDATA_ADDRESS FreeMT;
 	};
-	EnumSegmentsState outerState = { cb, state, m_pDac };
+	
 	HRESULT hr = S_OK;
 
+	ClrUsefulGlobalsData ug = {};
+	RETURN_IF_FAILED(m_pDac->GetUsefulGlobals(&ug));
+
+	EnumSegmentsState outerState = { cb, state, m_pDac, ug.FreeMethodTable };
+	
 	auto heapCb = [](const CLRDATA_ADDRESS segmentAddr, const ClrGcHeapSegmentData &segment, PVOID innerState)->BOOL {
 		auto *ess = static_cast<EnumSegmentsState *>(innerState);
 		
@@ -51,7 +57,6 @@ HRESULT ClrProcess::EnumHeapSegments(EnumHeapSegmentsCallback cb, PVOID state)
 	HRESULT hr = S_OK;
 	RETURN_IF_FAILED(m_pDac->GetGCHeapData(&gcData));
 
-	std::vector<ClrGcHeapSegmentData> segments;
 	if (gcData.ServerMode)
 	{
 		return EnumHeapSegmentsServer(cb, state);
@@ -102,7 +107,7 @@ HRESULT ClrProcess::EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, EnumHeapS
 		ClrGcHeapSegmentData segData = {};
 		RETURN_IF_FAILED(m_pDac->GetHeapSegmentData(currSegment, &segData));
 
-		if (segData.NextSegment == NULL && !visitedLOHSegment)
+		if (segData.Segment == gcsData.Generations[0].start_segment)
 		{
 			segData.Allocated = gcsData.AllocAllocated;
 		}
