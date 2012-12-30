@@ -22,12 +22,22 @@ struct DctEntry
 	ULONG32 HashCode;
 };
 
+enum THREADPOOL_WORKITEM_TYPE { CB_TYPE_INVALID, CB_TYPE_QUEUEUSERWORKITEM, CB_TYPE_ASYNC_WORKITEM  };
+
+struct ThreadPoolWorkItem
+{
+	CLRDATA_ADDRESS WorkItemPtr;
+	CLRDATA_ADDRESS StatePtr;
+	CLRDATA_ADDRESS DelegatePtr;
+	THREADPOOL_WORKITEM_TYPE Type;
+};
+
 
 HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac);
 HRESULT SDBGEXT_API __stdcall CreateDbgEngMemoryAccess(IDebugDataSpaces *data, IDacMemoryAccess **ret);
 
 typedef BOOL (CALLBACK * EnumHashtableCallback)(DctEntry entry, PVOID state);
-typedef BOOL (CALLBACK *EnumThreadPoolItemsCallback)(const CLRDATA_ADDRESS queueAddress, const TP_CALLBACK_ENTRY &workItems, PVOID state);
+typedef BOOL (CALLBACK *EnumThreadPoolItemsCallback)(const CLRDATA_ADDRESS queueAddress, const ThreadPoolWorkItem &workItems, PVOID state);
 
 struct DECLSPEC_NOVTABLE ISDbgExt : public IUnknown
 {
@@ -35,3 +45,5 @@ struct DECLSPEC_NOVTABLE ISDbgExt : public IUnknown
 	virtual STDMETHODIMP EnumerateHashtable(CLRDATA_ADDRESS dctObj, EnumHashtableCallback callback, PVOID state) = 0;
 	virtual STDMETHODIMP EnumerateThreadPools(EnumThreadPoolItemsCallback tpQueueCb, PVOID state) = 0;
 };
+
+HRESULT SDBGEXT_API __stdcall CreateSDbgExt(IClrProcess *p, ISDbgExt **ext);

@@ -32,6 +32,12 @@ HRESULT __stdcall CreateDbgEngMemoryAccess(IDebugDataSpaces *data, IDacMemoryAcc
 	return S_OK;
 }
 
+HRESULT __stdcall CreateSDbgExt(IClrProcess *p, ISDbgExt **ext)
+{
+	*ext = new CSDbgExt(p);
+	return S_OK;
+}
+
 HRESULT InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 {
 	CComPtr<IDebugSymbols3> dSym;

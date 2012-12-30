@@ -175,8 +175,8 @@
     </ClCompile>
     <ClCompile Include="SDbgExt.cpp" />
     <ClCompile Include="SDbgExt_DumpThreadPool.cpp" />
-    <ClCompile Include="SDbgExt_EnumerateKVP.cpp" />
-    <ClCompile Include="SDbgExt_Expressions.cpp" />
+    <ClCompile Include="SDbgExt_EnumerateHashtable.cpp" />
+    <ClCompile Include="SDbgExt_EvaluateExpression.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

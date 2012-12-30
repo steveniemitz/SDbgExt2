@@ -8,11 +8,15 @@
 #ifdef SDBGAPIEXPORTS
 	#define SDBGAPI __declspec(dllexport)
 #else
-#ifdef SDBGCORE_USELIB
-	#define SDBGAPI
-#else
-	#define SDBGAPI __declspec(dllimport)
-#endif
+	#ifdef SDBGEXT_EXPORTS
+		#define SDBGAPI __declspec(dllexport)
+	#else
+		#ifdef SDBGCORE_USELIB
+			#define SDBGAPI
+		#else
+			#define SDBGAPI __declspec(dllimport)
+		#endif
+	#endif
 #endif
 
 HRESULT SDBGAPI __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret);

@@ -59,16 +59,16 @@
     <ClCompile Include="DbgEngCLRDataTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SDbgExt_Expressions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DictionaryEnumerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SDbgExt_DumpThreadPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SDbgExt_EnumerateKVP.cpp">
+    <ClCompile Include="SDbgExt_EnumerateHashtable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SDbgExt_EvaluateExpression.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

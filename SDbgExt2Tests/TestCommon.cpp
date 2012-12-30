@@ -72,4 +72,5 @@ void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext)
 	InitFromDump(dumpFile, &chDac, &chDcma);
 
 	CreateClrProcess(chDac, chDcma, p);
+	CreateSDbgExt(*p, ext);
 }

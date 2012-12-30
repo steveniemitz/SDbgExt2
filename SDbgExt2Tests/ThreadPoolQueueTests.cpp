@@ -15,7 +15,7 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(DumpThreadPool_Baisc)
 		{
 			int n = 0;
-			auto cb = [](const CLRDATA_ADDRESS queueAddress, const TP_CALLBACK_ENTRY &tpWorkItems, PVOID state)->BOOL {
+			auto cb = [](const CLRDATA_ADDRESS queueAddress, const ThreadPoolWorkItem &tpWorkItems, PVOID state)->BOOL {
 				(*((int*)state))++;
 				return TRUE;
 			};

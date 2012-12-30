@@ -89,6 +89,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;SDBGAPIEXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <MultiProcessorCompilation>
+      </MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

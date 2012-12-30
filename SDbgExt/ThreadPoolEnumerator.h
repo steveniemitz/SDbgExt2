@@ -2,6 +2,7 @@
 #include "..\SDbgCore\inc\SDbgCoreApi.h"
 #include <set>
 
+
 class ThreadPoolEnumerator
 {
 public:
@@ -31,7 +32,7 @@ public:
 				CLRDATA_ADDRESS addr = values[a].Value;
 				if (addr)
 				{
-					TP_CALLBACK_ENTRY *entries = NULL;
+					ThreadPoolWorkItem *entries = NULL;
 					UINT32 numEntries = 0;
 					hr = DumpThreadPool(addr);
 				}
@@ -54,7 +55,7 @@ public:
 				CLRDATA_ADDRESS queueAddr = values[a].Value;
 				if (queueAddr)
 				{
-					TP_CALLBACK_ENTRY *entries = NULL;
+					ThreadPoolWorkItem *entries = NULL;
 					UINT32 numEntries = 0;
 					// TODO: Implement this
 					hr = E_FAIL; //DumpWorkStealingQueueList(queueAddr, &entries, &numEntries);
@@ -130,7 +131,7 @@ private:
 
 			CLRDATA_ADDRESS statePtr = NULL;
 			CLRDATA_ADDRESS delegatePtr = NULL;
-			TP_CALLBACK_TYPE cbType;
+			THREADPOOL_WORKITEM_TYPE cbType;
 
 			LPWSTR stateTypeName = nullptr;
 			LPWSTR l2methodName = nullptr;
@@ -173,7 +174,7 @@ private:
 				}
 			}
 
-			TP_CALLBACK_ENTRY ent = { workItem->Address(), statePtr, delegatePtr };
+			ThreadPoolWorkItem ent = { workItem->Address(), statePtr, delegatePtr };
 			if (cbType != CB_TYPE_INVALID)
 			{
 				m_tpQueueCb(queueAddr, ent, m_state);

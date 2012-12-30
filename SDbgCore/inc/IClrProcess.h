@@ -5,18 +5,8 @@
 #include "IDacMemoryAccess.h"
 #include <atlbase.h>
 
-enum TP_CALLBACK_TYPE { CB_TYPE_INVALID, CB_TYPE_QUEUEUSERWORKITEM, CB_TYPE_ASYNC_WORKITEM  };
-
-struct TP_CALLBACK_ENTRY
-{
-	CLRDATA_ADDRESS WorkItemPtr;
-	CLRDATA_ADDRESS StatePtr;
-	CLRDATA_ADDRESS DelegatePtr;
-};
-
 typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
 typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
-typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
 
 struct IClrObject;
 
