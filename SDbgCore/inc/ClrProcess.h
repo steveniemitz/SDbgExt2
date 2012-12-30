@@ -103,23 +103,17 @@ public:
 	STDMETHODIMP FindThreadByOsThreadId(DWORD osThreadId, CLRDATA_ADDRESS *unmanagedThreadObj);
 	STDMETHODIMP GetManagedThreadObject(CLRDATA_ADDRESS unmanagedThreadObj, CLRDATA_ADDRESS *managedThreadObj);
 	STDMETHODIMP GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, ClrThreadContext *ctx);
+	
+	BOOL IsValidObject(CLRDATA_ADDRESS obj);
 
 	STDMETHODIMP EnumStackObjects(DWORD corThreadId, EnumObjectsCallback cb, PVOID state);
 	STDMETHODIMP EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallback cb, PVOID state);
-
-	BOOL IsValidObject(CLRDATA_ADDRESS obj);
-
 	STDMETHODIMP EnumHeapObjects(EnumObjectsCallback cb, PVOID state);
 		
 	STDMETHODIMP GetClrObject(CLRDATA_ADDRESS obj, IClrObject **ret);
 
 	STDMETHODIMP FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, WCHAR *buffer);
 	STDMETHODIMP GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc);
-
-	STDMETHODIMP EnumerateKeyValuePairs(CLRDATA_ADDRESS dctObj, DctEntryCallback callback, PVOID state);
-	STDMETHODIMP EnumerateThreadPools(EnumThreadPoolItemsCallback tpQueueCb, PVOID state);
-
-	STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPCWSTR expression, CLRDATA_ADDRESS *result);
 
 private:
 	ULONG m_dwRef;

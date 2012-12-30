@@ -17,7 +17,6 @@ struct TP_CALLBACK_ENTRY
 typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
 typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
 typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
-typedef BOOL (CALLBACK *EnumThreadPoolItemsCallback)(const CLRDATA_ADDRESS queueAddress, const TP_CALLBACK_ENTRY &workItems, PVOID state);
 
 struct IClrObject;
 
@@ -56,23 +55,6 @@ struct ClrThreadContext
 	CLRDATA_ADDRESS HostContext;
 };
 
-struct DctEntry
-{
-	bool operator==(const DctEntry &rhs) const
-	{
-		return rhs.EntryPtr == EntryPtr
-			&& rhs.KeyPtr == KeyPtr
-			&& rhs.ValuePtr == ValuePtr;
-	}
-
-	CLRDATA_ADDRESS EntryPtr;
-	CLRDATA_ADDRESS KeyPtr;
-	CLRDATA_ADDRESS ValuePtr;
-	ULONG32 HashCode;
-};
-
-typedef BOOL (CALLBACK * DctEntryCallback)(DctEntry entry, PVOID state);
-
 struct DECLSPEC_NOVTABLE IClrProcess : public IUnknown
 {
 	virtual STDMETHODIMP GetProcess(IXCLRDataProcess3 **ppDac) = 0;
@@ -108,11 +90,4 @@ struct DECLSPEC_NOVTABLE IClrProcess : public IUnknown
 
 	virtual STDMETHODIMP FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, WCHAR *buffer) = 0;
 	virtual STDMETHODIMP GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc) = 0;
-
-	virtual STDMETHODIMP EnumerateKeyValuePairs(CLRDATA_ADDRESS dctObj, DctEntryCallback callback, PVOID state) = 0;
-	virtual STDMETHODIMP EnumerateThreadPools(EnumThreadPoolItemsCallback tpQueueCb, PVOID state) = 0;
-
-	virtual STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPCWSTR expression, CLRDATA_ADDRESS *result) = 0;
 };
-
-HRESULT SDBGAPI __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret);

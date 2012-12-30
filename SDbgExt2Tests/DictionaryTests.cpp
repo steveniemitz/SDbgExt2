@@ -61,7 +61,7 @@ namespace SDbgExt2Tests2
 				return TRUE;
 			};
 
-			auto hr = p->EnumerateKeyValuePairs(dctAddr, cb, &entries);
+			auto hr = ext->EnumerateHashtable(dctAddr, cb, &entries);
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual((size_t)numEntriesExpected, entries.size());

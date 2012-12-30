@@ -3,7 +3,6 @@
 #include <iterator>
 #include <algorithm>
 #include "..\inc\ClrObject.h"
-#include "..\inc\DictionaryEnumerator.h"
 
 HRESULT __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret)
 {
@@ -110,10 +109,4 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRES
 	{
 		return E_INVALIDARG;
 	}
-}
-
-HRESULT ClrProcess::EnumerateKeyValuePairs(CLRDATA_ADDRESS dctObj, DctEntryCallback callback, PVOID state)
-{
-	DctEnumerator enumer(this);
-	return enumer.EnumerateDctEntries(dctObj, callback, state);
 }

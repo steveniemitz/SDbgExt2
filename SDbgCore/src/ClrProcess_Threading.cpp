@@ -3,7 +3,6 @@
 #include <iterator>
 #include <algorithm>
 #include "..\inc\ClrObject.h"
-#include "..\inc\ThreadPoolEnumerator.h"
 
 HRESULT ClrProcess::EnumThreads(EnumThreadsCallback cb, PVOID state)
 {
@@ -159,10 +158,4 @@ HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallb
 	}
 	
 	return S_OK;
-}
-
-STDMETHODIMP ClrProcess::EnumerateThreadPools(EnumThreadPoolItemsCallback tpQueueCb, PVOID state)
-{
-	ThreadPoolEnumerator tp(this, tpQueueCb, state);
-	return tp.DumpThreadPools();
 }

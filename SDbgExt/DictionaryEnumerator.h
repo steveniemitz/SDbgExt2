@@ -1,5 +1,6 @@
 #pragma once
-#include "..\inc\IClrProcess.h"
+#include "..\SDbgCore\inc\SDbgCoreApi.h"
+#include "ISDbgExt.h"
 
 class DctEnumerator
 {
@@ -9,14 +10,14 @@ public:
 	{
 	}
 
-	HRESULT EnumerateDctEntries(CLRDATA_ADDRESS dctObj, DctEntryCallback callback, PVOID state);
+	HRESULT EnumerateDctEntries(CLRDATA_ADDRESS dctObj, EnumHashtableCallback callback, PVOID state);
 	HRESULT FindDctEntryByKey(CLRDATA_ADDRESS dctObj, LPCWSTR key, CLRDATA_ADDRESS *targetAddr);
 	HRESULT FindDctEntryByHash(CLRDATA_ADDRESS dctObj, UINT32 hash, CLRDATA_ADDRESS *targetAddr);
 	
 private:
 	CComPtr<IClrProcess> m_dac;
 
-	HRESULT EnumerateDctEntriesImpl(CLRDATA_ADDRESS dctObj, CLRDATA_ADDRESS methodTable, DctEntryCallback cb, PVOID state
+	HRESULT EnumerateDctEntriesImpl(CLRDATA_ADDRESS dctObj, CLRDATA_ADDRESS methodTable, EnumHashtableCallback cb, PVOID state
 									, WCHAR *bucketsName, WCHAR *keyFieldName, WCHAR *valFieldName, WCHAR *hashFieldName);
 
 	HRESULT GetEntryOffsets(CLRDATA_ADDRESS entriesPtr, WCHAR *keyFieldName, WCHAR *valFieldName, WCHAR *hashFieldName, 
@@ -24,9 +25,9 @@ private:
 							CLRDATA_ADDRESS *arrayBase, ULONG *arrayElementSize, ULONG *arrayEntries);
 
 	HRESULT ReadEntries(DWORD arrayEntries, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataBase, ULONG arrayElementSize,
-						ULONG keyOffset, ULONG valOffset, ULONG hashCodeOffset, DctEntryCallback cb, PVOID state);
+						ULONG keyOffset, ULONG valOffset, ULONG hashCodeOffset, EnumHashtableCallback cb, PVOID state);
 
-	HRESULT ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, DctEntryCallback cb, PVOID state);
+	HRESULT ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, EnumHashtableCallback cb, PVOID state);
 
-	HRESULT EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, DctEntryCallback callback, PVOID state);
+	HRESULT EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, EnumHashtableCallback callback, PVOID state);
 };

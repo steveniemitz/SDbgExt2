@@ -26,8 +26,6 @@
 	#define CORDAC_CLRVER L"4.0.30319"
 #endif
 
-#define SYMBOL_PATH "srv*c:\\symcache*http://msdl.microsoft.com/download/symbols"
-
 HRESULT __stdcall CreateDbgEngMemoryAccess(IDebugDataSpaces *data, IDacMemoryAccess **ret)
 {
 	*ret = new DbgEngMemoryAccess(data);

@@ -150,25 +150,22 @@
     <ClInclude Include="inc\ClrObject.h" />
     <ClInclude Include="inc\ClrObjectArray.h" />
     <ClInclude Include="inc\ClrProcess.h" />
-    <ClInclude Include="inc\DictionaryEnumerator.h" />
     <ClInclude Include="inc\IClrObjectArray.h" />
     <ClInclude Include="inc\IClrObject.h" />
     <ClInclude Include="inc\IClrProcess.h" />
     <ClInclude Include="inc\IDacMemoryAccess.h" />
     <ClInclude Include="inc\SDbgCore.h" />
     <ClInclude Include="inc\IXCLRDataProcess3.h" />
+    <ClInclude Include="inc\SDbgCoreApi.h" />
     <ClInclude Include="inc\targetver.h" />
-    <ClInclude Include="inc\ThreadPoolEnumerator.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ClrProcess.cpp" />
-    <ClCompile Include="src\ClrProcess_Expressions.cpp" />
     <ClCompile Include="src\ClrProcess_Fields.cpp" />
     <ClCompile Include="src\ClrProcess_Heap.cpp" />
     <ClCompile Include="src\ClrProcess_Threading.cpp" />
     <ClCompile Include="src\ClrProcess_Reflection.cpp" />
-    <ClCompile Include="src\DictionaryEnumerator.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

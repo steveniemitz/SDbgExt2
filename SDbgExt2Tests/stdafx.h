@@ -10,7 +10,6 @@
 
 // Headers for CppUnitTest
 #include "CppUnitTest.h"
-#include "..\SDbgCore\inc\ClrProcess.h"
-#include "..\SDbgCore\inc\IClrProcess.h"
+#include "..\SDbgCore\inc\SDbgCoreApi.h"
 #include <atlbase.h>
 // TODO: reference additional headers your program requires here

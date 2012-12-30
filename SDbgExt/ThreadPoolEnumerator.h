@@ -1,14 +1,12 @@
 #pragma once
-#include "IClrProcess.h"
-#include "IClrObjectArray.h"
-#include "IClrObject.h"
+#include "..\SDbgCore\inc\SDbgCoreApi.h"
 #include <set>
 
 class ThreadPoolEnumerator
 {
 public:
-	ThreadPoolEnumerator(CComPtr<IClrProcess> dac, EnumThreadPoolItemsCallback tpQueueCb, PVOID state)
-		: m_dac(dac), m_tpQueueCb(tpQueueCb), m_state(state)
+	ThreadPoolEnumerator(CComPtr<ISDbgExt> ext, CComPtr<IClrProcess> dac, EnumThreadPoolItemsCallback tpQueueCb, PVOID state)
+		: m_ext(ext), m_dac(dac), m_tpQueueCb(tpQueueCb), m_state(state)
 	{
 	}
 
@@ -139,11 +137,6 @@ private:
 			BOOL isTask = FALSE;
 			CComPtr<IClrObject> cb;
 
-			if (callbackField == NULL)
-			{
-				
-			}
-
 			if (FAILED(workItem->GetFieldValue(L"callback", &cb)) || !(cb->Address())) //It might also be a Task, check m_action
 			{
 				workItem->GetFieldValue(L"m_action", &cb);
@@ -160,7 +153,7 @@ private:
 				{
 					//// Get the target of the method via _reqMsg
 					CLRDATA_ADDRESS l2Delegate = 0;
-					if (SUCCEEDED(m_dac->EvaluateExpression(cb->Address(), L"_target._reqMsg.MI.m_handle", &l2Delegate)) && l2Delegate)
+					if (SUCCEEDED(m_ext->EvaluateExpression(cb->Address(), L"_target._reqMsg.MI.m_handle", &l2Delegate)) && l2Delegate)
 					{
 						cbType = CB_TYPE_ASYNC_WORKITEM;
 						delegatePtr = l2Delegate;
@@ -188,6 +181,7 @@ private:
 		}
 	}
 		
+	CComPtr<ISDbgExt> m_ext;
 	CComPtr<IClrProcess> m_dac;
 	CLRDATA_ADDRESS m_asyncWorkItemFinishAsyncWork;
 	CLRDATA_ADDRESS m_adAsyncWorkItemFinishAsyncWork;

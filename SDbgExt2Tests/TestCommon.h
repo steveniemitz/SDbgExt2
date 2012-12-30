@@ -1,7 +1,9 @@
 #pragma once
 #include "stdafx.h"
+#include "..\SDbgCore\inc\SDbgCoreApi.h"
+#include "..\SDbgExt\SDbgExtApi.h"
 
-void SetupTests(WCHAR *dumpFile, IClrProcess **p);
+void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext);
 
 #ifndef _WIN64
 #define ADD_BASIC_TEST_INIT  ADD_TEST_INIT(L"..\\Dumps\\x86\\basic.dmp") 
@@ -9,10 +11,11 @@ void SetupTests(WCHAR *dumpFile, IClrProcess **p);
 #define ADD_BASIC_TEST_INIT	 ADD_TEST_INIT(L"..\\..\\Dumps\\x64\\basic.dmp")
 #endif
 
-#define ADD_TEST_INIT(file)	TEST_METHOD_INITIALIZE(Init) { SetupTests(file, &p); } \
-							TEST_METHOD_CLEANUP(Cleanup) { p->Release(); } \
+#define ADD_TEST_INIT(file)	TEST_METHOD_INITIALIZE(Init) { SetupTests(file, &p, &ext); } \
+							TEST_METHOD_CLEANUP(Cleanup) { p->Release(); ext->Release(); } \
 							private: \
 								IClrProcess *p; \
+								ISDbgExt *ext; \
 							public: \
 
 

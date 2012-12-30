@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "..\inc\DictionaryEnumerator.h"
+#include "DictionaryEnumerator.h"
 
-HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, DctEntryCallback callback, PVOID state)
+HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, EnumHashtableCallback callback, PVOID state)
 {
 	CComPtr<IXCLRDataProcess3> proc = m_dac->GetProcess();
 
@@ -56,7 +56,7 @@ HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, DctEntryCallb
 	}
 }
 
-HRESULT DctEnumerator::EnumerateDctEntriesImpl(CLRDATA_ADDRESS dctObj, CLRDATA_ADDRESS methodTable, DctEntryCallback cb, PVOID state
+HRESULT DctEnumerator::EnumerateDctEntriesImpl(CLRDATA_ADDRESS dctObj, CLRDATA_ADDRESS methodTable, EnumHashtableCallback cb, PVOID state
 												, WCHAR *bucketsName, WCHAR *keyFieldName, WCHAR *valFieldName, WCHAR *hashFieldName)
 {
 	CLRDATA_ADDRESS entriesPtr = NULL;
@@ -105,7 +105,7 @@ HRESULT DctEnumerator::GetEntryOffsets(CLRDATA_ADDRESS entriesPtr, WCHAR *keyFie
 }
 
 HRESULT DctEnumerator::ReadEntries(DWORD arrayEntries, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataBase, ULONG arrayElementSize,
-									ULONG keyOffset, ULONG valOffset, ULONG hashCodeOffset, DctEntryCallback cb, PVOID state)
+									ULONG keyOffset, ULONG valOffset, ULONG hashCodeOffset, EnumHashtableCallback cb, PVOID state)
 {	
 	for (DWORD a = 0; a < arrayEntries; a++)
 	{
@@ -119,7 +119,7 @@ HRESULT DctEnumerator::ReadEntries(DWORD arrayEntries, CLRDATA_ADDRESS bucketArr
 }
 
 
-HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, DctEntryCallback cb, PVOID state)
+HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, EnumHashtableCallback cb, PVOID state)
 {
 	HRESULT hr = S_OK;
 
@@ -154,7 +154,7 @@ HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashC
 }
 
 
-HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, DctEntryCallback callback, PVOID state)
+HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, EnumHashtableCallback callback, PVOID state)
 {
 	ClrObjectData od = {};
 	HRESULT hr = S_OK;
