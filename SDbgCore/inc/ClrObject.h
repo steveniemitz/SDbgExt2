@@ -1,7 +1,5 @@
 #pragma once
-#include "IClrObject.h"
 #include "ClrObjectArray.h"
-#include <atlcom.h>
 
 class ClrObject : public IClrObject
 {

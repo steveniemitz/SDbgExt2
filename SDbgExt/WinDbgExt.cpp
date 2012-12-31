@@ -53,6 +53,6 @@ HRESULT CreateClrProcessFromWinDbg(CComPtr<IDebugClient> client, IClrProcess **p
 DBG_FUNC(spt_test)
 {
 	DBG_PREAMBLE;
-
+	
 	return S_OK;
 }

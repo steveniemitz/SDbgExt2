@@ -1,9 +1,6 @@
 #pragma once
-
 #include "stdafx.h"
-#include "SDbgCore.h"
-#include "IDacMemoryAccess.h"
-#include <atlbase.h>
+#include <clrdata.h>
 
 typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
 typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
@@ -78,6 +75,7 @@ IClrProcess : public IUnknown
 	virtual STDMETHODIMP EnumHeapObjects(EnumObjectsCallback cb, PVOID state) = 0;
 
 	virtual STDMETHODIMP GetClrObject(CLRDATA_ADDRESS obj, IClrObject **ret) = 0;
+	virtual STDMETHODIMP GetClrObjectArray(CLRDATA_ADDRESS objArray, IClrObjectArray **ret) = 0;
 
 	virtual STDMETHODIMP FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, WCHAR *buffer) = 0;
 	virtual STDMETHODIMP GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc) = 0;

@@ -4,6 +4,8 @@
 #include <algorithm>
 #include "..\inc\ClrObject.h"
 
+#define Align(addr) (addr + (sizeof(void*) - 1)) & ~(sizeof(void*) - 1)
+
 HRESULT ClrProcess::EnumHeapObjects(EnumObjectsCallback cb, PVOID state)
 {
 	struct EnumSegmentsState

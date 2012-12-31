@@ -21,9 +21,6 @@
     <ClInclude Include="inc\targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\SDbgCore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\IDacMemoryAccess.h">
       <Filter>Header Files</Filter>
     </ClInclude>

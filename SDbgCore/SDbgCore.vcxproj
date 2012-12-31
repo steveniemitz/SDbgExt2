@@ -156,7 +156,6 @@
     <ClInclude Include="inc\IClrObject.h" />
     <ClInclude Include="inc\IClrProcess.h" />
     <ClInclude Include="inc\IDacMemoryAccess.h" />
-    <ClInclude Include="inc\SDbgCore.h" />
     <ClInclude Include="inc\IXCLRDataProcess3.h" />
     <ClInclude Include="inc\SDbgCoreApi.h" />
     <ClInclude Include="inc\targetver.h" />

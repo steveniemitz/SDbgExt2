@@ -1,11 +1,11 @@
 #pragma once
-#include "IClrObjectArray.h"
+#include "stdafx.h"
 
 class ClrObjectArray : public IClrObjectArray
 {
 public:
 	ClrObjectArray(IClrProcess *proc, CLRDATA_ADDRESS obj)
-		: m_proc(proc), m_addr(obj), m_ref(1), m_mtAddr(0), m_arrayInit(FALSE)
+		: m_proc(proc), m_addr(obj), m_ref(1), m_arrayInit(FALSE)
 	{
 	}
 	
@@ -35,9 +35,41 @@ public:
         return S_OK;
     }
 
-	STDMETHODIMP GetItem(ULONG32 idx, IClrObject **ret)
+	STDMETHODIMP GetItem(ULONG32 idx, CLRDATA_ADDRESS *objAddr)
 	{
 		HRESULT hr = S_OK;
+		if (FAILED(hr = EnsureInit()))
+			return hr;
+
+		if (idx >= m_arrayData.NumElements)
+			return E_INVALIDARG;
+
+		*objAddr = 0;
+		return m_proc->GetDataAccess()->ReadVirtual(m_arrayData.FirstElement + (idx * m_arrayData.ElementSize), objAddr, sizeof(void*), NULL);
+	}
+
+	STDMETHODIMP GetItem(ULONG32 idx, IClrObject **ret)
+	{
+		CLRDATA_ADDRESS objAddr = 0;
+		HRESULT hr = S_OK;
+		RETURN_IF_FAILED(GetItem(idx, &objAddr));
+		
+		return m_proc->GetClrObject(objAddr, ret);
+	}
+
+	STDMETHODIMP_(size_t) GetSize()
+	{
+		if (FAILED(EnsureInit()))
+			return -1;
+
+		return m_arrayData.NumElements;
+	}
+
+private:
+
+	STDMETHODIMP EnsureInit()
+	{
+		HRESULT hr;
 		if (!m_arrayInit)
 		{
 			ClrObjectData od = {};
@@ -45,21 +77,12 @@ public:
 			m_arrayData = od.ArrayData;
 			m_arrayInit = TRUE;
 		}
-
-		if (idx >= m_arrayData.NumElements)
-			return E_INVALIDARG;
-
-		CLRDATA_ADDRESS objAddr = 0;
-		RETURN_IF_FAILED(m_proc->GetDataAccess()->ReadVirtual(m_arrayData.FirstElement + (idx * m_arrayData.ElementSize), &objAddr, sizeof(void*), NULL));
-
-		return m_proc->GetClrObject(objAddr, ret);
+		return S_OK;
 	}
 
-private:
 	int m_ref;
 	CComPtr<IClrProcess> m_proc;
 	CLRDATA_ADDRESS m_addr;
-	CLRDATA_ADDRESS m_mtAddr;
 	BOOL m_arrayInit;
 	ClrArrayData m_arrayData;
 };

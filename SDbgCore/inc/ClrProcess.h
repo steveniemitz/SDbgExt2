@@ -1,10 +1,6 @@
 #pragma once
-
 #include "stdafx.h"
-#include "SDbgCore.h"
-#include "IDacMemoryAccess.h"
-#include "IClrProcess.h"
-#include <atlbase.h>
+#include "ClrObjectArray.h"
 
 class ClrProcess : public IClrProcess
 {
@@ -45,6 +41,7 @@ public:
 	STDMETHODIMP GetProcess(IXCLRDataProcess3 **ppDac)
 	{
 		*ppDac = m_pDac;
+		(*ppDac)->AddRef();
 
 		return S_OK;
 	}
@@ -52,7 +49,8 @@ public:
 	STDMETHODIMP GetDataAccess(IDacMemoryAccess **ppDcma)
 	{
 		*ppDcma = m_dcma;
-
+		(*ppDcma)->AddRef();
+		
 		return S_OK;
 	}
 
@@ -91,15 +89,30 @@ public:
 	STDMETHODIMP EnumHeapObjects(EnumObjectsCallback cb, PVOID state);
 		
 	STDMETHODIMP GetClrObject(CLRDATA_ADDRESS obj, IClrObject **ret);
+	STDMETHODIMP GetClrObjectArray(CLRDATA_ADDRESS objArray, IClrObjectArray **ret)
+	{
+		*ret = new ClrObjectArray(this, objArray);
+		return S_OK;
+	}
 
 	STDMETHODIMP FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, WCHAR *buffer);
 	STDMETHODIMP GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc);
 
 private:
+
+	struct UsefulFields
+	{
+		ClrFieldDescData Delegate_Target;
+		ClrFieldDescData Delegate_MethodPtr;
+		ClrFieldDescData Delegate_MethodPtrAux;
+	};	
+
 	ULONG m_dwRef;
 	CComPtr<IXCLRDataProcess3> m_pDac;
 	CComPtr<IDacMemoryAccess> m_dcma;
 
+	static UsefulFields s_usefulFields;
+	
 	STDMETHODIMP FindThreadById(DWORD id, DWORD fieldOffsetInClrThreadData, CLRDATA_ADDRESS *threadObj);
 	STDMETHODIMP GetManagedThreadObj(CLRDATA_ADDRESS unmanagedThreadObj, CLRDATA_ADDRESS *managedThreadObj);
 

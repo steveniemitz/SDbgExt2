@@ -1,6 +1,10 @@
 #pragma once
-#include "ClrProcess.h"
-#include "IClrObjectArray.h"
+#include "stdafx.h"
+#include <atlbase.h>
+#include <atlcom.h>
+#include <clrdata.h>
+
+struct IClrObjectArray;
 
 MIDL_INTERFACE("AA53AC80-D86E-47CE-ABE9-69C3C82B58C7")
 IClrObject : public IUnknown

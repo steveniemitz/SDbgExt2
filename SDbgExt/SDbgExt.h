@@ -35,9 +35,21 @@ public:
         punk->AddRef();
         return S_OK;
     }
+		
+	STDMETHODIMP GetProcess(IClrProcess **proc)
+	{
+		*proc = m_proc;
+		(*proc)->AddRef();
+		return S_OK;
+	}
+	
+	STDMETHODIMP GetObjectData(CLRDATA_ADDRESS objAddr, ClrObjectData *data)
+	{
+		return m_proc->GetProcess()->GetObjectData(objAddr, data);
+	}
 
 	STDMETHODIMP EnumerateHashtable(CLRDATA_ADDRESS dctObj, EnumHashtableCallback callback, PVOID state);
-	STDMETHODIMP EnumerateThreadPools(EnumThreadPoolItemsCallback tpQueueCb, PVOID state);
+	STDMETHODIMP EnumerateThreadPoolQueues(EnumThreadPoolItemsCallback tpQueueCb, PVOID state);
 	STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPCWSTR expression, CLRDATA_ADDRESS *result);
 
 private:

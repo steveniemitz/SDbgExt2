@@ -19,5 +19,14 @@ namespace SDbgExt2Tests2
 			ASSERT_SOK(hr);
 		}
 
+		TEST_METHOD(SDbg_GetProcess_RefCounting)
+		{
+			for (int a = 0; a < 10; a++)
+			{
+				CComPtr<IClrProcess> proc2;
+				ext->GetProcess(&proc2);
+			}
+		}
+
 	};
 }

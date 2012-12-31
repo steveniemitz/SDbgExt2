@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SDbgExt.h"
 #include "DictionaryEnumerator.h"
+#include <string>
 
 #define RESET_BUFFER RETURN_IF_FAILED(hr);				\
 					 bufferPos = 0;								\
@@ -17,7 +18,7 @@ HRESULT CSDbgExt::EvaluateExpression(CLRDATA_ADDRESS rootAddr, LPCWSTR expressio
 	int bufferPos = 0;
 	CLRDATA_ADDRESS currAddr = rootAddr;
 	BOOL validDctLookup = FALSE;
-	for (int a = 0; a < len; a++)
+	for (size_t a = 0; a < len; a++)
 	{
 		if (str[a] == L'.')
 		{

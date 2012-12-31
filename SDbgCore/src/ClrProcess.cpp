@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "..\inc\ClrProcess.h"
-#include <iterator>
-#include <algorithm>
 #include "..\inc\ClrObject.h"
+#include "..\inc\ClrProcess.h"
+
+ClrProcess::UsefulFields ClrProcess::s_usefulFields = {};
 
 HRESULT __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret)
 {
@@ -84,14 +84,30 @@ HRESULT ClrProcess::FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, WCHAR *buff
 HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc)
 {
 	HRESULT hr = S_OK;
+
+	if (s_usefulFields.Delegate_MethodPtr.Field == NULL || s_usefulFields.Delegate_MethodPtrAux.Field == NULL || s_usefulFields.Delegate_Target.Field == NULL)
+	{
+		ClrObjectData od = {};
+		RETURN_IF_FAILED(m_pDac->GetObjectData(delegateAddr, &od));
+
+		ClrFieldDescData fd = {};
+
+		RETURN_IF_FAILED(FindFieldByName(od.MethodTable, L"_target", NULL, &(s_usefulFields.Delegate_Target)));
+		RETURN_IF_FAILED(FindFieldByName(od.MethodTable, L"_methodPtr", NULL, &(s_usefulFields.Delegate_MethodPtr)));
+		RETURN_IF_FAILED(FindFieldByName(od.MethodTable, L"_methodPtrAux", NULL, &(s_usefulFields.Delegate_MethodPtrAux)));
+	}
+		
 	CLRDATA_ADDRESS methodPtr = NULL;
 	CLRDATA_ADDRESS methodPtrAux = NULL;
 
 	if (target)
-		hr = GetFieldValuePtr(delegateAddr, L"_target", target);
+	{
+		*target = NULL;
+		hr = ReadFieldValueBuffer(delegateAddr, s_usefulFields.Delegate_Target, 0, target, NULL);
+	}
 
-	hr = GetFieldValuePtr(delegateAddr, L"_methodPtr", &methodPtr);
-	hr = GetFieldValuePtr(delegateAddr, L"_methodPtrAux", &methodPtrAux);
+	hr = ReadFieldValueBuffer(delegateAddr, s_usefulFields.Delegate_MethodPtr, 0, &methodPtr, NULL);
+	hr = ReadFieldValueBuffer(delegateAddr, s_usefulFields.Delegate_MethodPtrAux, 0, &methodPtrAux, NULL);
 					
 	if (methodPtrAux != NULL)
 	{
@@ -104,14 +120,18 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRES
 	else if (methodPtr != NULL)
 	{
 		hr = m_pDac->GetMethodDescPtrFromIP(methodPtr, methodDesc);
-		if (FAILED(hr))
+		if (SUCCEEDED(hr))
+		{
+			return S_OK;
+		}
+		else
 		{
 			ClrCodeHeaderData chData = {};
 			RETURN_IF_FAILED(m_pDac->GetCodeHeaderData(methodPtr, &chData));
 			*methodDesc = chData.MethodDescPtr;
 			return S_OK;
 		}
-		return E_INVALIDARG;
+		
 	}	
 	else
 	{

@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "..\inc\ClrProcess.h"
-#include <iterator>
-#include <algorithm>
 #include "..\inc\ClrObject.h"
 
 HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData)

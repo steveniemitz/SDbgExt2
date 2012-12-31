@@ -175,6 +175,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DumpThreadPoolQueues.cpp" />
     <ClCompile Include="GetDelegateMethod.cpp" />
     <ClCompile Include="SDbgExt.cpp" />
     <ClCompile Include="SDbgExt_DumpThreadPool.cpp" />

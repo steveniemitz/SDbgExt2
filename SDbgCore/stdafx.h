@@ -11,7 +11,9 @@
 #include <tchar.h>
 #include <Windows.h>
 #include <atlbase.h>
-
-#define NO_WDBG_EXT
-
-// TODO: reference additional headers your program requires here
+#include <atlcom.h>
+#include <iterator>
+#include <algorithm>
+#include <vector>
+#include <clrdata.h>
+#include "inc\SDbgCoreApi.h"

@@ -8,7 +8,7 @@
 
 #define DBG_API extern "C" __declspec(dllexport) HRESULT
 #define DBG_FUNC(name) DBG_API name(PDEBUG_CLIENT clientPtr, PCSTR args)
-#define dwdprintf(ctrl, x,...) dbg.Control->ControlledOutputWide(DEBUG_OUTCTL_AMBIENT_DML, DEBUG_OUTPUT_NORMAL, ##x, __VA_ARGS__)
+#define dwdprintf(ctrl, x,...) ctrl->ControlledOutputWide(DEBUG_OUTCTL_AMBIENT_DML, DEBUG_OUTPUT_NORMAL, ##x, __VA_ARGS__)
 //#define dwdprintf_res(ctrl, resName, ...) dwdprintf(ctrl, SR::resName(), __VA_ARGS__);
 
 HRESULT CreateClrProcessFromWinDbg(CComPtr<IDebugClient> client, IClrProcess **proc);
