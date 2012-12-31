@@ -1,4 +1,0 @@
-import "oaidl.idl";
-import "ocidl.idl";
-
-typedef ULONG64 CLRDATA_ADDRESS;

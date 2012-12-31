@@ -1,6 +1,6 @@
 import "oaidl.idl";
 import "ocidl.idl";
-import "idl\ClrTypes.idl";
+import "idl\_ClrTypes.idl";
 
 #define PADIMPL(prefix,bytes)	BYTE padding##prefix[##bytes]
 #define PAD(prefix,bytes)	PADIMPL(prefix,bytes)

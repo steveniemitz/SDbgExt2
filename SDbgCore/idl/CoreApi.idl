@@ -1,8 +1,10 @@
 import "oaidl.idl";
 import "ocidl.idl";
 
-import "idl\IXCLRDataProcess3.idl";
-import "idl\IClrObject.idl";
+import "idl\_IXCLRDataProcess3.idl";
+//import "idl\_IClrProcess.idl";
+import "idl\_IClrObject.idl";
+//import "idl\_ISDbgExt.idl";
 
 [
 	uuid(D90CA04C-0A5E-4E81-9F53-83EFB19B3EAD)
@@ -12,5 +14,7 @@ library SDbgCore
 	interface IClrObjectArray;
 	interface IDacMemoryAccess;
 	interface IXCLRDataProcess3;
+	//interface IClrProcess;
+	//interface ISDbgExt;
 	enum CorElementType;
 }

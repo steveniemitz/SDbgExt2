@@ -1,0 +1,45 @@
+import "oaidl.idl";
+import "ocidl.idl";
+import "idl\_ClrTypes.idl";
+
+interface IClrProcess;
+typedef struct DctEntry
+{
+	CLRDATA_ADDRESS EntryPtr;
+	CLRDATA_ADDRESS KeyPtr;
+	CLRDATA_ADDRESS ValuePtr;
+	ULONG32 HashCode;
+} DctEntry;
+
+typedef enum THREADPOOL_WORKITEM_TYPE 
+{ 
+	CB_TYPE_INVALID, 
+	CB_TYPE_QUEUEUSERWORKITEM, 
+	CB_TYPE_ASYNC_WORKITEM  
+} THREADPOOL_WORKITEM_TYPE;
+
+typedef struct ThreadPoolWorkItem
+{
+	CLRDATA_ADDRESS WorkItemPtr;
+	CLRDATA_ADDRESS StatePtr;
+	CLRDATA_ADDRESS DelegatePtr;
+	CLRDATA_ADDRESS DelegateMethodDesc;
+	THREADPOOL_WORKITEM_TYPE Type;
+} ThreadPoolWorkItem;
+
+typedef BOOL (*EnumHashtableCallback)(DctEntry ent, PVOID state);
+typedef BOOL (*EnumThreadPoolItemsCallback)([in] AppDomainAndValue queue, [in] ThreadPoolWorkItem workItem, [in, out] PVOID state);
+
+[
+	object,
+	local,
+	uuid(1F0565EB-95CE-48DE-BC4A-54AD9C034A2C)
+]
+interface ISDbgExt : IUnknown
+{
+	HRESULT GetProcess(IClrProcess **proc);
+	HRESULT GetObjectData(CLRDATA_ADDRESS objAddr, ClrObjectData *data);
+	HRESULT EvaluateExpression(CLRDATA_ADDRESS rootObj, LPCWSTR expression, CLRDATA_ADDRESS *result);
+	HRESULT EnumerateHashtable([in] CLRDATA_ADDRESS dctObj, [in] EnumHashtableCallback cb, [in] PVOID state);
+	HRESULT EnumerateThreadPoolQueues([in] EnumThreadPoolItemsCallback tpQueueCb, [in] PVOID state);
+};

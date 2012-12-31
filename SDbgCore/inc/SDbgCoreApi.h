@@ -1,10 +1,7 @@
 #pragma once
 
-#ifdef _DEBUG
-#import "..\Debug\SDbgCore.tlb" no_namespace, raw_interfaces_only
-#else
-#import "..\Release\SDbgCore.tlb" no_namespace, raw_interfaces_only
-#endif
+
+#import "..\..\lib\SDbgCore.tlb" no_namespace, raw_interfaces_only
 #include "IClrProcess.h"
 
 #ifdef SDBGAPIEXPORTS

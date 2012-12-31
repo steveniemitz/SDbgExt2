@@ -139,5 +139,34 @@ namespace SDbgExt2Tests2
 			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x02ec4148, 0x0000000002ec5cd8), managedObj);
 		}
 
+		TEST_METHOD(BeginEnumThreads_BigBlock)
+		{
+			CComPtr<IEnumClrThreads> t;
+			p->BeginEnumThreads(&t);
+
+			EnumClrThreadData data[5];
+			ULONG numItems;
+			auto hr = t->Next(5, data, &numItems);
+			
+			Assert::AreEqual(S_FALSE, hr);
+			Assert::AreEqual((ULONG)3, numItems);
+		}
+
+		TEST_METHOD(BeginEnumThreads_OneAtATime)
+		{
+			CComPtr<IEnumClrThreads> t;
+			p->BeginEnumThreads(&t);
+
+			EnumClrThreadData data;
+			ULONG numItems = 0;
+			while(t->Next(1, &data, NULL) == S_OK)
+			{
+				numItems++;
+			}
+		
+			Assert::AreEqual((ULONG)3, numItems);
+			Assert::AreEqual((CLRDATA_ADDRESS)0, data.ThreadData.NextThread);
+		}
+
 	};
 }

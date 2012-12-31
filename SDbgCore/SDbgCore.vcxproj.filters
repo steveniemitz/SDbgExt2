@@ -42,6 +42,12 @@
     <ClInclude Include="inc\SDbgCoreApi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\CEnumStackObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\CEnumClrThreads.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -64,16 +70,22 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="idl\ClrTypes.idl">
-      <Filter>IDL</Filter>
-    </Midl>
     <Midl Include="idl\CoreApi.idl">
       <Filter>IDL</Filter>
     </Midl>
-    <Midl Include="idl\IClrObject.idl">
+    <Midl Include="idl\_ClrTypes.idl">
       <Filter>IDL</Filter>
     </Midl>
-    <Midl Include="idl\IXCLRDataProcess3.idl">
+    <Midl Include="idl\_IClrObject.idl">
+      <Filter>IDL</Filter>
+    </Midl>
+    <Midl Include="idl\_IXCLRDataProcess3.idl">
+      <Filter>IDL</Filter>
+    </Midl>
+    <Midl Include="idl\_ISDbgExt.idl">
+      <Filter>IDL</Filter>
+    </Midl>
+    <Midl Include="idl\_IClrProcess.idl">
       <Filter>IDL</Filter>
     </Midl>
   </ItemGroup>

@@ -18,8 +18,9 @@ namespace SDbgExt2Tests2
 #ifndef _WIN64
 	 { { 0x023c3fb0, 0x023c2418, 0x023c2424 }, { 0x023c3fc0, 0x023c24e4, 0x023c24f0 } };
 #else
+	 { { 0, 0 } };
 #endif
-			DumpDictionary_TestImpl((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x023c2318, "boom"), 58, expected, ARRAYSIZE(expected));
+			DumpDictionary_TestImpl((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x023c2318, 0), 58, expected, ARRAYSIZE(expected));
 		}
 
 		TEST_METHOD(DumpDictionary_Hashtable)
@@ -28,8 +29,9 @@ namespace SDbgExt2Tests2
 #ifndef _WIN64
 	 { { 0x023c33f0, 0x023c2b4c, 0x023c2b58 }, { 0x023c33fc, 0x023c2da4, 0x023c2db0 } };
 #else
+				{ { 0, 0 } };
 #endif
-			DumpDictionary_TestImpl((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x023c23b4, "boom"), 58, expected, ARRAYSIZE(expected));
+			DumpDictionary_TestImpl((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x023c23b4, 0), 58, expected, ARRAYSIZE(expected));
 		}
 
 		TEST_METHOD(DumpDictionary_HybridDictionaryWithList)
@@ -38,8 +40,9 @@ namespace SDbgExt2Tests2
 #ifndef _WIN64
 	{ { 0x023c244c, 0x023c2418, 0x023c2424 }, { 0x023c24fc, 0x023c24e4, 0x023c24f0 } };
 #else
+				{ { 0, 0 } };
 #endif
-			DumpDictionary_TestImpl((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x023c23a0, "boom"), 5, expected, ARRAYSIZE(expected));
+			DumpDictionary_TestImpl((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x023c23a0, 0), 5, expected, ARRAYSIZE(expected));
 		}
 
 		TEST_METHOD(DumpDictionary_HybridDictionaryWithDictionary)
@@ -48,8 +51,9 @@ namespace SDbgExt2Tests2
 #ifndef _WIN64
 	{ { 0x023c38d0, 0x023c45bc, 0x023c45c8 }, { 0x023c38dc, 0x023c29b0, 0x023c29bc } };
 #else
+				{ { 0, 0 } };
 #endif
-			DumpDictionary_TestImpl((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x023c238c, "boom"), 58, expected, ARRAYSIZE(expected));
+			DumpDictionary_TestImpl((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x023c238c, 0), 58, expected, ARRAYSIZE(expected));
 		}
 
 		void DumpDictionary_TestImpl(CLRDATA_ADDRESS dctAddr, size_t numEntriesExpected, DctEntry *expected, int countExpected)

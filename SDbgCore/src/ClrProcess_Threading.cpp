@@ -3,6 +3,8 @@
 #include <iterator>
 #include <algorithm>
 #include "..\inc\ClrObject.h"
+#include "..\inc\CEnumStackObjects.h"
+#include "..\inc\CEnumClrThreads.h"
 
 HRESULT ClrProcess::EnumThreads(EnumThreadsCallback cb, PVOID state)
 {
@@ -128,6 +130,18 @@ HRESULT ClrProcess::EnumStackObjects(DWORD corThreadId, EnumObjectsCallback cb, 
 	RETURN_IF_FAILED(FindThreadByCorThreadId(corThreadId, &threadObj));
 
 	return EnumStackObjects(threadObj, cb, state);
+}
+
+HRESULT ClrProcess::BeginEnumStackObjects(CLRDATA_ADDRESS threadObj, IEnumClrObjects **ret)
+{
+	//*ret = new CEnumStackObjects(this);
+	return E_NOTIMPL;
+}
+
+HRESULT ClrProcess::BeginEnumThreads(IEnumClrThreads **ret)
+{
+	*ret = new CEnumClrThreads(this);
+	return E_NOTIMPL;
 }
 
 HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallback cb, PVOID state)
