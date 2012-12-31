@@ -224,7 +224,7 @@ HRESULT DctEnumerator::FindDctEntryByKey(CLRDATA_ADDRESS dctObj, LPCWSTR key, CL
 		DctKeySearchState *ds = reinterpret_cast<DctKeySearchState *>(state);
 		std::wstring keyStr(ds->TargetKeyLen + 1, '\0');
 
-		if (SUCCEEDED(ds->pDac->GetObjectStringData(entry.KeyPtr, ds->TargetKeyLen + 1, &keyStr[0], NULL)))
+		if (SUCCEEDED(ds->pDac->GetObjectStringData(entry.KeyPtr, (UINT)ds->TargetKeyLen + 1, &keyStr[0], NULL)))
 		{
 			if (keyStr.compare(0, ds->TargetKeyLen, ds->TargetKey) == 0)
 			{

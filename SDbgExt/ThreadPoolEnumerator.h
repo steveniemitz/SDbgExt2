@@ -25,7 +25,7 @@ public:
 		CLRDATA_ADDRESS tpGlobalsMT, workQueueField;
 		if (SUCCEEDED(m_dac->FindTypeByName(L"mscorlib.dll", L"System.Threading.ThreadPoolGlobals", &tpGlobalsMT)) 
 			&& SUCCEEDED(m_dac->FindFieldByName(tpGlobalsMT, L"workQueue", &workQueueField, NULL))
-			&& SUCCEEDED(m_dac->GetStaticFieldValues(workQueueField, values.size(), values.data(), &numValues))
+			&& SUCCEEDED(m_dac->GetStaticFieldValues(workQueueField, (ULONG32)values.size(), values.data(), &numValues))
 			&& numValues > 0)
 		{
 			for (UINT a = 0; a < numValues; a++)
@@ -46,7 +46,7 @@ public:
 
 		if (SUCCEEDED(m_dac->FindTypeByName(L"mscorlib.dll", L"System.Threading.ThreadPoolWorkQueue", &localQueuesMT)) 
 			&& SUCCEEDED(m_dac->FindFieldByName(localQueuesMT, L"allThreadQueues", &allThreadQueuesField, NULL))
-			&& SUCCEEDED(m_dac->GetStaticFieldValues(allThreadQueuesField, values.size(), values.data(), &numValues))
+			&& SUCCEEDED(m_dac->GetStaticFieldValues(allThreadQueuesField, (ULONG32)values.size(), values.data(), &numValues))
 			&& numValues > 0)
 		if (SUCCEEDED(hr) && numValues > 0)
 		{
