@@ -1,5 +1,4 @@
 #pragma once
-#include "..\SDbgCore\inc\IXCLRDataProcess3.h"
 #include "ISDbgExt.h"
 
 HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma);

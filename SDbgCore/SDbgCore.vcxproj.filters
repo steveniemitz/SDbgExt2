@@ -13,15 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="IDL">
+      <UniqueIdentifier>{a4f4b442-0789-48b5-8d84-33ba235703d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\IXCLRDataProcess3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\ClrProcess.h">
@@ -64,17 +64,17 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="inc\CoreApi.idl">
-      <Filter>Header Files</Filter>
+    <Midl Include="idl\ClrTypes.idl">
+      <Filter>IDL</Filter>
     </Midl>
-    <Midl Include="inc\ClrTypes.idl">
-      <Filter>Header Files</Filter>
+    <Midl Include="idl\CoreApi.idl">
+      <Filter>IDL</Filter>
     </Midl>
-    <Midl Include="inc\IClrObject.idl">
-      <Filter>Header Files</Filter>
+    <Midl Include="idl\IClrObject.idl">
+      <Filter>IDL</Filter>
     </Midl>
-    <Midl Include="inc\IXCLRDataProcess3.idl">
-      <Filter>Header Files</Filter>
+    <Midl Include="idl\IXCLRDataProcess3.idl">
+      <Filter>IDL</Filter>
     </Midl>
   </ItemGroup>
 </Project>

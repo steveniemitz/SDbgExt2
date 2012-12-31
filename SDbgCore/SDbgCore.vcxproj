@@ -153,7 +153,6 @@
     <ClInclude Include="inc\ClrObjectArray.h" />
     <ClInclude Include="inc\ClrProcess.h" />
     <ClInclude Include="inc\IClrProcess.h" />
-    <ClInclude Include="inc\IXCLRDataProcess3.h" />
     <ClInclude Include="inc\SDbgCoreApi.h" />
     <ClInclude Include="inc\targetver.h" />
     <ClInclude Include="stdafx.h" />
@@ -170,15 +169,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="inc\ClrTypes.idl">
+    <Midl Include="idl\ClrTypes.idl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Midl>
-    <Midl Include="inc\CoreApi.idl" />
-    <Midl Include="inc\IClrObject.idl">
+    <Midl Include="idl\CoreApi.idl" />
+    <Midl Include="idl\IClrObject.idl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Midl>
-    <Midl Include="inc\IXCLRDataProcess3.idl">
-      <TypeLibraryName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\lib\%(Filename).tlb</TypeLibraryName>
+    <Midl Include="idl\IXCLRDataProcess3.idl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </Midl>
   </ItemGroup>

@@ -1,8 +1,8 @@
 import "oaidl.idl";
 import "ocidl.idl";
 
-import "inc\IXCLRDataProcess3.idl";
-import "inc\IClrObject.idl";
+import "idl\IXCLRDataProcess3.idl";
+import "idl\IClrObject.idl";
 
 [
 	uuid(D90CA04C-0A5E-4E81-9F53-83EFB19B3EAD)
