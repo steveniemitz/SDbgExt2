@@ -21,9 +21,6 @@
     <ClInclude Include="inc\targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\IDacMemoryAccess.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\IXCLRDataProcess3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -36,13 +33,7 @@
     <ClInclude Include="inc\IClrProcess.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\IClrObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\ClrObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\IClrObjectArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\ClrObjectArray.h">
@@ -71,5 +62,19 @@
     <ClCompile Include="src\ClrProcess_Reflection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="inc\CoreApi.idl">
+      <Filter>Header Files</Filter>
+    </Midl>
+    <Midl Include="inc\ClrTypes.idl">
+      <Filter>Header Files</Filter>
+    </Midl>
+    <Midl Include="inc\IClrObject.idl">
+      <Filter>Header Files</Filter>
+    </Midl>
+    <Midl Include="inc\IXCLRDataProcess3.idl">
+      <Filter>Header Files</Filter>
+    </Midl>
   </ItemGroup>
 </Project>

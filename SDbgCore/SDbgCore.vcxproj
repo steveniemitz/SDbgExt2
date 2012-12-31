@@ -152,10 +152,7 @@
     <ClInclude Include="inc\ClrObject.h" />
     <ClInclude Include="inc\ClrObjectArray.h" />
     <ClInclude Include="inc\ClrProcess.h" />
-    <ClInclude Include="inc\IClrObjectArray.h" />
-    <ClInclude Include="inc\IClrObject.h" />
     <ClInclude Include="inc\IClrProcess.h" />
-    <ClInclude Include="inc\IDacMemoryAccess.h" />
     <ClInclude Include="inc\IXCLRDataProcess3.h" />
     <ClInclude Include="inc\SDbgCoreApi.h" />
     <ClInclude Include="inc\targetver.h" />
@@ -171,6 +168,19 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="inc\ClrTypes.idl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Midl>
+    <Midl Include="inc\CoreApi.idl" />
+    <Midl Include="inc\IClrObject.idl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Midl>
+    <Midl Include="inc\IXCLRDataProcess3.idl">
+      <TypeLibraryName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)\lib\%(Filename).tlb</TypeLibraryName>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Midl>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -35,7 +35,7 @@ public:
         return S_OK;
     }
 
-	STDMETHODIMP GetItem(ULONG32 idx, CLRDATA_ADDRESS *objAddr)
+	STDMETHODIMP GetItemAddr(ULONG32 idx, CLRDATA_ADDRESS *objAddr)
 	{
 		HRESULT hr = S_OK;
 		if (FAILED(hr = EnsureInit()))
@@ -48,16 +48,16 @@ public:
 		return m_proc->GetDataAccess()->ReadVirtual(m_arrayData.FirstElement + (idx * m_arrayData.ElementSize), objAddr, sizeof(void*), NULL);
 	}
 
-	STDMETHODIMP GetItem(ULONG32 idx, IClrObject **ret)
+	STDMETHODIMP GetItemObj(ULONG32 idx, IClrObject **ret)
 	{
 		CLRDATA_ADDRESS objAddr = 0;
 		HRESULT hr = S_OK;
-		RETURN_IF_FAILED(GetItem(idx, &objAddr));
+		RETURN_IF_FAILED(GetItemAddr(idx, &objAddr));
 		
 		return m_proc->GetClrObject(objAddr, ret);
 	}
 
-	STDMETHODIMP_(size_t) GetSize()
+	STDMETHODIMP_(ULONG) GetSize()
 	{
 		if (FAILED(EnsureInit()))
 			return -1;

@@ -18,8 +18,8 @@ namespace SDbgExt2Tests2
 
 			ASSERT_SOK(hr);
 			ASSERT_EQUAL((UINT)1, gcData.HeapCount);
-			ASSERT_EQUAL(1, gcData.HeapsValid);
-			ASSERT_EQUAL(0, gcData.ServerMode);
+			ASSERT_EQUAL(1, (BOOL)gcData.HeapsValid);
+			ASSERT_EQUAL(0, (BOOL)gcData.ServerMode);
 		}
 
 		TEST_METHOD(ClrGcHeapList_Basic)

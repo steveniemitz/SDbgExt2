@@ -1,6 +1,8 @@
 #pragma once
 #include "stdafx.h"
+#include "SDbgCoreApi.h"
 #include "ClrObjectArray.h"
+#include <CorHdr.h>
 
 class ClrProcess : public IClrProcess
 {

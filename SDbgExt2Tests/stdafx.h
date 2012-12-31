@@ -10,6 +10,7 @@
 
 // Headers for CppUnitTest
 #include "CppUnitTest.h"
-#include "..\SDbgCore\inc\SDbgCoreApi.h"
 #include <atlbase.h>
+#include <atlcom.h>
+#include "..\SDbgCore\inc\SDbgCoreApi.h"
 // TODO: reference additional headers your program requires here

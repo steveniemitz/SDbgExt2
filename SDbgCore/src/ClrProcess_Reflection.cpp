@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\inc\ClrProcess.h"
 #include "..\inc\ClrObject.h"
+#include <cor.h>
 
 HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData)
 {
@@ -57,7 +58,7 @@ BOOL ClrProcess::FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, LPCWSTR pwszFi
 	
 		mdTypeDef mdClass;
 		ULONG size = 0;		
-		if (FAILED(metaData->GetMemberProps(fdData.Field, &mdClass, fieldName, ARRAYSIZE(fieldName), &size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)))
+		if (FAILED(metaData->GetMemberProps(fdData.field, &mdClass, fieldName, ARRAYSIZE(fieldName), &size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)))
 		{
 			currFieldAddr = fdData.NextField;
 			continue;
@@ -195,12 +196,12 @@ STDMETHODIMP ClrProcess::FindMethodByName(CLRDATA_ADDRESS methodTable, LPCWSTR m
 
 		WCHAR buffer[512] = {0};
 		ULONG32 methodNameLen;
-		if (FAILED(m_pDac->GetMethodDescName(chd.MethodDescPtr, ARRAYSIZE(buffer), buffer, &methodNameLen)))
+		if (FAILED(m_pDac->GetMethodDescName(chd.methodDescPtr, ARRAYSIZE(buffer), buffer, &methodNameLen)))
 			continue;
 
 		if (wcscmp(buffer, methodSig) == 0)
 		{
-			*methodDesc = chd.MethodDescPtr;
+			*methodDesc = chd.methodDescPtr;
 			return S_OK;
 		}
 	}

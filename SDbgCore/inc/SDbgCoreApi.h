@@ -1,9 +1,10 @@
 #pragma once
 
-#include "IClrObjectArray.h"
-#include "IXCLRDataProcess3.h"
-#include "IDacMemoryAccess.h"
-#include "IClrObject.h"
+#ifdef _DEBUG
+#import "..\Debug\SDbgCore.tlb" no_namespace, raw_interfaces_only
+#else
+#import "..\Release\SDbgCore.tlb" no_namespace, raw_interfaces_only
+#endif
 #include "IClrProcess.h"
 
 #ifdef SDBGAPIEXPORTS

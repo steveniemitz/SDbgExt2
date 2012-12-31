@@ -42,7 +42,7 @@ HRESULT ClrProcess::GetStaticFieldValue(CLRDATA_ADDRESS field, CLRDATA_ADDRESS a
 	}
 	else
 	{
-		ULONG readSize = GetSizeForType(fdData.FieldType);
+		ULONG readSize = GetSizeForType((CorElementType)fdData.FieldType);
 		CLRDATA_ADDRESS tmpVal = 0;
 		if (SUCCEEDED(m_dcma->ReadVirtual(dataPtr, &tmpVal, readSize, &readSize)) && tmpVal)
 		{
@@ -105,7 +105,7 @@ HRESULT ClrProcess::ReadFieldValueBuffer(const CLRDATA_ADDRESS obj, const ClrFie
 {
 	if (numBytes == 0)
 	{
-		numBytes = GetSizeForType(fd.FieldType);
+		numBytes = GetSizeForType((CorElementType)fd.FieldType);
 		if (numBytes > sizeof(CLRDATA_ADDRESS))
 			return E_OUTOFMEMORY;
 	}	

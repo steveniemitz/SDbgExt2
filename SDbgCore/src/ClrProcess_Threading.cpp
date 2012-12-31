@@ -49,7 +49,7 @@ HRESULT ClrProcess::GetManagedThreadObject(CLRDATA_ADDRESS unmanagedThreadObj, C
 
 HRESULT ClrProcess::FindThreadByOsThreadId(DWORD osThreadId, CLRDATA_ADDRESS *threadObj)
 {
-	return FindThreadById(osThreadId, FIELD_OFFSET(ClrThreadData, OSThreadId), threadObj);
+	return FindThreadById(osThreadId, FIELD_OFFSET(ClrThreadData, osThreadId), threadObj);
 }
 
 HRESULT ClrProcess::FindThreadByCorThreadId(DWORD corThreadId, CLRDATA_ADDRESS *threadObj)
@@ -100,7 +100,7 @@ HRESULT ClrProcess::GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, 
 		return E_NOTATHREAD;
 
 	CComPtr<IClrObject> execCtx;
-	RETURN_IF_FAILED(clrThread->GetFieldValue(L"m_ExecutionContext", &execCtx));
+	RETURN_IF_FAILED(clrThread->GetFieldValueObj(L"m_ExecutionContext", &execCtx));
 	if (!execCtx->Address())
 	{
 		ctx->ExecutionContext = ctx->IllogicalCallContext = ctx->LogicalCallContext = ctx->HostContext = 0;
@@ -110,9 +110,9 @@ HRESULT ClrProcess::GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, 
 	ctx->ExecutionContext = execCtx->Address();
 
 	CComPtr<IClrObject> hostCtx, illogicalCallCtx, logicalCallCtx;
-	RETURN_IF_FAILED(execCtx->GetFieldValue(L"_illogicalCallContext", &illogicalCallCtx));
-	RETURN_IF_FAILED(execCtx->GetFieldValue(L"_logicalCallContext", &logicalCallCtx));
-	RETURN_IF_FAILED(execCtx->GetFieldValue(L"m_HostContext", &hostCtx));
+	RETURN_IF_FAILED(execCtx->GetFieldValueObj(L"_illogicalCallContext", &illogicalCallCtx));
+	RETURN_IF_FAILED(execCtx->GetFieldValueObj(L"_logicalCallContext", &logicalCallCtx));
+	RETURN_IF_FAILED(execCtx->GetFieldValueObj(L"m_HostContext", &hostCtx));
 
 	ctx->IllogicalCallContext = illogicalCallCtx->Address();
 	ctx->LogicalCallContext = logicalCallCtx->Address();
@@ -137,7 +137,7 @@ HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallb
 	RETURN_IF_FAILED(m_pDac->GetThreadData(threadObj, &td));
 
 	CLRDATA_ADDRESS stackBase = 0, stackLimit = 0;
-	RETURN_IF_FAILED(m_dcma->GetThreadStack(td.OSThreadId, &stackBase, &stackLimit));
+	RETURN_IF_FAILED(m_dcma->GetThreadStack(td.osThreadId, &stackBase, &stackLimit));
 
 	for (CLRDATA_ADDRESS addr = stackLimit; addr < stackBase; addr += sizeof(void*))
 	{

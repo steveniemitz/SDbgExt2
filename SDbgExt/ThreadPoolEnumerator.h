@@ -9,7 +9,7 @@ public:
 		: m_ext(ext), m_dac(dac), m_tpQueueCb(tpQueueCb), m_state(state)
 			, m_adAsyncWorkItemFinishAsyncWork(0), m_asyncWorkItemFinishAsyncWork(0)
 	{
-		m_sparseArrayArrayField.Field = 0;
+		m_sparseArrayArrayField.field = 0;
 	}
 
 	HRESULT DumpThreadPools()
@@ -89,9 +89,9 @@ private:
 
 		HRESULT hr = S_OK;		
 		CLRDATA_ADDRESS queueNode = 0;
-		if (FAILED(tpWorkQueue->GetFieldValue(L"queueTail", &queueNode)) || !queueNode)
+		if (FAILED(tpWorkQueue->GetFieldValueAddr(L"queueTail", &queueNode)) || !queueNode)
 		{
-			RETURN_IF_FAILED(tpWorkQueue->GetFieldValue(L"queueHead", &queueNode));
+			RETURN_IF_FAILED(tpWorkQueue->GetFieldValueAddr(L"queueHead", &queueNode));
 		}
 
 		if (!queueNode)
@@ -103,7 +103,7 @@ private:
 		
 		while (queueNode)
 		{
-			if (indexesField.Field == NULL)
+			if (indexesField.field == NULL)
 			{
 				ClrObjectData od = {};
 				RETURN_IF_FAILED(m_ext->GetObjectData(queueNode, &od));
@@ -183,7 +183,7 @@ private:
 		for (UINT32 a = bottom; a < top; a++)
 		{
 			CLRDATA_ADDRESS workItem;
-			if (FAILED(nodesArr->GetItem(a, &workItem)))
+			if (FAILED(nodesArr->GetItemAddr(a, &workItem)))
 				continue;
 			
 			CLRDATA_ADDRESS statePtr = NULL;
@@ -255,7 +255,7 @@ private:
 			{
 				// This is a WorkStealingQueue instance
 				CLRDATA_ADDRESS obj = 0;
-				if (SUCCEEDED(sparseArray->GetItem(a, &obj)) && obj)
+				if (SUCCEEDED(sparseArray->GetItemAddr(a, &obj)) && obj)
 				{
 					DumpWorkStealingQueue(proc, AppDomainAndValue(tpWorkQueueAddr.Domain, obj));
 				}				
@@ -268,7 +268,7 @@ private:
 	HRESULT DumpWorkStealingQueue(CComPtr<IClrProcess> proc, AppDomainAndValue queue)
 	{
 		HRESULT hr = S_OK;
-		if (!m_sparseArrayArrayField.Field)
+		if (!m_sparseArrayArrayField.field)
 		{
 			ClrObjectData od = {};
 			RETURN_IF_FAILED(m_ext->GetObjectData(queue.Value, &od));

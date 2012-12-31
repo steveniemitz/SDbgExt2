@@ -1,0 +1,45 @@
+import "oaidl.idl";
+import "ocidl.idl";
+import "inc\ClrTypes.idl";
+
+interface IClrObject;
+
+[
+	local,
+	object,
+	uuid(E46D45EC-36EF-4DE3-9077-B03F386F4CDF)
+]
+interface IClrObjectArray : IUnknown
+{
+	ULONG GetSize();
+	HRESULT GetItemAddr([in] ULONG32 idx, [out, retval] CLRDATA_ADDRESS *addr) = 0;
+	HRESULT GetItemObj([in] ULONG32 idx, [out, retval] IClrObject **ret) = 0;
+};
+
+[
+	local,
+	object, 
+	uuid(AA53AC80-D86E-47CE-ABE9-69C3C82B58C7)
+]
+interface IClrObject : IUnknown
+{
+	BOOL IsValid();
+	CLRDATA_ADDRESS Address();
+	HRESULT GetFieldValueAddr([in] LPWSTR field, [out, retval] CLRDATA_ADDRESS *ret);
+	HRESULT GetFieldValueObj([in] LPWSTR field, [out, retval] IClrObject **ret);
+	HRESULT GetFieldValueUInt32([in] LPWSTR field, [out, retval] UINT32 *val);
+	HRESULT GetFieldValueWSTR([in] LPWSTR field, [in] ULONG32 iNumChars, [in, out] LPWSTR buffer, [out] ULONG *bytesRead);
+	HRESULT GetFieldValueArray([in] LPWSTR field, [out, retval] IClrObjectArray **ret); 
+	HRESULT GetTypeName([in] ULONG32 cchBuffer, [in, out] LPWSTR buffer, [out] ULONG *nameLen);
+};
+
+[
+	object,
+	local, 
+	uuid(D6AE6FAF-DEE6-4D52-ABA4-2C2320DBADBB)
+]
+interface IDacMemoryAccess : IUnknown
+{
+	[local] HRESULT ReadVirtual([in] ULONG64 Offset, [out] LPVOID Buffer, [in] ULONG BufferSize,	[out] ULONG *BytesRead);
+	HRESULT GetThreadStack([in] DWORD osThreadId, [out] CLRDATA_ADDRESS *stackBase, [out] CLRDATA_ADDRESS *stackLimit);
+};

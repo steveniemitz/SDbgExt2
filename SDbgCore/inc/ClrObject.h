@@ -1,4 +1,5 @@
 #pragma once
+#include "stdafx.h"
 #include "ClrObjectArray.h"
 
 class ClrObject : public IClrObject
@@ -35,15 +36,9 @@ public:
         return S_OK;
     }
 
-	STDMETHODIMP_(BOOL) IsValid() 
+	STDMETHODIMP_(LONG) IsValid() 
 	{
 		return m_addr != NULL && m_proc->IsValidObject(m_addr);
-	}
-
-	STDMETHODIMP Address(CLRDATA_ADDRESS *addr)
-	{
-		*addr = m_addr;
-		return S_OK;
 	}
 
 	STDMETHODIMP_(CLRDATA_ADDRESS) Address()
@@ -51,7 +46,12 @@ public:
 		return m_addr;
 	}
 
-	STDMETHODIMP GetFieldValue(LPCWSTR field, IClrObject **ret)
+	STDMETHODIMP GetFieldValueAddr(LPWSTR field, CLRDATA_ADDRESS *ret)
+	{
+		return m_proc->GetFieldValuePtr(m_addr, field, ret);
+	}
+
+	STDMETHODIMP GetFieldValueObj(LPWSTR field, IClrObject **ret)
 	{
 		CLRDATA_ADDRESS addr = 0;
 		HRESULT hr = S_OK;
@@ -61,24 +61,19 @@ public:
 		return S_OK;
 	}
 
-	STDMETHODIMP GetFieldValue(LPCWSTR field, CLRDATA_ADDRESS *ret)
-	{
-		return m_proc->GetFieldValuePtr(m_addr, field, ret);
-	}
-
-	STDMETHODIMP GetFieldValue(LPCWSTR field, UINT32 *val)
+	STDMETHODIMP GetFieldValueUInt32(LPWSTR field, UINT32 *val)
 	{
 		HRESULT hr = S_OK;
 		return m_proc->GetFieldValueBuffer(m_addr, field, sizeof(UINT32), (PVOID)val, NULL);
 	}
 
-	STDMETHODIMP GetFieldValue(LPCWSTR field, ULONG32 iNumChars, WCHAR *buffer, PULONG bytesRead)
+	STDMETHODIMP GetFieldValueWSTR(LPWSTR field, ULONG32 iNumChars, LPWSTR buffer, PULONG bytesRead)
 	{
 		HRESULT hr = S_OK;
 		return m_proc->GetFieldValueString(m_addr, field, iNumChars, buffer, bytesRead);
 	}
 
-	STDMETHODIMP GetFieldValue(LPCWSTR field, IClrObjectArray **ret)
+	STDMETHODIMP GetFieldValueArray(LPWSTR field, IClrObjectArray **ret)
 	{
 		HRESULT hr = S_OK;
 		CLRDATA_ADDRESS arrayObj;

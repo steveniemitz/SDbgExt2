@@ -1,0 +1,403 @@
+import "oaidl.idl";
+import "ocidl.idl";
+import "inc\ClrTypes.idl";
+
+#define PADIMPL(prefix,bytes)	BYTE padding##prefix[##bytes]
+#define PAD(prefix,bytes)	PADIMPL(prefix,bytes)
+#define PAD_DWORD(x)		PAD(__COUNTER__, x*4)
+#define PAD_ADDR(x)			PAD(__COUNTER__, x*8)
+
+typedef ULONG32 mdToken;
+typedef mdToken mdTypeDef;
+typedef mdToken mdFieldDef;
+
+
+typedef struct ClrArrayData
+{
+	CLRDATA_ADDRESS ElementMethodTable;
+	DWORD Size;
+	DWORD Rank;
+	DWORD NumElements;
+	PAD_DWORD(1);
+	DWORD ElementSize;
+	PAD_DWORD(1);
+	CLRDATA_ADDRESS FirstElement;
+	CLRDATA_ADDRESS ArrayDataStart;
+	PAD_DWORD(6);
+} ClrArrayData;
+
+typedef enum DacpObjectType { OBJ_STRING=0,OBJ_FREE,OBJ_OBJECT,OBJ_ARRAY,OBJ_OTHER } DacpObjectType;
+typedef struct ClrObjectData
+{
+	CLRDATA_ADDRESS MethodTable;
+	DacpObjectType ObjectType;
+	PAD_DWORD(1);
+	DWORD Size;
+	ClrArrayData ArrayData;
+} ClrObjectData;
+
+typedef struct ClrMethodTableData
+{
+	PAD_ADDR(1);
+	CLRDATA_ADDRESS Module;
+	CLRDATA_ADDRESS EEClass;
+	CLRDATA_ADDRESS ParentMT;
+	WORD NumInterfaces;
+	WORD NumSlotsInVTable;
+	WORD EEClass_TotalMethodSlots;
+	WORD EEClass_VTableSlots;
+	DWORD BaseSize;
+	DWORD ComponentSize;
+	DWORD mdToken;
+	DWORD ClassAttributes;
+	PAD_DWORD(4);
+} ClrMethodTableData;  
+
+typedef struct ClrFieldDescData
+{
+	UINT32 FieldType;
+	UINT32 SigFieldType;
+	CLRDATA_ADDRESS FieldMethodTable;
+	CLRDATA_ADDRESS Module;
+	mdTypeDef FieldTypeDefOrRef;
+	mdFieldDef field;
+	CLRDATA_ADDRESS MethodTableOfEnclosingClass;
+	DWORD Offset;
+	BOOL IsThreadLocal;
+	BOOL IsContextLocal;
+	BOOL IsStatic;
+	CLRDATA_ADDRESS NextField;
+} ClrFieldDescData;
+
+typedef struct ClrMethodTableFieldData
+{
+	WORD NumInstanceFields;
+	WORD NumStaticFields;
+	WORD NumThreadStaticFields;
+	WORD NumContextStaticFields;
+	CLRDATA_ADDRESS FirstField;
+	PAD_DWORD(3);
+} ClrMethodTableFieldData;
+
+typedef struct ClrThreadPoolData
+{
+	DWORD CpuUsage;
+	PAD_DWORD(1);
+	DWORD NumThreads;
+	PAD_DWORD(1);
+	DWORD MinLimitThreads;
+	DWORD MaxLimitThreads;
+	PAD_DWORD(2);
+	PAD_ADDR(1);
+	PAD_DWORD(2);
+	DWORD NumTimers;
+	DWORD NumCompPortTotal;
+	DWORD NumCompPortFree;
+	DWORD MaxCompPortFree;
+	DWORD CurrCompPortLimit;
+	DWORD MaxCompPortLimit;
+	DWORD MinCompPortLimit;
+} ClrThreadPoolData;
+
+typedef struct ClrModuleData
+{
+	CLRDATA_ADDRESS PEFile;
+	CLRDATA_ADDRESS Unknown02;
+	CLRDATA_ADDRESS ModuleBase;
+	CLRDATA_ADDRESS MetaDataStart;
+	SIZE_T MetaDataLength;
+	CLRDATA_ADDRESS Assembly;
+	BOOL IsReflection;
+	BOOL IsPEFile;
+	// Note: these SIZE_T's might be wrong, TODO: test this on x64;
+	ULONG64 BaseClassIndex;
+	ULONG64 DomainNeutralIndex;
+
+	CLRDATA_ADDRESS TransientFlags;
+	CLRDATA_ADDRESS TypeDefToMethodTableMap;
+	CLRDATA_ADDRESS TypeRefToMethodTableMap;
+	CLRDATA_ADDRESS MethodDefToDescMap;
+	CLRDATA_ADDRESS FieldDefToDescMap;
+	CLRDATA_ADDRESS MemberRefToDescMap;
+	CLRDATA_ADDRESS FileReferencesMap;
+	CLRDATA_ADDRESS AssemblyReferencesMap;
+	CLRDATA_ADDRESS Unknown18;
+	CLRDATA_ADDRESS Unknown19;
+	CLRDATA_ADDRESS Unknown20;
+	CLRDATA_ADDRESS Unknown21;
+} ClrModuleData;
+
+typedef struct ClrThreadData
+{
+	DWORD CorThreadId;
+	DWORD osThreadId;
+	DWORD State;
+	DWORD PreemptiveGCDisabled;
+
+	CLRDATA_ADDRESS GCAllocContext;
+	CLRDATA_ADDRESS GCAllocContextLimit;
+	CLRDATA_ADDRESS Unknown05;
+	CLRDATA_ADDRESS Domain;
+	CLRDATA_ADDRESS SharedStaticData;
+	DWORD LockCount;
+	DWORD unused;
+	CLRDATA_ADDRESS Unknown10;
+	CLRDATA_ADDRESS FirstNestedException;
+	CLRDATA_ADDRESS FiberData;
+	CLRDATA_ADDRESS LastThrownObjectHandle;
+	CLRDATA_ADDRESS NextThread;
+} ClrThreadData;
+
+typedef struct ClrNestedExceptionData
+{
+	CLRDATA_ADDRESS ExceptionObject;
+	CLRDATA_ADDRESS NextNestedException;
+} ClrNestedExceptionData;
+
+typedef struct ClrThreadStoreData
+{
+	DWORD ThreadCount;
+	DWORD UnstartedThreadCount;
+	DWORD BackgroundThreadCount;
+	DWORD PendingThreadCount;
+	DWORD DeadThreadCount;
+
+	CLRDATA_ADDRESS FirstThreadObj;
+	CLRDATA_ADDRESS FinalizerThreadObj;
+	CLRDATA_ADDRESS GCThread;
+	CLRDATA_ADDRESS HostedRuntime;
+} ClrThreadStoreData;
+
+typedef struct ClrAppDomainStoreData
+{
+	CLRDATA_ADDRESS SharedDomain;
+	CLRDATA_ADDRESS SystemDomain;
+	LONG DomainCount;
+} ClrAppDomainStoreData;
+
+typedef enum DacpAppDomainDataStage {
+	STAGE_CREATING,
+	STAGE_READYFORMANAGEDCODE,
+	STAGE_ACTIVE,
+	STAGE_OPEN,
+	STAGE_UNLOAD_REQUESTED,
+	STAGE_EXITING,
+	STAGE_EXITED,
+	STAGE_FINALIZING,
+	STAGE_FINALIZED,
+	STAGE_HANDLETABLE_NOACCESS,
+	STAGE_CLEARED,
+	STAGE_COLLECTED,
+	STAGE_CLOSED
+} DacpAppDomainDataStage;
+
+typedef struct ClrAppDomainData
+{
+	CLRDATA_ADDRESS AppDomainPtr;
+	CLRDATA_ADDRESS SecurityDescriptor;
+	CLRDATA_ADDRESS LowFrequencyHeap;
+	CLRDATA_ADDRESS HighFrequencyHeap;
+	CLRDATA_ADDRESS StubHeap;
+	CLRDATA_ADDRESS DomainLocalBlock;
+	CLRDATA_ADDRESS DomainLocalModules;
+	DWORD Id;
+	LONG AssemblyCount;
+	LONG FailedAssemblyCount;
+	DacpAppDomainDataStage AppDomainStage;
+} ClrAppDomainData;
+
+typedef struct ClrAssemblyData
+{
+	CLRDATA_ADDRESS AssemblyPtr;
+	CLRDATA_ADDRESS ClassLoader;
+	CLRDATA_ADDRESS ParentDomain;
+	CLRDATA_ADDRESS AppDomainPtr;
+	CLRDATA_ADDRESS AssemblySecurityDescriptor;
+	BOOL IsDynamic;
+	UINT ModuleCount;
+	UINT LoadContext;
+	BOOL IsDomainNeutral;
+	DWORD LocationFlags;
+} ClrAssemblyData;
+
+typedef struct ClrDomainLocalModuleData
+{
+	CLRDATA_ADDRESS AppDomain;
+	CLRDATA_ADDRESS Unused2;	    
+	CLRDATA_ADDRESS ClassData;   
+	CLRDATA_ADDRESS DynamicClassTable;   
+	CLRDATA_ADDRESS GCStaticDataStart;
+	CLRDATA_ADDRESS NonGCStaticDataStart; 
+} ClrDomainLocalModuleData;
+
+typedef struct ClrGcHeapData
+{
+	BOOL ServerMode;
+	BOOL HeapsValid;
+	UINT HeapCount;
+	UINT MaxGeneration;
+} ClrGcHeapData;
+
+typedef struct GcGenerationData
+{    
+	CLRDATA_ADDRESS start_segment;
+	CLRDATA_ADDRESS allocation_start;
+
+	// These are examined only for generation 0, otherwise NULL
+	CLRDATA_ADDRESS allocContextPtr;
+	CLRDATA_ADDRESS allocContextLimit;
+} GcGenerationData;
+
+#define DAC_NUM_GENERATIONS 4
+
+typedef struct ClrGcHeapStaticData
+{
+	CLRDATA_ADDRESS HeapAddress;
+	CLRDATA_ADDRESS AllocAllocated;
+	CLRDATA_ADDRESS Padding[7];
+
+	GcGenerationData Generations[DAC_NUM_GENERATIONS];
+	CLRDATA_ADDRESS EphemeralHeapSegment;
+
+	CLRDATA_ADDRESS FinalizationFillPointers[DAC_NUM_GENERATIONS + 2];
+	
+	CLRDATA_ADDRESS LowestAddress;
+	CLRDATA_ADDRESS HighestAddress;
+	CLRDATA_ADDRESS CardTable;
+
+	CLRDATA_ADDRESS MoreData[10];
+} ClrGcHeapStaticData;
+
+typedef struct ClrGcHeapSegmentData
+{
+	CLRDATA_ADDRESS Segment;
+	CLRDATA_ADDRESS Allocated;
+	CLRDATA_ADDRESS Committed;
+	CLRDATA_ADDRESS Reserved;
+	CLRDATA_ADDRESS Used;
+	CLRDATA_ADDRESS AllocBegin;
+	CLRDATA_ADDRESS NextSegment;
+	CLRDATA_ADDRESS GCHeap;
+	CLRDATA_ADDRESS Unknown9;
+	CLRDATA_ADDRESS Unknown10;
+	CLRDATA_ADDRESS Unknown11;
+} ClrGcHeapSegmentData;
+
+typedef enum JITTypes {TYPE_UNKNOWN=0,TYPE_JIT,TYPE_EJIT,TYPE_PJIT} JITTypes;
+
+typedef struct ClrCodeHeaderData
+{
+	CLRDATA_ADDRESS GCInfo;
+	JITTypes        JITType;
+	CLRDATA_ADDRESS methodDescPtr;
+	CLRDATA_ADDRESS MethodStart;
+	DWORD           MethodSize;
+	CLRDATA_ADDRESS ColdRegionStart;
+	DWORD           ColdRegionSize;
+	DWORD           HotRegionSize;
+} ClrCodeHeaderData;
+
+typedef struct ClrUsefulGlobalsData
+{
+	CLRDATA_ADDRESS ArrayMethodTable;
+	CLRDATA_ADDRESS StringMethodTable;
+	CLRDATA_ADDRESS ObjectMethodTable;
+	CLRDATA_ADDRESS ExceptionMethodTable;
+	CLRDATA_ADDRESS FreeMethodTable;
+} ClrUsefulGlobalsData;
+
+[
+	object,
+	uuid(436f00f2-b42a-4b9f-870c-e73db66ae930)
+]
+interface IXCLRDataProcess3 : IUnknown
+{
+	HRESULT GetThreadStoreData(ClrThreadStoreData *ret) = 0;
+	HRESULT GetAppDomainStoreData(ClrAppDomainStoreData *ret) = 0;
+	HRESULT GetAppDomainList(ULONG32 iArraySize, CLRDATA_ADDRESS *domains, DWORD *numDomains) = 0;
+	HRESULT GetAppDomainData(CLRDATA_ADDRESS domain, ClrAppDomainData *ret) = 0;
+	HRESULT GetAppDomainName() = 0;
+	HRESULT GetDomainFromContext() = 0;
+	HRESULT GetAssemblyList(CLRDATA_ADDRESS domain, ULONG32 iArraySize, CLRDATA_ADDRESS *assembliess, DWORD *numAssemblies) = 0;
+	HRESULT GetAssemblyData(CLRDATA_ADDRESS domain, CLRDATA_ADDRESS assembly, ClrAssemblyData *ret) = 0;
+	HRESULT GetAssemblyName(CLRDATA_ADDRESS addr, ULONG32 iNameChars,LPWSTR pwszName, ULONG32 *strLen) = 0;
+	HRESULT GetModule(CLRDATA_ADDRESS addr, IUnknown **pUnk) = 0;
+	HRESULT GetModuleData(CLRDATA_ADDRESS addr, ClrModuleData *ret) = 0;
+	HRESULT TraverseModuleMap() = 0;
+	HRESULT GetAssemblyModuleList(CLRDATA_ADDRESS assembly, ULONG32 iArraySize, CLRDATA_ADDRESS *modules, DWORD *numModules) = 0;
+	HRESULT GetILForModule() = 0;
+	HRESULT GetThreadData(CLRDATA_ADDRESS threadAddr, ClrThreadData *ret) = 0;
+	HRESULT GetThreadFromThinlockID() = 0;
+	HRESULT GetStackLimits() = 0;
+	HRESULT GetMethodDescData() = 0;
+	HRESULT GetMethodDescPtrFromIP(CLRDATA_ADDRESS ip, CLRDATA_ADDRESS *methodDescPtr) = 0;
+	HRESULT GetMethodDescName(CLRDATA_ADDRESS addr, ULONG32 iNameChars,LPWSTR pwszName, ULONG32 *strLen) = 0;
+	HRESULT GetMethodDescPtrFromFrame(CLRDATA_ADDRESS frameAddr, CLRDATA_ADDRESS *methodDescPtr) = 0;
+	HRESULT GetMethodDescFromToken(CLRDATA_ADDRESS moduleAddr, mdToken token, CLRDATA_ADDRESS *mdAddr) = 0;
+	HRESULT GetMethodDescTransparencyData() = 0;
+	HRESULT GetCodeHeaderData(CLRDATA_ADDRESS ipAddr, ClrCodeHeaderData *ret) = 0;
+	HRESULT GetJitManagerList() = 0;
+	HRESULT GetJitHelperFunctionName() = 0;
+	HRESULT GetJumpThunkTarget() = 0;
+	HRESULT GetThreadpoolData() = 0;
+	HRESULT GetWorkRequestData() = 0;
+	HRESULT GetHillClimbingLogEntry() = 0;
+	HRESULT GetObjectData(CLRDATA_ADDRESS addr, ClrObjectData* ret) = 0;
+	HRESULT GetObjectStringData(CLRDATA_ADDRESS addr, ULONG32 iNameChars, LPWSTR pwszName, ULONG32 *strLen) = 0;
+	HRESULT GetObjectClassName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, LPWSTR pwszName, ULONG32 *strLen) = 0;
+	HRESULT GetMethodTableName(CLRDATA_ADDRESS mtAddr, ULONG32 iNameChars, LPWSTR pwszName, ULONG32 *strLen) = 0;
+	HRESULT GetMethodTableData(CLRDATA_ADDRESS mtAddr, ClrMethodTableData *ret) = 0;
+	HRESULT GetMethodTableSlot(CLRDATA_ADDRESS mtAddr, UINT32 slotNumber, CLRDATA_ADDRESS *ret) = 0;
+	HRESULT GetMethodTableFieldData(CLRDATA_ADDRESS mtAddr, ClrMethodTableFieldData *ret) = 0;
+	HRESULT GetMethodTableTransparencyData() = 0;
+	HRESULT GetMethodTableForEEClass() = 0;
+	HRESULT GetFieldDescData(CLRDATA_ADDRESS fieldAddr, ClrFieldDescData *ret) = 0;
+	HRESULT GetFrameName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, LPWSTR pwszName, ULONG32 *strLen) = 0;
+	HRESULT GetPEFileBase() = 0;
+	HRESULT GetPEFileName(CLRDATA_ADDRESS addr, ULONG32 iNameChars, LPWSTR pwszName, ULONG32 *strLen) = 0;
+	HRESULT GetGCHeapData(ClrGcHeapData *ret) = 0;
+	HRESULT GetGCHeapList(ULONG32 iArraySize, CLRDATA_ADDRESS *heaps, DWORD *numHeaps) = 0;
+	HRESULT GetGCHeapDetails(CLRDATA_ADDRESS heap, ClrGcHeapStaticData *ret) = 0;
+	HRESULT GetGCHeapStaticData(ClrGcHeapStaticData *ret) = 0;
+	HRESULT GetHeapSegmentData(CLRDATA_ADDRESS segment, ClrGcHeapSegmentData *ret) = 0;
+	HRESULT GetOOMData() = 0;
+	HRESULT GetOOMStaticData() = 0;
+	HRESULT GetHeapAnalyzeData() = 0;
+	HRESULT GetHeapAnalyzeStaticData() = 0;
+	HRESULT GetDomainLocalModuleData() = 0;
+	HRESULT GetDomainLocalModuleDataFromAppDomain(CLRDATA_ADDRESS domainAddr, SIZE_T moduleDomainNeutralIndex, ClrDomainLocalModuleData *ret) = 0;
+	HRESULT GetDomainLocalModuleDataFromModule(CLRDATA_ADDRESS moduleAddr, ClrDomainLocalModuleData *ret) = 0;
+	HRESULT GetThreadLocalModuleData() = 0;
+	HRESULT GetSyncBlockData() = 0;
+	HRESULT GetSyncBlockCleanupData() = 0;
+	HRESULT GetHandleEnum() = 0;
+	HRESULT GetHandleEnumForTypes() = 0;
+	HRESULT GetHandleEnumForGC() = 0;
+	HRESULT TraverseEHInfo() = 0;
+	HRESULT GetNestedExceptionData(CLRDATA_ADDRESS addr, ClrNestedExceptionData *ret) = 0;
+	HRESULT GetStressLogAddress() = 0;
+	HRESULT TraverseLoaderHeap() = 0;
+	HRESULT GetCodeHeapList() = 0;
+	HRESULT TraverseVirtCallStubHeap() = 0;
+	HRESULT GetUsefulGlobals(ClrUsefulGlobalsData *ret) = 0;
+	HRESULT GetClrWatsonBuckets() = 0;
+	HRESULT GetTLSIndex() = 0;
+	HRESULT GetDacModuleHandle() = 0;
+	HRESULT GetRCWData() = 0;
+	HRESULT GetRCWInterfaces() = 0;
+	HRESULT GetCCWData() = 0;
+	HRESULT GetCCWInterfaces() = 0;
+	HRESULT TraverseRCWCleanupList() = 0;
+	HRESULT GetStackReferences() = 0;
+	HRESULT GetRegisterName() = 0;
+	HRESULT GetThreadAllocData() = 0;
+	HRESULT GetHeapAllocData() = 0;
+	HRESULT GetFailedAssemblyList() = 0;
+	HRESULT GetPrivateBinPaths() = 0;
+	HRESULT GetAssemblyLocation() = 0;
+	HRESULT GetAppDomainConfigFile() = 0;
+	HRESULT GetApplicationBase() = 0;
+	HRESULT GetFailedAssemblyData() = 0;
+	HRESULT GetFailedAssemblyLocation() = 0;
+	HRESULT GetFailedAssemblyDisplayName() = 0;
+};

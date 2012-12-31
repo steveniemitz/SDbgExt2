@@ -6,6 +6,8 @@ typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectDa
 typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
 
 struct IClrObject;
+struct IXCLRDataProcess3;
+struct IDacMemoryAccess;
 
 struct AppDomainAndValue
 {

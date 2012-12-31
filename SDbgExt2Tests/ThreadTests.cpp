@@ -96,7 +96,7 @@ namespace SDbgExt2Tests2
 			p->GetProcess()->GetThreadData(threadObj, &tData);
 
 			CLRDATA_ADDRESS stackBase, stackLimit;
-			hr = p->GetDataAccess()->GetThreadStack(tData.OSThreadId, &stackBase, &stackLimit);
+			hr = p->GetDataAccess()->GetThreadStack(tData.osThreadId, &stackBase, &stackLimit);
 
 			ASSERT_SOK(hr);
 			Assert::IsTrue(stackBase > stackLimit);

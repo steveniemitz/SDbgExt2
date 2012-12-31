@@ -4,7 +4,6 @@
 #include "DbgEngCLRDataTarget.h"
 #include "DbgEngMemoryAccess.h"
 #include "..\SDbgCore\inc\IXCLRDataProcess3.h"
-#include "..\SDbgCore\inc\IDacMemoryAccess.h"
 #include "..\SDbgCore\inc\IClrProcess.h"
 #include <DbgHelp.h>
 

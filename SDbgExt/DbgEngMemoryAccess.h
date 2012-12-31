@@ -1,5 +1,5 @@
 #pragma once
-#include "..\SDbgCore\inc\IDacMemoryAccess.h"
+#include "..\SDbgCore\inc\SDbgCoreApi.h"
 #include <DbgEng.h>
 
 class DbgEngMemoryAccess : public IDacMemoryAccess
@@ -11,7 +11,7 @@ public:
 	{
 	}
 
-	HRESULT ReadVirtual(
+	STDMETHODIMP ReadVirtual(
 		ULONG64 Offset,
         PVOID Buffer,
         ULONG BufferSize,
@@ -21,7 +21,7 @@ public:
 		return m_pData->ReadVirtual(Offset, Buffer, BufferSize, BytesRead);
 	}
 
-	HRESULT GetThreadStack(DWORD osThreadId, CLRDATA_ADDRESS *stackBase, CLRDATA_ADDRESS *stackLimit)
+	STDMETHODIMP GetThreadStack(DWORD osThreadId, CLRDATA_ADDRESS *stackBase, CLRDATA_ADDRESS *stackLimit)
 	{
 		struct CurrentThreadHolder
 		{

@@ -85,7 +85,7 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRES
 {
 	HRESULT hr = S_OK;
 
-	if (s_usefulFields.Delegate_MethodPtr.Field == NULL || s_usefulFields.Delegate_MethodPtrAux.Field == NULL || s_usefulFields.Delegate_Target.Field == NULL)
+	if (s_usefulFields.Delegate_MethodPtr.field == NULL || s_usefulFields.Delegate_MethodPtrAux.field == NULL || s_usefulFields.Delegate_Target.field == NULL)
 	{
 		ClrObjectData od = {};
 		RETURN_IF_FAILED(m_pDac->GetObjectData(delegateAddr, &od));
@@ -114,7 +114,7 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRES
 		ClrCodeHeaderData chData = {};
 		RETURN_IF_FAILED(m_pDac->GetCodeHeaderData(methodPtrAux, &chData));
 
-		*methodDesc = chData.MethodDescPtr;
+		*methodDesc = chData.methodDescPtr;
 		return S_OK;
 	}
 	else if (methodPtr != NULL)
@@ -128,7 +128,7 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRES
 		{
 			ClrCodeHeaderData chData = {};
 			RETURN_IF_FAILED(m_pDac->GetCodeHeaderData(methodPtr, &chData));
-			*methodDesc = chData.MethodDescPtr;
+			*methodDesc = chData.methodDescPtr;
 			return S_OK;
 		}
 		
