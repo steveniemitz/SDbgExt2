@@ -2,39 +2,27 @@
 #include "stdafx.h"
 #include "ClrObjectArray.h"
 
-class ClrObject : public IClrObject
+class ClrObject;
+typedef CComObject<ClrObject> CClrObject;
+
+class ClrObject : 
+	public CComObjectRoot,
+	public IClrObject
 {
 public:
-	ClrObject(IClrProcess *proc, CLRDATA_ADDRESS obj)
-		: m_proc(proc), m_addr(obj), m_ref(1), m_mtAddr(0)
+	BEGIN_COM_MAP(ClrObject)
+		COM_INTERFACE_ENTRY(IClrObject)
+	END_COM_MAP()
+
+	static IClrObject *Construct(IClrProcess *proc, CLRDATA_ADDRESS obj)
 	{
+		CClrObject *clrObj;
+		CClrObject::CreateInstance(&clrObj);
+		clrObj->AddRef();
+		clrObj->Init(proc, obj);
+
+		return clrObj;
 	}
-	
-	STDMETHODIMP_(ULONG) AddRef() { return ++m_ref; }
-	STDMETHODIMP_(ULONG) Release()
-	{
-		ULONG newRef = --m_ref;
-		if (newRef == 0)
-			delete this;
-		return newRef;
-	}
-
-	STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject)
-    {
-		IUnknown *punk = nullptr;
-
-        if (riid == IID_IUnknown)
-            punk = static_cast<IUnknown*>(this);
-		else if (riid == __uuidof(IClrObject))
-			punk = static_cast<IClrObject*>(this);
-
-        *ppvObject = punk;
-        if (!punk)
-            return E_NOINTERFACE;
-
-        punk->AddRef();
-        return S_OK;
-    }
 
 	STDMETHODIMP_(LONG) IsValid() 
 	{
@@ -57,7 +45,12 @@ public:
 		HRESULT hr = S_OK;
 		RETURN_IF_FAILED(m_proc->GetFieldValuePtr(m_addr, field, &addr));
 
-		*ret = new ClrObject(m_proc, addr);	
+		CClrObject *obj;
+		CClrObject::CreateInstance(&obj);
+		obj->AddRef();
+		obj->Init(m_proc, addr);
+
+		*ret = obj;
 		return S_OK;
 	}
 
@@ -88,7 +81,7 @@ public:
 		m_proc->GetProcess()->GetObjectData(arrayObj, &od);
 		*/
 
-		*ret = new ClrObjectArray(m_proc, arrayObj);
+		*ret = ClrObjectArray::Construct(m_proc, arrayObj);
 		return S_OK;
 	}
 
@@ -107,8 +100,19 @@ public:
 		return m_proc->GetProcess()->GetMethodTableName(m_mtAddr, cchBuffer, buffer, (ULONG32*)nameLen);
 	}
 
+protected:
+	ClrObject()
+		: m_mtAddr(0)
+	{
+	}
+
 private:
-	int m_ref;
+	void Init(IClrProcess *proc, CLRDATA_ADDRESS obj)
+	{
+		m_addr = obj;
+		m_proc = proc;
+	}
+
 	CComPtr<IClrProcess> m_proc;
 	CLRDATA_ADDRESS m_addr;
 	CLRDATA_ADDRESS m_mtAddr;

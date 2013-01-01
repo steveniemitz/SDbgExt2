@@ -6,7 +6,13 @@ ClrProcess::UsefulFields ClrProcess::s_usefulFields = {};
 
 HRESULT __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret)
 {
-	*ret = new ClrProcess(pDac, dcma);
+	CClrProcess *p;
+	CClrProcess::CreateInstance(&p);
+
+	p->Init(pDac, dcma);
+	p->AddRef();
+	*ret = p;
+	
 	return S_OK;
 }
 
@@ -15,8 +21,8 @@ HRESULT ClrProcess::GetClrObject(CLRDATA_ADDRESS obj, IClrObject **ret)
 	if (!IsValidObject(obj))
 		return E_INVALIDARG;
 	else
-	{
-		*ret = new ClrObject(this, obj);
+	{	
+		*ret = ClrObject::Construct(this, obj);
 		return S_OK;
 	}
 }

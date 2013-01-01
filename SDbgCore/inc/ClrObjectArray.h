@@ -1,39 +1,28 @@
 #pragma once
 #include "stdafx.h"
 
-class ClrObjectArray : public IClrObjectArray
+class ClrObjectArray;
+typedef CComObject<ClrObjectArray> CClrObjectArray;
+
+class ClrObjectArray : 
+	public CComObjectRoot,
+	public IClrObjectArray
 {
 public:
-	ClrObjectArray(IClrProcess *proc, CLRDATA_ADDRESS obj)
-		: m_proc(proc), m_addr(obj), m_ref(1), m_arrayInit(FALSE)
+
+	static IClrObjectArray *Construct(IClrProcess *proc, CLRDATA_ADDRESS obj)
 	{
-	}
-	
-	STDMETHODIMP_(ULONG) AddRef() { return ++m_ref; }
-	STDMETHODIMP_(ULONG) Release()
-	{
-		ULONG newRef = --m_ref;
-		if (newRef == 0)
-			delete this;
-		return newRef;
+		CClrObjectArray *arr;
+		CClrObjectArray::CreateInstance(&arr);
+		arr->AddRef();
+		arr->Init(proc, obj);
+
+		return arr;
 	}
 
-	STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject)
-    {
-        IUnknown *punk = nullptr;
-
-        if (riid == IID_IUnknown)
-            punk = static_cast<IUnknown*>(this);
-		else if (riid == __uuidof(IClrObjectArray))
-			punk = static_cast<IClrObjectArray*>(this);
-
-        *ppvObject = punk;
-        if (!punk)
-            return E_NOINTERFACE;
-
-        punk->AddRef();
-        return S_OK;
-    }
+	BEGIN_COM_MAP(ClrObjectArray)
+		COM_INTERFACE_ENTRY(IClrObjectArray)
+	END_COM_MAP()
 
 	STDMETHODIMP GetItemAddr(ULONG32 idx, CLRDATA_ADDRESS *objAddr)
 	{
@@ -65,6 +54,11 @@ public:
 		return m_arrayData.NumElements;
 	}
 
+protected:
+	ClrObjectArray()
+		: m_arrayInit(FALSE)
+	{ }
+	
 private:
 
 	STDMETHODIMP EnsureInit()
@@ -80,7 +74,12 @@ private:
 		return S_OK;
 	}
 
-	int m_ref;
+	void Init(IClrProcess *proc, CLRDATA_ADDRESS obj)
+	{
+		m_addr = obj;
+		m_proc = proc;
+	}
+
 	CComPtr<IClrProcess> m_proc;
 	CLRDATA_ADDRESS m_addr;
 	BOOL m_arrayInit;

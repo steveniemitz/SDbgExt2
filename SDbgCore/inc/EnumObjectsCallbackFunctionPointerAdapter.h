@@ -1,7 +1,7 @@
 #pragma once
 #include "stdafx.h"
 
-//typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS obj, ClrObjectData objData, PVOID state);
+typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
 
 class EnumObjectsCallbackFunctionPointerAdapterImpl : 
 	public CComObjectRoot,

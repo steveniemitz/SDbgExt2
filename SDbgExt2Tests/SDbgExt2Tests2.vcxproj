@@ -182,9 +182,6 @@
     <ClCompile Include="WorkstationHeapTests_BigHeap.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SDbgCore\SDbgCore.vcxproj">
-      <Project>{35663062-4dec-49f9-bf5f-3c3e34828010}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\SDbgExt\SDbgExt.vcxproj">
       <Project>{5f22cf78-8740-4419-b863-4628dccff1d2}</Project>
     </ProjectReference>

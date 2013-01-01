@@ -4,17 +4,23 @@
 #include "ClrObjectArray.h"
 #include <CorHdr.h>
 
-class ClrProcess : public IClrProcess
+class ClrProcess : 
+	public CComObjectRoot,
+	public IClrProcess
 {
 public:
-	ClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *pDcma)
-		: m_pDac(pDac), m_dcma(pDcma)
+
+	BEGIN_COM_MAP(ClrProcess)
+		COM_INTERFACE_ENTRY(IClrProcess)
+	END_COM_MAP()
+
+	void Init(IXCLRDataProcess3 *pDac, IDacMemoryAccess *pDcma)
 	{
-		m_dwRef = 1;
+		m_pDac = pDac;
+		m_dcma = pDcma;
 	}
 
-
-	STDMETHODIMP_(ULONG) AddRef() { return ++m_dwRef; }
+	/*STDMETHODIMP_(ULONG) AddRef() { return ++m_dwRef; }
 	STDMETHODIMP_(ULONG) Release()
 	{
 		ULONG newRef = --m_dwRef;
@@ -38,7 +44,7 @@ public:
 
         punk->AddRef();
         return S_OK;
-    }
+    }*/
 
 
 	STDMETHODIMP GetProcess(IXCLRDataProcess3 **ppDac)
@@ -95,7 +101,7 @@ public:
 	STDMETHODIMP GetClrObject(CLRDATA_ADDRESS obj, IClrObject **ret);
 	STDMETHODIMP GetClrObjectArray(CLRDATA_ADDRESS objArray, IClrObjectArray **ret)
 	{
-		*ret = new ClrObjectArray(this, objArray);
+		*ret = ClrObjectArray::Construct(this, objArray);
 		return S_OK;
 	}
 
@@ -111,7 +117,7 @@ private:
 		ClrFieldDescData Delegate_MethodPtrAux;
 	};	
 
-	ULONG m_dwRef;
+	//ULONG m_dwRef;
 	CComPtr<IXCLRDataProcess3> m_pDac;
 	CComPtr<IDacMemoryAccess> m_dcma;
 
@@ -157,3 +163,4 @@ private:
 	HRESULT EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, EnumHeapSegmentsCallback cb, PVOID state);
 };
 
+typedef CComObject<ClrProcess> CClrProcess;

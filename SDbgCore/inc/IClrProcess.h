@@ -3,12 +3,9 @@
 #include <clrdata.h>
 #include <vector>
 
-typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
-
 struct IClrObject;
 struct IXCLRDataProcess3;
 struct IDacMemoryAccess;
-
 
 struct AppDomainAndValue
 {
