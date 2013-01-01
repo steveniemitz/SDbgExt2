@@ -1,19 +1,15 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
+#include "dllmain.h"
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
+CSDbgCoreModule _AtlModule;
+
+BOOL APIENTRY DllMain( HINSTANCE hInstance,
+                       DWORD  dwReason,
                        LPVOID lpReserved
 					 )
 {
-	switch (ul_reason_for_call)
-	{
-	case DLL_PROCESS_ATTACH:
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-	return TRUE;
+	hInstance;
+	return 	_AtlModule.DllMain(dwReason, lpReserved);
 }
 
