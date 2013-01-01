@@ -82,7 +82,7 @@ BOOL ClrProcess::FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, BSTR pwszField
 	return FALSE;
 }
 
-HRESULT ClrProcess::FindTypeByName(LPCWSTR assemblyName, LPCWSTR typeName, CLRDATA_ADDRESS *ret)
+HRESULT ClrProcess::FindTypeByName(const BSTR assemblyName, const BSTR typeName, CLRDATA_ADDRESS *ret)
 {
 	ClrAppDomainStoreData ads = {};
 	HRESULT hr = S_OK;
@@ -178,7 +178,7 @@ CLRDATA_ADDRESS ClrProcess::SearchModule(CLRDATA_ADDRESS module, LPCWSTR typeNam
 	return mtAddr;
 }
 
-STDMETHODIMP ClrProcess::FindMethodByName(CLRDATA_ADDRESS methodTable, LPCWSTR methodSig, CLRDATA_ADDRESS *methodDesc)
+STDMETHODIMP ClrProcess::FindMethodByName(CLRDATA_ADDRESS methodTable, LPWSTR methodSig, CLRDATA_ADDRESS *methodDesc)
 {
 	HRESULT hr = S_OK;
 	ClrMethodTableData mtd = {};

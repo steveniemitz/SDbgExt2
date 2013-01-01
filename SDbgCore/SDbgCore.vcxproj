@@ -154,7 +154,6 @@
     <ClInclude Include="inc\ClrProcess.h" />
     <ClInclude Include="inc\EnumObjectsCallbackFunctionPointerAdapter.h" />
     <ClInclude Include="inc\EnumThreadsCallbackFunctionPointerAdapter.h" />
-    <ClInclude Include="inc\IClrProcess.h" />
     <ClInclude Include="inc\SDbgCoreApi.h" />
     <ClInclude Include="inc\targetver.h" />
     <ClInclude Include="stdafx.h" />

@@ -30,9 +30,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\IClrProcess.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\ClrObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>

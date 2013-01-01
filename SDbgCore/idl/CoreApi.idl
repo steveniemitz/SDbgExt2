@@ -22,7 +22,7 @@ library SDbgCore
 	struct AppDomainAndValue;
 	struct ClrThreadContext;
 
-	//interface IClrProcess;
+	interface IClrProcess;
 	//interface ISDbgExt;
 	enum CorElementType;
 }

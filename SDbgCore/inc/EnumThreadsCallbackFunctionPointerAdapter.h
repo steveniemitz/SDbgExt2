@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include <clrdata.h>
 
 typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
 

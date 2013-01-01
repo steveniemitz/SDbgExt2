@@ -27,14 +27,14 @@ HRESULT CSDbgExt::EvaluateExpression(CLRDATA_ADDRESS rootAddr, LPCWSTR expressio
 				hr = E_INVALIDARG;
 				goto cleanup;
 			}
-			hr = m_proc->GetFieldValuePtr(currAddr, buffer.data(), &currAddr);
+			hr = m_proc->GetFieldValuePtr(currAddr, const_cast<LPWSTR>(buffer.c_str()), &currAddr);
 			RESET_BUFFER
 		}
 		else if (str[a] == L'[')
 		{
 			if (bufferPos > 0)
 			{
-				hr = m_proc->GetFieldValuePtr(currAddr, buffer.data(), &currAddr);
+				hr = m_proc->GetFieldValuePtr(currAddr, const_cast<LPWSTR>(buffer.c_str()), &currAddr);
 			}
 			RESET_BUFFER
 		}
@@ -47,7 +47,7 @@ HRESULT CSDbgExt::EvaluateExpression(CLRDATA_ADDRESS rootAddr, LPCWSTR expressio
 				std::wstring buffer2(buffer.data() + 1, bufferLen);
 				
 				DctEnumerator dctEnum(m_proc);
-				hr = dctEnum.FindDctEntryByKey(currAddr, buffer2.data(), &currAddr);
+				hr = dctEnum.FindDctEntryByKey(currAddr, buffer2.c_str(), &currAddr);
 			}
 			else
 			{
@@ -67,7 +67,7 @@ HRESULT CSDbgExt::EvaluateExpression(CLRDATA_ADDRESS rootAddr, LPCWSTR expressio
 	}
 	if (bufferPos > 0)
 	{
-		hr = m_proc->GetFieldValuePtr(currAddr, buffer.data(), &currAddr);
+		hr = m_proc->GetFieldValuePtr(currAddr, const_cast<LPWSTR>(buffer.c_str()), &currAddr);
 	}
 	if (SUCCEEDED(hr))
 		*result = currAddr;

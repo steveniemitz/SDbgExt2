@@ -1,10 +1,9 @@
 #pragma once
 
-
 #import "..\..\lib\SDbgCore.tlb" no_namespace, raw_interfaces_only
-#include "IClrProcess.h"
 #include "EnumThreadsCallbackFunctionPointerAdapter.h"
 #include "EnumObjectsCallbackFunctionPointerAdapter.h"
+#include <clrdata.h>
 
 #ifdef SDBGAPIEXPORTS
 	#define SDBGAPI __declspec(dllexport)

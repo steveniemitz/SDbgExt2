@@ -92,19 +92,18 @@ HRESULT ClrProcess::GetStaticFieldValues(CLRDATA_ADDRESS field, ULONG32 cValues,
 	return hr;
 }
 
-HRESULT ClrProcess::GetFieldValueBuffer(const CLRDATA_ADDRESS obj, LPCWSTR fieldName, ULONG32 numBytes, PVOID buffer, PULONG iBytesRead)
+HRESULT ClrProcess::GetFieldValueBuffer(CLRDATA_ADDRESS obj, LPWSTR fieldName, ULONG32 numBytes, PVOID buffer, PULONG iBytesRead)
 {
 	ClrObjectData od = {};
 	ClrFieldDescData fd = {};
 	HRESULT hr = S_OK;
 	RETURN_IF_FAILED(m_pDac->GetObjectData(obj, &od));
-	CComBSTR fieldStr(fieldName);
-	RETURN_IF_FAILED(FindFieldByName(od.MethodTable, fieldStr, NULL, &fd));
+	RETURN_IF_FAILED(FindFieldByName(od.MethodTable, fieldName, NULL, &fd));
 	
 	return ReadFieldValueBuffer(obj, fd, numBytes, buffer, iBytesRead);
 }
 
-HRESULT ClrProcess::ReadFieldValueBuffer(const CLRDATA_ADDRESS obj, const ClrFieldDescData &fd, ULONG32 numBytes, PVOID buffer, PULONG bytesRead)
+HRESULT ClrProcess::ReadFieldValueBuffer(CLRDATA_ADDRESS obj, ClrFieldDescData fd, ULONG32 numBytes, PVOID buffer, PULONG bytesRead)
 {
 	if (numBytes == 0)
 	{
@@ -130,13 +129,13 @@ HRESULT ClrProcess::ReadFieldValueBuffer(const CLRDATA_ADDRESS obj, const ClrFie
 	}
 }
 
-HRESULT ClrProcess::GetFieldValuePtr(const CLRDATA_ADDRESS obj, LPCWSTR fieldName, CLRDATA_ADDRESS *addr)
+HRESULT ClrProcess::GetFieldValuePtr(const CLRDATA_ADDRESS obj, LPWSTR fieldName, CLRDATA_ADDRESS *addr)
 {
 	*addr = 0;
 	return	GetFieldValueBuffer(obj, fieldName, 0, (PVOID)addr, NULL);		
 }
 
-HRESULT ClrProcess::GetFieldValueString(const CLRDATA_ADDRESS obj, LPCWSTR fieldName, ULONG32 iNumChars, WCHAR *buffer, PULONG iBytesRead)
+HRESULT ClrProcess::GetFieldValueString(const CLRDATA_ADDRESS obj, LPWSTR fieldName, ULONG32 iNumChars, WCHAR *buffer, PULONG iBytesRead)
 {
 	HRESULT hr = S_OK;
 	CLRDATA_ADDRESS stringAddr;

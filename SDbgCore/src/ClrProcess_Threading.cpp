@@ -102,7 +102,7 @@ HRESULT ClrProcess::GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, 
 	clrThread->GetTypeName(ARRAYSIZE(typeNameBuffer), typeNameBuffer, NULL);
 	
 	if (wcscmp(typeNameBuffer, L"System.Threading.Thread") != 0)
-		return E_NOTATHREAD;
+		return E_INVALIDARG;
 
 	CComPtr<IClrObject> execCtx;
 	RETURN_IF_FAILED(clrThread->GetFieldValueObj(L"m_ExecutionContext", &execCtx));
@@ -133,10 +133,10 @@ HRESULT ClrProcess::EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb
 	HRESULT hr = S_OK;
 	RETURN_IF_FAILED(FindThreadByCorThreadId(corThreadId, &threadObj));
 
-	return EnumStackObjects(threadObj, cbPtr);
+	return EnumStackObjectsByThreadObj(threadObj, cbPtr);
 }
 
-HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb)
+HRESULT ClrProcess::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb)
 {
 	CComPtr<IEnumObjectsCallback> cbPtr(cb);
 

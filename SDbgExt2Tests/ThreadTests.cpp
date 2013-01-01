@@ -144,15 +144,5 @@ namespace SDbgExt2Tests2
 			ASSERT_SOK(hr);
 			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x02ec4148, 0x0000000002ec5cd8), managedObj);
 		}
-
-		TEST_METHOD(BeginEnumThreads_BigBlock)
-		{
-			
-		}
-
-		TEST_METHOD(BeginEnumThreads_OneAtATime)
-		{
-		}
-
 	};
 }
