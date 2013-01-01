@@ -14,7 +14,7 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(GetUsefulGlobals)
 		{
 			ClrUsefulGlobalsData g;
-			auto hr = p->GetProcess()->GetUsefulGlobals(&g);
+			auto hr = proc->GetUsefulGlobals(&g);
 
 			ASSERT_SOK(hr);
 		}

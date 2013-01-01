@@ -3,7 +3,7 @@
 #include "..\inc\ClrObject.h"
 #include <cor.h>
 
-HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData)
+HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, BSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData)
 {
 	UINT32 instanceFields = 0, staticFields = 0;
 	BOOL found = FindFieldByNameImpl(methodTable, pwszField, field, fieldData, &instanceFields);
@@ -14,7 +14,7 @@ HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszFie
 		return S_OK;
 }
 
-BOOL ClrProcess::FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen)
+BOOL ClrProcess::FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, BSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen)
 {
 	ClrMethodTableData mtData = {};
 	if (FAILED(m_pDac->GetMethodTableData(methodTable, &mtData)))

@@ -32,6 +32,7 @@ Global
 		{648A7B22-65ED-4418-8735-458C70576D59}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{648A7B22-65ED-4418-8735-458C70576D59}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{648A7B22-65ED-4418-8735-458C70576D59}.Debug|Win32.ActiveCfg = Debug|Win32
+		{648A7B22-65ED-4418-8735-458C70576D59}.Debug|Win32.Build.0 = Debug|Win32
 		{648A7B22-65ED-4418-8735-458C70576D59}.Debug|x64.ActiveCfg = Debug|x64
 		{648A7B22-65ED-4418-8735-458C70576D59}.Debug|x64.Build.0 = Debug|x64
 		{648A7B22-65ED-4418-8735-458C70576D59}.Release|Mixed Platforms.ActiveCfg = Release|Win32

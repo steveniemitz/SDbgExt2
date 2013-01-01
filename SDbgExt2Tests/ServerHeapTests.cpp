@@ -18,8 +18,6 @@ namespace SDbgExt2Tests2
 
 		TEST_METHOD(ClrGcHeapList_Server)
 		{
-			auto proc = p->GetProcess();
-
 			ClrGcHeapData gcData = {};
 			proc->GetGCHeapData(&gcData);
 
@@ -34,8 +32,6 @@ namespace SDbgExt2Tests2
 
 		TEST_METHOD(ClrGcHeapData_Server)
 		{
-			auto proc = p->GetProcess();
-
 			ClrGcHeapData gcData = {};
 			proc->GetGCHeapData(&gcData);
 

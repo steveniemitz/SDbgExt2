@@ -15,7 +15,7 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(ClrThreadStoreData_Basic)
 		{
 			ClrThreadStoreData tsData;
-			auto hr = p->GetProcess()->GetThreadStoreData(&tsData);
+			auto hr = proc->GetThreadStoreData(&tsData);
 
 			ASSERT_SOK(hr);
 			ASSERT_EQUAL((DWORD)BITNESS_CONDITIONAL(3, 2), tsData.ThreadCount);
@@ -26,8 +26,7 @@ namespace SDbgExt2Tests2
 		{
 			ClrThreadData tData = {};
 			ClrThreadStoreData tsData = {};
-			CComPtr<IXCLRDataProcess3> proc = p->GetProcess();
-
+			
 			auto hr = proc->GetThreadStoreData(&tsData);
 			hr = proc->GetThreadData(tsData.FirstThreadObj, &tData);
 
@@ -41,7 +40,6 @@ namespace SDbgExt2Tests2
 		{
 			ClrThreadData tData = {};
 			ClrThreadStoreData tsData = {};
-			CComPtr<IXCLRDataProcess3> proc = p->GetProcess();
 
 			auto hr = proc->GetThreadStoreData(&tsData);
 			int threads = 0;
@@ -96,10 +94,12 @@ namespace SDbgExt2Tests2
 			CLRDATA_ADDRESS threadObj = 0;
 			auto hr = p->FindThreadByCorThreadId(1, &threadObj);
 			ClrThreadData tData = {};
-			p->GetProcess()->GetThreadData(threadObj, &tData);
+			proc->GetThreadData(threadObj, &tData);
 
 			CLRDATA_ADDRESS stackBase, stackLimit;
-			hr = p->GetDataAccess()->GetThreadStack(tData.osThreadId, &stackBase, &stackLimit);
+			CComPtr<IDacMemoryAccess> dcma;
+			p->GetDataAccess(&dcma);
+			hr = dcma->GetThreadStack(tData.osThreadId, &stackBase, &stackLimit);
 
 			ASSERT_SOK(hr);
 			Assert::IsTrue(stackBase > stackLimit);

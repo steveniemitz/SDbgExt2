@@ -34,7 +34,7 @@ namespace SDbgExt2Tests2
 		{
 			WCHAR buffer[200];
 			ULONG32 strLen;
-			auto hr = p->GetProcess()->GetObjectStringData(BITNESS_CONDITIONAL(0x02ec2318, 0x0000000002ec2d50), ARRAYSIZE(buffer), buffer, &strLen);
+			auto hr = proc->GetObjectStringData(BITNESS_CONDITIONAL(0x02ec2318, 0x0000000002ec2d50), ARRAYSIZE(buffer), buffer, &strLen);
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual(buffer, L"hello");
@@ -46,7 +46,7 @@ namespace SDbgExt2Tests2
 			WCHAR buffer[200];
 			ULONG32 strLen;
 			// If this was in bytes it wouldn't read the entire string
-			auto hr = p->GetProcess()->GetObjectStringData(BITNESS_CONDITIONAL(0x02ec2318, 0x0000000002ec2d50), 6, buffer, &strLen);
+			auto hr = proc->GetObjectStringData(BITNESS_CONDITIONAL(0x02ec2318, 0x0000000002ec2d50), 6, buffer, &strLen);
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual(buffer, L"hello");

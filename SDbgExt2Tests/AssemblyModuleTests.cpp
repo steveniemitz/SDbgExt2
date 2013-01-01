@@ -13,8 +13,6 @@ namespace SDbgExt2Tests2
 		
 		TEST_METHOD(ClrAssemblyData_Basic)
 		{
-			auto proc = p->GetProcess();
-
 			CLRDATA_ADDRESS domain;
 			proc->GetAppDomainList(1, &domain, 0);	
 	
@@ -35,8 +33,6 @@ namespace SDbgExt2Tests2
 
 		TEST_METHOD(GetAssemblyModuleList_Basic)
 		{
-			auto proc = p->GetProcess();
-
 			CLRDATA_ADDRESS domain;
 			proc->GetAppDomainList(1, &domain, 0);	
 	
@@ -55,8 +51,6 @@ namespace SDbgExt2Tests2
 
 		TEST_METHOD(GetModuleData_Basic)
 		{
-			auto proc = p->GetProcess();
-
 			CLRDATA_ADDRESS domain;
 			proc->GetAppDomainList(1, &domain, 0);	
 	
@@ -77,8 +71,6 @@ namespace SDbgExt2Tests2
 
 		TEST_METHOD(GetAssemblyName_Basic)
 		{
-			auto proc = p->GetProcess();
-
 			CLRDATA_ADDRESS domain;
 			proc->GetAppDomainList(1, &domain, 0);	
 	
@@ -115,7 +107,7 @@ namespace SDbgExt2Tests2
 			ASSERT_EQUAL((ULONG32)1, iValues);
 			
 			WCHAR mtName[200] = {0};
-			p->GetProcess()->GetMethodTableName(fdData.FieldMethodTable, 200, mtName, NULL);
+			proc->GetMethodTableName(fdData.FieldMethodTable, 200, mtName, NULL);
 
 			Assert::AreEqual(L"System.Int32", mtName);
 			Assert::AreEqual(101, (int)values.Value);
@@ -136,7 +128,7 @@ namespace SDbgExt2Tests2
 			ASSERT_EQUAL((ULONG32)1, iValues);
 			
 			WCHAR mtName[200] = {0};
-			p->GetProcess()->GetMethodTableName(fdData.FieldMethodTable, 200, mtName, NULL);
+			proc->GetMethodTableName(fdData.FieldMethodTable, 200, mtName, NULL);
 
 			Assert::AreEqual(L"SOSRevHelper.TestClass", mtName);
 			Assert::AreEqual(values.Value, (CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x02ec23f8, 0x0000000002ec2eb0));
@@ -144,8 +136,6 @@ namespace SDbgExt2Tests2
 
 		TEST_METHOD(GetDomainLocalModuleDataFromModule_Basic)
 		{
-			auto proc = p->GetProcess();
-
 			CLRDATA_ADDRESS domain;
 			proc->GetAppDomainList(1, &domain, 0);	
 	
@@ -171,7 +161,7 @@ namespace SDbgExt2Tests2
 			const CLRDATA_ADDRESS modAddr = (CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x01152e94, 0x000007fca72c2f90);
 
 			ClrModuleData modData = {};
-			auto hr = p->GetProcess()->GetModuleData(modAddr, &modData);
+			auto hr = proc->GetModuleData(modAddr, &modData);
 
 			ASSERT_SOK(hr);
 		}

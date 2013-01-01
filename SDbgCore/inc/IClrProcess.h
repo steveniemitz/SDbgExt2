@@ -19,7 +19,7 @@ IClrProcess : public IUnknown
 	virtual STDMETHODIMP GetProcess(IXCLRDataProcess3 **ppDac) = 0;
 	virtual STDMETHODIMP GetDataAccess(IDacMemoryAccess **ppDcma) = 0;
 	
-	virtual STDMETHODIMP FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData) = 0;
+	virtual STDMETHODIMP FindFieldByName(CLRDATA_ADDRESS methodTable, BSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData) = 0;
 	virtual STDMETHODIMP FindTypeByName(LPCWSTR assemblyName, LPCWSTR typeName, CLRDATA_ADDRESS *ret) = 0;
 	virtual STDMETHODIMP FindMethodByName(CLRDATA_ADDRESS methodTable, LPCWSTR methodSig, CLRDATA_ADDRESS *methodDesc) = 0;
 

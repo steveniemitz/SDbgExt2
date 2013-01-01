@@ -63,7 +63,7 @@ void SetupTestsFromProcess(DWORD pid, IClrProcess **p)
 	CreateClrProcess(chDac, chDcma, p);
 }
 
-void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext)
+void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext, IXCLRDataProcess3 **proc)
 {
 	CoInitialize(NULL);
 
@@ -73,4 +73,6 @@ void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext)
 
 	CreateClrProcess(chDac, chDcma, p);
 	CreateSDbgExt(*p, ext);
+
+	(*p)->GetProcess(proc);
 }

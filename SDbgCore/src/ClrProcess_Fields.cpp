@@ -98,7 +98,8 @@ HRESULT ClrProcess::GetFieldValueBuffer(const CLRDATA_ADDRESS obj, LPCWSTR field
 	ClrFieldDescData fd = {};
 	HRESULT hr = S_OK;
 	RETURN_IF_FAILED(m_pDac->GetObjectData(obj, &od));
-	RETURN_IF_FAILED(FindFieldByName(od.MethodTable, fieldName, NULL, &fd));
+	CComBSTR fieldStr(fieldName);
+	RETURN_IF_FAILED(FindFieldByName(od.MethodTable, fieldStr, NULL, &fd));
 	
 	return ReadFieldValueBuffer(obj, fd, numBytes, buffer, iBytesRead);
 }

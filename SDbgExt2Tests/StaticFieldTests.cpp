@@ -41,7 +41,7 @@ namespace SDbgExt2Tests2
 
 
 	private:
-		void StaticFieldTestImpl(const WCHAR *field, CLRDATA_ADDRESS _32bitValue, CLRDATA_ADDRESS _64bitValue)
+		void StaticFieldTestImpl(const BSTR field, CLRDATA_ADDRESS _32bitValue, CLRDATA_ADDRESS _64bitValue)
 		{
 			AppDomainAndValue expectedStatics = 
 			{ BITNESS_CONDITIONAL(0x00ae72c0, 0x00000000006617a0), BITNESS_CONDITIONAL(_32bitValue, _64bitValue) };

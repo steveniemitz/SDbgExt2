@@ -14,7 +14,7 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(ClrGcHeapData_Basic)
 		{
 			ClrGcHeapData gcData = {};
-			auto hr = p->GetProcess()->GetGCHeapData(&gcData);
+			auto hr = proc->GetGCHeapData(&gcData);
 
 			ASSERT_SOK(hr);
 			ASSERT_EQUAL((UINT)1, gcData.HeapCount);
@@ -24,8 +24,6 @@ namespace SDbgExt2Tests2
 
 		TEST_METHOD(ClrGcHeapList_Basic)
 		{
-			auto proc = p->GetProcess();
-
 			ClrGcHeapData gcData = {};
 			proc->GetGCHeapData(&gcData);
 

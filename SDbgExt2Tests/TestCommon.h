@@ -3,7 +3,7 @@
 #include "..\SDbgCore\inc\SDbgCoreApi.h"
 #include "..\SDbgExt\SDbgExtApi.h"
 
-void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext);
+void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext, IXCLRDataProcess3 **proc);
 
 #ifndef _WIN64
 #define ADD_BASIC_TEST_INIT  ADD_TEST_INIT(L"..\\Dumps\\x86\\basic.dmp") 
@@ -11,11 +11,12 @@ void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext);
 #define ADD_BASIC_TEST_INIT	 ADD_TEST_INIT(L"..\\..\\Dumps\\x64\\basic.dmp")
 #endif
 
-#define ADD_TEST_INIT(file)	TEST_METHOD_INITIALIZE(Init) { SetupTests(file, &p, &ext); } \
-							TEST_METHOD_CLEANUP(Cleanup) { p->Release(); ext->Release(); } \
+#define ADD_TEST_INIT(file)	TEST_METHOD_INITIALIZE(Init) { SetupTests(file, &p, &ext, &proc); } \
+							TEST_METHOD_CLEANUP(Cleanup) { p->Release(); ext->Release(); proc->Release(); } \
 							private: \
 								IClrProcess *p; \
 								ISDbgExt *ext; \
+								IXCLRDataProcess3 *proc; \
 							public: \
 
 

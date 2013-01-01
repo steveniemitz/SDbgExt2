@@ -47,7 +47,7 @@ namespace SDbgExt2Tests2
 			const CLRDATA_ADDRESS modAddr = SystemWebModule;
 
 			ClrModuleData modData = {};
-			auto hr = p->GetProcess()->GetModuleData(modAddr, &modData);
+			auto hr = proc->GetModuleData(modAddr, &modData);
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual((SIZE_T)3, (SIZE_T)modData.DomainNeutralIndex);
@@ -57,7 +57,7 @@ namespace SDbgExt2Tests2
 		{
 			CLRDATA_ADDRESS modAddr = MyDllModule;
 
-			auto proc = p->GetProcess();
+			auto proc = proc;
 
 			ClrModuleData modData_myDll = {};
 			ClrModuleData modData_SystemWeb = {};

@@ -15,7 +15,7 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(ClrAppDomainStoreData_Basic)
 		{
 			ClrAppDomainStoreData ads = {};
-			auto hr = p->GetProcess()->GetAppDomainStoreData(&ads);	
+			auto hr = proc->GetAppDomainStoreData(&ads);	
 
 			Assert::AreEqual(S_OK, hr);
 			Assert::AreEqual((LONG)1, ads.DomainCount);
@@ -26,7 +26,6 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(ClrAppDomainList_Basic)
 		{
 			ClrAppDomainStoreData ads = {};
-			auto proc = p->GetProcess();
 			auto hr = proc->GetAppDomainStoreData(&ads);
 
 			ULONG32 numDomains = ads.DomainCount + 2;
@@ -42,7 +41,6 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(ClrAssemblyList_Basic)
 		{
 			CLRDATA_ADDRESS domain;
-			auto proc = p->GetProcess();
 			auto hr = proc->GetAppDomainList(1, &domain, 0);
 
 			ClrAppDomainData adData = {};
@@ -58,7 +56,6 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(ClrAppDomainData_Basic)
 		{
 			CLRDATA_ADDRESS domain;
-			auto proc = p->GetProcess();
 			auto hr = proc->GetAppDomainList(1, &domain, 0);
 
 			ClrAppDomainData adData = {};
