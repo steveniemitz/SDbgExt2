@@ -5,6 +5,9 @@ import "idl\_IClrObject.idl";
 import "idl\_IXCLRDataProcess3.idl";
 import "ClrData.idl";
 
+//#pragma midl_echo("STDAPI CLRDataCreateInstance(REFIID iid, ICLRDataTarget* target, void** iface);")
+//#pragma midl_echo("typedef HRESULT (STDAPICALLTYPE* PFN_CLRDataCreateInstance)(REFIID iid, ICLRDataTarget* target, void** iface);")
+
 [
 	object,
 	uuid(10D69AE4-80AA-4D87-AF18-86DD0010AA8C)

@@ -13,15 +13,9 @@ import "idl\_IClrObject.idl";
 library SDbgCore
 {
 	interface IClrObjectArray;
+	interface IClrObject;
 	interface IDacMemoryAccess;
 	interface IXCLRDataProcess3;
-
-	interface IEnumThreadsCallback;
-	interface IEnumObjectsCallback;
-
-	struct AppDomainAndValue;
-	struct ClrThreadContext;
-
 	interface IClrProcess;
 	//interface ISDbgExt;
 	enum CorElementType;
