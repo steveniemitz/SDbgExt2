@@ -11,7 +11,7 @@ namespace SDbgExt2Tests2
 	public:
 #ifndef _WIN64
 		#define SystemWebModule 0x000000005cf91000
-#define ExpectedHttpRuntimeStatics { AppDomainAndValue(0x013a35d8, 0x0b946300), AppDomainAndValue(0x013f3570, 0x01a30c0c) }
+#define ExpectedHttpRuntimeStatics { { 0x013a35d8, 0x0b946300 }, { 0x013f3570, 0x01a30c0c } }
 
 		ADD_TEST_INIT(L"..\\dumps\\x86\\iis_small.dmp")
 #else
@@ -37,7 +37,7 @@ namespace SDbgExt2Tests2
 
 			for (ULONG32 a = 0; a < numValues; a++)
 			{
-				Assert::AreEqual(expectedValues[a].Domain, values[a].Domain);
+				Assert::AreEqual(expectedValues[a].domain, values[a].domain);
 				Assert::AreEqual(expectedValues[a].Value, values[a].Value);
 			}			
 		}

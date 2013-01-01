@@ -257,7 +257,8 @@ private:
 				CLRDATA_ADDRESS obj = 0;
 				if (SUCCEEDED(sparseArray->GetItemAddr(a, &obj)) && obj)
 				{
-					DumpWorkStealingQueue(proc, AppDomainAndValue(tpWorkQueueAddr.Domain, obj));
+					AppDomainAndValue adv = { tpWorkQueueAddr.domain, obj };
+					DumpWorkStealingQueue(proc, adv);
 				}				
 			}
 		}

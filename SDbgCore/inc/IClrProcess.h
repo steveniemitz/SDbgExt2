@@ -7,26 +7,26 @@ struct IClrObject;
 struct IXCLRDataProcess3;
 struct IDacMemoryAccess;
 
-struct AppDomainAndValue
-{
-	AppDomainAndValue() 
-		: Domain(0), Value(0)
-	{ 
-	}
-
-	AppDomainAndValue(CLRDATA_ADDRESS domain, CLRDATA_ADDRESS value)
-		: Domain(domain), Value(value)
-	{ 
-	}
-
-	bool operator==(const AppDomainAndValue &rhs) const
-	{
-		return rhs.Domain == Domain && rhs.Value == Value;
-	}
-
-	CLRDATA_ADDRESS Domain;
-	CLRDATA_ADDRESS Value;	
-};
+//struct AppDomainAndValue
+//{
+//	AppDomainAndValue() 
+//		: Domain(0), Value(0)
+//	{ 
+//	}
+//
+//	AppDomainAndValue(CLRDATA_ADDRESS domain, CLRDATA_ADDRESS value)
+//		: Domain(domain), Value(value)
+//	{ 
+//	}
+//
+//	bool operator==(const AppDomainAndValue &rhs) const
+//	{
+//		return rhs.Domain == Domain && rhs.Value == Value;
+//	}
+//
+//	CLRDATA_ADDRESS Domain;
+//	CLRDATA_ADDRESS Value;	
+//};
 
 
 #define E_NOMANAGEDTHREAD	MAKE_HRESULT(SEVERITY_ERROR, 0x200, 1)

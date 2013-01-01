@@ -43,10 +43,8 @@ namespace SDbgExt2Tests2
 	private:
 		void StaticFieldTestImpl(const WCHAR *field, CLRDATA_ADDRESS _32bitValue, CLRDATA_ADDRESS _64bitValue)
 		{
-			AppDomainAndValue expectedStatics = BITNESS_CONDITIONAL(
-				AppDomainAndValue(0x00ae72c0, _32bitValue),
-				AppDomainAndValue(0x00000000006617a0, _64bitValue)
-			);
+			AppDomainAndValue expectedStatics = 
+			{ BITNESS_CONDITIONAL(0x00ae72c0, 0x00000000006617a0), BITNESS_CONDITIONAL(_32bitValue, _64bitValue) };
 
 			AppDomainAndValue values;
 			ULONG32 iValues;
@@ -57,7 +55,8 @@ namespace SDbgExt2Tests2
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual((ULONG32)1, iValues);
-			Assert::AreEqual(expectedStatics, values);
+			Assert::AreEqual(expectedStatics.domain, values.domain);
+			Assert::AreEqual(expectedStatics.Value, values.Value);
 		}
 
 	};

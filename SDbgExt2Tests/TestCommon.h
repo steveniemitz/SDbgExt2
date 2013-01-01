@@ -38,7 +38,7 @@ namespace Microsoft
 			template<> static std::wstring ToString<AppDomainAndValue>(const AppDomainAndValue& t)				 
 			{ 
 				WCHAR buffer[18*2+8] = {0};
-				swprintf_s(buffer, L"(0x%016I64x, 0x%016I64x)", t.Domain, t.Value);
+				swprintf_s(buffer, L"(0x%016I64x, 0x%016I64x)", t.domain, t.Value);
 
 				return std::wstring(buffer);
 			}

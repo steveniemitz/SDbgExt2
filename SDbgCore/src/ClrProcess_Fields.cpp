@@ -37,7 +37,8 @@ HRESULT ClrProcess::GetStaticFieldValue(CLRDATA_ADDRESS field, CLRDATA_ADDRESS a
 	
 	if (fdData.FieldType == ELEMENT_TYPE_VALUETYPE)
 	{
-		*ret = AppDomainAndValue(appDomain, dataPtr);
+		ret->domain = appDomain;
+		ret->Value = dataPtr;
 		return S_OK;
 	}
 	else
@@ -46,7 +47,8 @@ HRESULT ClrProcess::GetStaticFieldValue(CLRDATA_ADDRESS field, CLRDATA_ADDRESS a
 		CLRDATA_ADDRESS tmpVal = 0;
 		if (SUCCEEDED(m_dcma->ReadVirtual(dataPtr, &tmpVal, readSize, &readSize)) && tmpVal)
 		{
-			*ret = AppDomainAndValue(appDomain, tmpVal);
+			ret->domain = appDomain;
+			ret->Value = tmpVal;
 			return S_OK;
 		}
 		else

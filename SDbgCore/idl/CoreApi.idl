@@ -19,6 +19,8 @@ library SDbgCore
 	interface IEnumThreadsCallback;
 	interface IEnumObjectsCallback;
 
+	struct AppDomainAndValue;
+
 	//interface IClrProcess;
 	//interface ISDbgExt;
 	enum CorElementType;

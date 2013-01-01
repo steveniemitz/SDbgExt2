@@ -15,7 +15,7 @@ BOOL CALLBACK EnumThreadPoolQueuesCallback(const AppDomainAndValue queue, const 
 
 	if (es->LastQueue != queue.Value)
 	{
-		dwdprintf(es->dbg->Control, SR::DumpThreadPoolQueues_NewQueue(), queue.Value, queue.Domain);
+		dwdprintf(es->dbg->Control, SR::DumpThreadPoolQueues_NewQueue(), queue.Value, queue.domain);
 		dwdprintf(es->dbg->Control, SR::DumpThreadPoolQueues_Header());
 	}
 
