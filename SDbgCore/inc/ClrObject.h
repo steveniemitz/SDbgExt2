@@ -92,12 +92,16 @@ public:
 		if (!m_mtAddr)
 		{
 			ClrObjectData od = {};
-			RETURN_IF_FAILED(m_proc->GetProcess()->GetObjectData(m_addr, &od));
+			CComPtr<IXCLRDataProcess3> dac;
+			m_proc->GetProcess(&dac);
+			RETURN_IF_FAILED(dac->GetObjectData(m_addr, &od));
 
 			m_mtAddr = od.MethodTable;
 		}
 
-		return m_proc->GetProcess()->GetMethodTableName(m_mtAddr, cchBuffer, buffer, (ULONG32*)nameLen);
+		CComPtr<IXCLRDataProcess3> dac;
+		m_proc->GetProcess(&dac);
+		return dac->GetMethodTableName(m_mtAddr, cchBuffer, buffer, (ULONG32*)nameLen);
 	}
 
 protected:

@@ -3,7 +3,8 @@
 
 HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, EnumHashtableCallback callback, PVOID state)
 {
-	CComPtr<IXCLRDataProcess3> proc = m_dac->GetProcess();
+	CComPtr<IXCLRDataProcess3> proc;
+	m_dac->GetProcess(&proc);
 
 	ClrObjectData od = {};
 	ClrFieldDescData fd = {};
@@ -83,7 +84,9 @@ HRESULT DctEnumerator::GetEntryOffsets(CLRDATA_ADDRESS entriesPtr, WCHAR *keyFie
 									   CLRDATA_ADDRESS *arrayBase, ULONG *arrayElementSize, ULONG *arrayEntries)
 {
 	ClrObjectData entriesData = {};
-	m_dac->GetProcess()->GetObjectData(entriesPtr, &entriesData);
+	CComPtr<IXCLRDataProcess3> dac;
+	m_dac->GetProcess(&dac);
+	dac->GetObjectData(entriesPtr, &entriesData);
 	CLRDATA_ADDRESS typeMt = entriesData.ArrayData.ElementMethodTable;
 		
 	ClrFieldDescData field;
@@ -129,7 +132,8 @@ HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashC
 
 	ULONG bytesRead = 0;
 
-	auto dcma = m_dac->GetDataAccess();
+	CComPtr<IDacMemoryAccess> dcma;
+	m_dac->GetDataAccess(&dcma);
 
 	ULONG64 baseAddr = arrayDataPtr;
 	hr = dcma->ReadVirtual(baseAddr+keyOffset, &keyValue, sizeof(PVOID), &bytesRead);
@@ -158,7 +162,9 @@ HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, EnumH
 {
 	ClrObjectData od = {};
 	HRESULT hr = S_OK;
-	RETURN_IF_FAILED(m_dac->GetProcess()->GetObjectData(listObj, &od));
+	CComPtr<IXCLRDataProcess3> dac;
+	m_dac->GetProcess(&dac);
+	RETURN_IF_FAILED(dac->GetObjectData(listObj, &od));
 
 	CLRDATA_ADDRESS currNode = NULL;
 	RETURN_IF_FAILED(m_dac->GetFieldValuePtr(listObj, L"head", &currNode));
@@ -168,14 +174,15 @@ HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, EnumH
 		return S_OK;
 	}
 
-	RETURN_IF_FAILED(m_dac->GetProcess()->GetObjectData(currNode, &od));
+	RETURN_IF_FAILED(dac->GetObjectData(currNode, &od));
 
 	ClrFieldDescData keyField, valueField, nextField;
 	RETURN_IF_FAILED(m_dac->FindFieldByName(od.MethodTable, L"key", NULL, &keyField))
 	RETURN_IF_FAILED(m_dac->FindFieldByName(od.MethodTable, L"value", NULL, &valueField));
 	RETURN_IF_FAILED(m_dac->FindFieldByName(od.MethodTable, L"next", NULL, &nextField));
 
-	CComPtr<IDacMemoryAccess> dcma = m_dac->GetDataAccess();
+	CComPtr<IDacMemoryAccess> dcma;
+	m_dac->GetDataAccess(&dcma);
 
 	ULONG bytesRead = 0;
 	while(currNode)
@@ -218,7 +225,10 @@ HRESULT DctEnumerator::FindDctEntryByKey(CLRDATA_ADDRESS dctObj, LPCWSTR key, CL
 		CLRDATA_ADDRESS TargetValuePtr;
 	};
 
-	DctKeySearchState dkss = { m_dac->GetProcess(), key, wcslen(key), NULL };
+	CComPtr<IXCLRDataProcess3> dac;
+	m_dac->GetProcess(&dac);
+
+	DctKeySearchState dkss = { dac, key, wcslen(key), NULL };
 	auto cb = [](DctEntry entry, PVOID state)->BOOL {
 		BOOL ret = TRUE;
 		DctKeySearchState *ds = reinterpret_cast<DctKeySearchState *>(state);

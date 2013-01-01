@@ -20,6 +20,7 @@ library SDbgCore
 	interface IEnumObjectsCallback;
 
 	struct AppDomainAndValue;
+	struct ClrThreadContext;
 
 	//interface IClrProcess;
 	//interface ISDbgExt;

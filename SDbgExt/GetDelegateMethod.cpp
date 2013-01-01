@@ -11,7 +11,7 @@ DBG_FUNC(getdelegatemethod)
 	RETURN_IF_FAILED(dbg.Process->GetDelegateInfo(addr, &target, &methodDesc));
 
 	WCHAR buffer[512];
-	if (FAILED(dbg.Process->GetProcess()->GetMethodDescName(methodDesc, ARRAYSIZE(buffer), buffer, NULL)))
+	if (FAILED(dbg.XCLR->GetMethodDescName(methodDesc, ARRAYSIZE(buffer), buffer, NULL)))
 	{
 		dwdprintf(dbg.Control, SR::GetDelegateMethod_Error());
 	}

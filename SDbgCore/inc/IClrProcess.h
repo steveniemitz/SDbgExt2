@@ -7,50 +7,18 @@ struct IClrObject;
 struct IXCLRDataProcess3;
 struct IDacMemoryAccess;
 
-//struct AppDomainAndValue
-//{
-//	AppDomainAndValue() 
-//		: Domain(0), Value(0)
-//	{ 
-//	}
-//
-//	AppDomainAndValue(CLRDATA_ADDRESS domain, CLRDATA_ADDRESS value)
-//		: Domain(domain), Value(value)
-//	{ 
-//	}
-//
-//	bool operator==(const AppDomainAndValue &rhs) const
-//	{
-//		return rhs.Domain == Domain && rhs.Value == Value;
-//	}
-//
-//	CLRDATA_ADDRESS Domain;
-//	CLRDATA_ADDRESS Value;	
-//};
-
-
 #define E_NOMANAGEDTHREAD	MAKE_HRESULT(SEVERITY_ERROR, 0x200, 1)
 #define E_NOTATHREAD		MAKE_HRESULT(SEVERITY_ERROR, 0x200, 2)
 #define E_CANTREADEXECTX	MAKE_HRESULT(SEVERITY_ERROR, 0x200, 3)
 #define E_CANTREADILLCTX	MAKE_HRESULT(SEVERITY_ERROR, 0x200, 4)
 #define E_CANTREADHOSTCTX	MAKE_HRESULT(SEVERITY_ERROR, 0x200, 5)
 
-struct ClrThreadContext
-{
-	CLRDATA_ADDRESS ExecutionContext;
-	CLRDATA_ADDRESS IllogicalCallContext;
-	CLRDATA_ADDRESS LogicalCallContext;
-	CLRDATA_ADDRESS HostContext;
-};
-
 MIDL_INTERFACE("C20A701D-82B7-498D-B35F-8C2874542A1C")
 IClrProcess : public IUnknown
 {
 	virtual STDMETHODIMP GetProcess(IXCLRDataProcess3 **ppDac) = 0;
 	virtual STDMETHODIMP GetDataAccess(IDacMemoryAccess **ppDcma) = 0;
-	virtual STDMETHODIMP_(CComPtr<IXCLRDataProcess3>) GetProcess() = 0;
-	virtual STDMETHODIMP_(CComPtr<IDacMemoryAccess>) GetDataAccess() = 0;
-
+	
 	virtual STDMETHODIMP FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData) = 0;
 	virtual STDMETHODIMP FindTypeByName(LPCWSTR assemblyName, LPCWSTR typeName, CLRDATA_ADDRESS *ret) = 0;
 	virtual STDMETHODIMP FindMethodByName(CLRDATA_ADDRESS methodTable, LPCWSTR methodSig, CLRDATA_ADDRESS *methodDesc) = 0;
@@ -71,7 +39,7 @@ IClrProcess : public IUnknown
 	virtual STDMETHODIMP EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb) = 0;
 	virtual STDMETHODIMP EnumStackObjects(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb) = 0;
 	
-	virtual BOOL IsValidObject(CLRDATA_ADDRESS obj) = 0;
+	virtual STDMETHODIMP_(LONG) IsValidObject(CLRDATA_ADDRESS obj) = 0;
 
 	virtual STDMETHODIMP EnumHeapObjects(IEnumObjectsCallback *cb) = 0;
 

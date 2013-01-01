@@ -28,8 +28,11 @@ struct WinDbgInterfaces
 
 		Client = client;
 		client.QueryInterface<IDebugControl4>(&Control);
+		
+		Process->GetProcess(&XCLR);
 	}
 
+	CComPtr<IXCLRDataProcess3> XCLR;
 	CComPtr<IClrProcess> Process;
 	CComPtr<ISDbgExt> Ext;
 

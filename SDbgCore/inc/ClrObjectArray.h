@@ -34,7 +34,9 @@ public:
 			return E_INVALIDARG;
 
 		*objAddr = 0;
-		return m_proc->GetDataAccess()->ReadVirtual(m_arrayData.FirstElement + (idx * m_arrayData.ElementSize), objAddr, sizeof(void*), NULL);
+		CComPtr<IDacMemoryAccess> dac;
+		m_proc->GetDataAccess(&dac);
+		return dac->ReadVirtual(m_arrayData.FirstElement + (idx * m_arrayData.ElementSize), objAddr, sizeof(void*), NULL);
 	}
 
 	STDMETHODIMP GetItemObj(ULONG32 idx, IClrObject **ret)
@@ -67,7 +69,9 @@ private:
 		if (!m_arrayInit)
 		{
 			ClrObjectData od = {};
-			RETURN_IF_FAILED(m_proc->GetProcess()->GetObjectData(m_addr, &od));
+			CComPtr<IXCLRDataProcess3> dac;
+			m_proc->GetProcess(&dac);
+			RETURN_IF_FAILED(dac->GetObjectData(m_addr, &od));
 			m_arrayData = od.ArrayData;
 			m_arrayInit = TRUE;
 		}

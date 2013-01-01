@@ -26,7 +26,7 @@ BOOL CALLBACK EnumThreadPoolQueuesCallback(const AppDomainAndValue queue, const 
 		WCHAR buffer[512];
 		UINT32 numChars;
 
-		if (SUCCEEDED(es->dbg->Process->GetProcess()->GetMethodDescName(workItem.DelegateMethodDesc, ARRAYSIZE(buffer), buffer, &numChars)))
+		if (SUCCEEDED(es->dbg->XCLR->GetMethodDescName(workItem.DelegateMethodDesc, ARRAYSIZE(buffer), buffer, &numChars)))
 		{
 			delegateName = std::wstring(buffer, numChars);
 		}

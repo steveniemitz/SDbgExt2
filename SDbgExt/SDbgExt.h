@@ -43,7 +43,10 @@ public:
 	
 	STDMETHODIMP GetObjectData(CLRDATA_ADDRESS objAddr, ClrObjectData *data)
 	{
-		return m_proc->GetProcess()->GetObjectData(objAddr, data);
+		CComPtr<IXCLRDataProcess3> dac;
+		m_proc->GetProcess(&dac);
+
+		return dac->GetObjectData(objAddr, data);
 	}
 
 	STDMETHODIMP EnumerateHashtable(CLRDATA_ADDRESS dctObj, EnumHashtableCallback callback, PVOID state);

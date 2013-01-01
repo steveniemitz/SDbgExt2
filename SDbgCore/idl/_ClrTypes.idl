@@ -6,3 +6,12 @@ typedef struct AppDomainAndValue
 	CLRDATA_ADDRESS Domain;
 	CLRDATA_ADDRESS Value;
 } AppDomainAndValue;
+
+
+typedef struct ClrThreadContext
+{
+	CLRDATA_ADDRESS ExecutionContext;
+	CLRDATA_ADDRESS IllogicalCallContext;
+	CLRDATA_ADDRESS LogicalCallContext;
+	CLRDATA_ADDRESS HostContext;
+} ClrThreadContext;

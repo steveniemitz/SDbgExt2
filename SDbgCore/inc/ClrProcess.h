@@ -19,34 +19,7 @@ public:
 		m_pDac = pDac;
 		m_dcma = pDcma;
 	}
-
-	/*STDMETHODIMP_(ULONG) AddRef() { return ++m_dwRef; }
-	STDMETHODIMP_(ULONG) Release()
-	{
-		ULONG newRef = --m_dwRef;
-		if (newRef == 0)
-			delete this;
-		return newRef;
-	}
-
-	STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject)
-    {
-        IUnknown *punk = nullptr;
-
-        if (riid == IID_IUnknown)
-            punk = static_cast<IUnknown*>(this);
-		else if (riid == __uuidof(IClrProcess))
-			punk = static_cast<IClrProcess*>(this);
-
-        *ppvObject = punk;
-        if (!punk)
-            return E_NOINTERFACE;
-
-        punk->AddRef();
-        return S_OK;
-    }*/
-
-
+	
 	STDMETHODIMP GetProcess(IXCLRDataProcess3 **ppDac)
 	{
 		*ppDac = m_pDac;
@@ -61,17 +34,6 @@ public:
 		(*ppDcma)->AddRef();
 		
 		return S_OK;
-	}
-
-
-	STDMETHODIMP_(CComPtr<IXCLRDataProcess3>) GetProcess()
-	{
-		return CComPtr<IXCLRDataProcess3>(m_pDac);
-	}
-
-	STDMETHODIMP_(CComPtr<IDacMemoryAccess>) GetDataAccess()
-	{
-		return CComPtr<IDacMemoryAccess>(m_dcma);
 	}
 
 	STDMETHODIMP FindFieldByName(CLRDATA_ADDRESS methodTable, LPCWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData);
@@ -92,7 +54,7 @@ public:
 	STDMETHODIMP GetManagedThreadObject(CLRDATA_ADDRESS unmanagedThreadObj, CLRDATA_ADDRESS *managedThreadObj);
 	STDMETHODIMP GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, ClrThreadContext *ctx);
 	
-	BOOL IsValidObject(CLRDATA_ADDRESS obj);
+	STDMETHODIMP_(LONG) IsValidObject(CLRDATA_ADDRESS obj);
 
 	STDMETHODIMP EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb);
 	STDMETHODIMP EnumStackObjects(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb);

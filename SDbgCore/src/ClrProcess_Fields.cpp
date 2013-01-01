@@ -154,7 +154,7 @@ HRESULT ClrProcess::GetFieldValueString(const CLRDATA_ADDRESS obj, LPCWSTR field
 	}
 }
 
-BOOL ClrProcess::IsValidObject(CLRDATA_ADDRESS obj)
+LONG ClrProcess::IsValidObject(CLRDATA_ADDRESS obj)
 {
 	if (!obj)
 		return FALSE;

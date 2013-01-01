@@ -18,7 +18,9 @@ public:
 		HRESULT hr = S_OK;
 
 		ClrAppDomainStoreData ads = {};
-		m_dac->GetProcess()->GetAppDomainStoreData(&ads);
+		CComPtr<IXCLRDataProcess3> dac;
+		m_dac->GetProcess(&dac);
+		dac->GetAppDomainStoreData(&ads);
 	
 		std::vector<AppDomainAndValue> values(ads.DomainCount + 2);
 		ULONG32 numValues;
