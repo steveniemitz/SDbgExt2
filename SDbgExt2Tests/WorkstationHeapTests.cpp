@@ -47,7 +47,10 @@ namespace SDbgExt2Tests2
 				return TRUE;
 			};
 			
-			p->EnumHeapObjects(cb, &n);
+			EnumObjectsCallbackFunctionPointerAdapter adapt;
+			adapt.Init(cb, &n);
+
+			p->EnumHeapObjects(&adapt);
 
 #ifndef _WIN64
 	#define ExpectedHeapObjects 547

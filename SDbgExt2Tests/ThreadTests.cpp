@@ -73,7 +73,10 @@ namespace SDbgExt2Tests2
 				return TRUE;
 			};
 
-			p->EnumThreads(func, &state);
+			EnumThreadsCallbackFunctionPointerAdapter adapt;
+			adapt.Init(func, &state);
+
+			p->EnumThreads(&adapt);
 
 			ASSERT_EQUAL(BITNESS_CONDITIONAL(3,2), state.NumTimesCalled);
 		}
@@ -117,7 +120,10 @@ namespace SDbgExt2Tests2
 				return TRUE;
 			};
 
-			auto hr = p->EnumStackObjects((DWORD)1, cb, &seenObjects);
+			EnumObjectsCallbackFunctionPointerAdapter adapt;
+			adapt.Init(cb, &seenObjects);
+
+			auto hr = p->EnumStackObjects((DWORD)1, &adapt);
 
 			ASSERT_SOK(hr);
 		}
@@ -141,31 +147,11 @@ namespace SDbgExt2Tests2
 
 		TEST_METHOD(BeginEnumThreads_BigBlock)
 		{
-			CComPtr<IEnumClrThreads> t;
-			p->BeginEnumThreads(&t);
-
-			EnumClrThreadData data[5];
-			ULONG numItems;
-			auto hr = t->Next(5, data, &numItems);
 			
-			Assert::AreEqual(S_FALSE, hr);
-			Assert::AreEqual((ULONG)3, numItems);
 		}
 
 		TEST_METHOD(BeginEnumThreads_OneAtATime)
 		{
-			CComPtr<IEnumClrThreads> t;
-			p->BeginEnumThreads(&t);
-
-			EnumClrThreadData data;
-			ULONG numItems = 0;
-			while(t->Next(1, &data, NULL) == S_OK)
-			{
-				numItems++;
-			}
-		
-			Assert::AreEqual((ULONG)3, numItems);
-			Assert::AreEqual((CLRDATA_ADDRESS)0, data.ThreadData.NextThread);
 		}
 
 	};

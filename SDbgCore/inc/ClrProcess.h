@@ -7,8 +7,6 @@
 class ClrProcess : public IClrProcess
 {
 public:
-	friend class CEnumClrThreads;
-	
 	ClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *pDcma)
 		: m_pDac(pDac), m_dcma(pDcma)
 	{
@@ -82,8 +80,7 @@ public:
 	STDMETHODIMP GetFieldValueString(const CLRDATA_ADDRESS obj, LPCWSTR fieldName, ULONG32 bufferSize, WCHAR *buffer, PULONG bytesRead);
 	STDMETHODIMP ReadFieldValueBuffer(const CLRDATA_ADDRESS obj, const ClrFieldDescData &fd, ULONG32 numBytes, PVOID buffer, PULONG bytesRead);
 
-	STDMETHODIMP BeginEnumThreads(IEnumClrThreads **ret);
-	STDMETHODIMP EnumThreads(EnumThreadsCallback cb, PVOID state);
+	STDMETHODIMP EnumThreads(IEnumThreadsCallback *cb);
 	STDMETHODIMP FindThreadByCorThreadId(DWORD corThreadId, CLRDATA_ADDRESS *unmanagedThreadObj);
 	STDMETHODIMP FindThreadByOsThreadId(DWORD osThreadId, CLRDATA_ADDRESS *unmanagedThreadObj);
 	STDMETHODIMP GetManagedThreadObject(CLRDATA_ADDRESS unmanagedThreadObj, CLRDATA_ADDRESS *managedThreadObj);
@@ -91,10 +88,9 @@ public:
 	
 	BOOL IsValidObject(CLRDATA_ADDRESS obj);
 
-	STDMETHODIMP EnumStackObjects(DWORD corThreadId, EnumObjectsCallback cb, PVOID state);
-	STDMETHODIMP EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallback cb, PVOID state);
-	STDMETHODIMP BeginEnumStackObjects(CLRDATA_ADDRESS threadObj, IEnumClrObjects **ret);
-	STDMETHODIMP EnumHeapObjects(EnumObjectsCallback cb, PVOID state);
+	STDMETHODIMP EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb);
+	STDMETHODIMP EnumStackObjects(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb);
+	STDMETHODIMP EnumHeapObjects(IEnumObjectsCallback *cb);
 		
 	STDMETHODIMP GetClrObject(CLRDATA_ADDRESS obj, IClrObject **ret);
 	STDMETHODIMP GetClrObjectArray(CLRDATA_ADDRESS objArray, IClrObjectArray **ret)

@@ -56,8 +56,11 @@ namespace SDbgExt2Tests2
 				(*((int*)state))++;
 				return TRUE;
 			};
-			
-			p->EnumHeapObjects(cb, &n);
+
+			EnumObjectsCallbackFunctionPointerAdapter adapt;
+			adapt.Init(cb, &n);
+
+			p->EnumHeapObjects(&adapt);
 
 			Assert::AreEqual(BITNESS_CONDITIONAL(50475, 52100), n);
 		}

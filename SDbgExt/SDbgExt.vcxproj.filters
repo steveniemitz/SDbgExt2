@@ -16,9 +16,6 @@
     <Filter Include="Source Files\WinDbg">
       <UniqueIdentifier>{6c1ec6ea-8cb3-4290-a3e3-7e364aa87f77}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IDL">
-      <UniqueIdentifier>{0b826f86-ed5a-45c5-9d2b-f9e22b84c5f5}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -55,6 +52,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dllmain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

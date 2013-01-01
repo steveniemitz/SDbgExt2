@@ -1,8 +1,9 @@
 import "oaidl.idl";
 import "ocidl.idl";
+import "ClrData.idl";
 
 import "idl\_IXCLRDataProcess3.idl";
-//import "idl\_IClrProcess.idl";
+import "idl\_IClrProcess.idl";
 import "idl\_IClrObject.idl";
 //import "idl\_ISDbgExt.idl";
 
@@ -14,6 +15,10 @@ library SDbgCore
 	interface IClrObjectArray;
 	interface IDacMemoryAccess;
 	interface IXCLRDataProcess3;
+
+	interface IEnumThreadsCallback;
+	interface IEnumObjectsCallback;
+
 	//interface IClrProcess;
 	//interface ISDbgExt;
 	enum CorElementType;

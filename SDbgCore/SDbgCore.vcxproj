@@ -149,11 +149,11 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\CEnumClrThreads.h" />
-    <ClInclude Include="inc\CEnumStackObjects.h" />
     <ClInclude Include="inc\ClrObject.h" />
     <ClInclude Include="inc\ClrObjectArray.h" />
     <ClInclude Include="inc\ClrProcess.h" />
+    <ClInclude Include="inc\EnumObjectsCallbackFunctionPointerAdapter.h" />
+    <ClInclude Include="inc\EnumThreadsCallbackFunctionPointerAdapter.h" />
     <ClInclude Include="inc\IClrProcess.h" />
     <ClInclude Include="inc\SDbgCoreApi.h" />
     <ClInclude Include="inc\targetver.h" />

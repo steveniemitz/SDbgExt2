@@ -149,6 +149,7 @@
     <ClInclude Include="DbgEngCLRDataTarget.h" />
     <ClInclude Include="DbgEngMemoryAccess.h" />
     <ClInclude Include="DictionaryEnumerator.h" />
+    <ClInclude Include="dllmain.h" />
     <ClInclude Include="ISDbgExt.h" />
     <ClInclude Include="SDbgExt.h" />
     <ClInclude Include="SDbgExtApi.h" />

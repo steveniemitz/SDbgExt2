@@ -6,12 +6,12 @@
 
 #define Align(addr) (addr + (sizeof(void*) - 1)) & ~(sizeof(void*) - 1)
 
-HRESULT ClrProcess::EnumHeapObjects(EnumObjectsCallback cb, PVOID state)
+HRESULT ClrProcess::EnumHeapObjects(IEnumObjectsCallback *cb)
 {
+	CComPtr<IEnumObjectsCallback> cbPtr(cb);
 	struct EnumSegmentsState
 	{
-		EnumObjectsCallback wrappedCb;
-		PVOID wrappedState;
+		CComPtr<IEnumObjectsCallback> wrappedCb;
 		IXCLRDataProcess3 *pDac;
 		CLRDATA_ADDRESS FreeMT;
 	};
@@ -21,7 +21,7 @@ HRESULT ClrProcess::EnumHeapObjects(EnumObjectsCallback cb, PVOID state)
 	ClrUsefulGlobalsData ug = {};
 	RETURN_IF_FAILED(m_pDac->GetUsefulGlobals(&ug));
 
-	EnumSegmentsState outerState = { cb, state, m_pDac, ug.FreeMethodTable };
+	EnumSegmentsState outerState = { cbPtr, m_pDac, ug.FreeMethodTable };
 	
 	auto heapCb = [](const CLRDATA_ADDRESS segmentAddr, const ClrGcHeapSegmentData &segment, PVOID innerState)->BOOL {
 		auto *ess = static_cast<EnumSegmentsState *>(innerState);
@@ -37,7 +37,7 @@ HRESULT ClrProcess::EnumHeapObjects(EnumObjectsCallback cb, PVOID state)
 			}
 			else
 			{
-				if (!ess->wrappedCb(currObj, od, ess->wrappedState))
+				if (FAILED(ess->wrappedCb->OnEnumObject(currObj, od)))
 				{
 					return FALSE;
 				}

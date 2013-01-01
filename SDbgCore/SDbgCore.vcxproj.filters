@@ -42,10 +42,10 @@
     <ClInclude Include="inc\SDbgCoreApi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\CEnumStackObjects.h">
+    <ClInclude Include="inc\EnumThreadsCallbackFunctionPointerAdapter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\CEnumClrThreads.h">
+    <ClInclude Include="inc\EnumObjectsCallbackFunctionPointerAdapter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

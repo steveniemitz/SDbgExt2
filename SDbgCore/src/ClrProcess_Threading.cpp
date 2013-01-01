@@ -3,11 +3,11 @@
 #include <iterator>
 #include <algorithm>
 #include "..\inc\ClrObject.h"
-#include "..\inc\CEnumStackObjects.h"
-#include "..\inc\CEnumClrThreads.h"
 
-HRESULT ClrProcess::EnumThreads(EnumThreadsCallback cb, PVOID state)
+HRESULT ClrProcess::EnumThreads(IEnumThreadsCallback *cb)
 {
+	CComPtr<IEnumThreadsCallback> cbPtr(cb);
+
 	ClrThreadStoreData tsData = {};
 	HRESULT hr = S_OK;
 	RETURN_IF_FAILED(m_pDac->GetThreadStoreData(&tsData));	
@@ -18,7 +18,7 @@ HRESULT ClrProcess::EnumThreads(EnumThreadsCallback cb, PVOID state)
 		ClrThreadData tData = {};
 		RETURN_IF_FAILED(m_pDac->GetThreadData(currThreadObj, &tData));
 
-		if (!cb(currThreadObj, tData, state))
+		if (FAILED(cbPtr->OnEnumThread(currThreadObj, tData)))
 			return S_OK;
 
 		currThreadObj = tData.NextThread;		
@@ -82,7 +82,10 @@ STDMETHODIMP ClrProcess::FindThreadById(DWORD id, DWORD fieldOffsetInClrThreadDa
 		return TRUE;
 	};
 
-	EnumThreads(cb, (PVOID)&fts);
+	EnumThreadsCallbackFunctionPointerAdapter adapt;
+	adapt.Init(cb, &fts);
+
+	EnumThreads(&adapt);
 	*threadObj = fts.FoundThread;
 
 	return fts.FoundThread != NULL ? S_OK : E_INVALIDARG;
@@ -123,29 +126,20 @@ HRESULT ClrProcess::GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, 
 	return E_NOTIMPL;
 }
 
-HRESULT ClrProcess::EnumStackObjects(DWORD corThreadId, EnumObjectsCallback cb, PVOID state)
+HRESULT ClrProcess::EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb)
 {
+	CComPtr<IEnumObjectsCallback> cbPtr(cb);
 	CLRDATA_ADDRESS threadObj = 0;
 	HRESULT hr = S_OK;
 	RETURN_IF_FAILED(FindThreadByCorThreadId(corThreadId, &threadObj));
 
-	return EnumStackObjects(threadObj, cb, state);
+	return EnumStackObjects(threadObj, cbPtr);
 }
 
-HRESULT ClrProcess::BeginEnumStackObjects(CLRDATA_ADDRESS threadObj, IEnumClrObjects **ret)
+HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb)
 {
-	//*ret = new CEnumStackObjects(this);
-	return E_NOTIMPL;
-}
+	CComPtr<IEnumObjectsCallback> cbPtr(cb);
 
-HRESULT ClrProcess::BeginEnumThreads(IEnumClrThreads **ret)
-{
-	*ret = new CEnumClrThreads(this);
-	return E_NOTIMPL;
-}
-
-HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallback cb, PVOID state)
-{
 	ClrThreadData td = {};
 	HRESULT hr = S_OK;
 	RETURN_IF_FAILED(m_pDac->GetThreadData(threadObj, &td));
@@ -163,7 +157,7 @@ HRESULT ClrProcess::EnumStackObjects(CLRDATA_ADDRESS threadObj, EnumObjectsCallb
 				ClrObjectData od = {};
 				m_pDac->GetObjectData(stackPtr, &od);
 
-				if (!cb(stackPtr, od, state))
+				if (FAILED(cbPtr->OnEnumObject(stackPtr, od)))
 				{
 					return S_FALSE;
 				}

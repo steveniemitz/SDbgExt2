@@ -22,7 +22,10 @@ namespace SDbgExt2Tests2
 				return TRUE;
 			};
 			
-			p->EnumHeapObjects(cb, &n);
+			EnumObjectsCallbackFunctionPointerAdapter adapt;
+			adapt.Init(cb, &n);
+
+			p->EnumHeapObjects(&adapt);
 
 			Assert::AreEqual(1000322, n);
 		}
