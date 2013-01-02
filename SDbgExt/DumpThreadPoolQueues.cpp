@@ -53,7 +53,11 @@ DBG_FUNC(dumpthreadpoolqueues)
 	DBG_PREAMBLE;
 
 	EnumState s = { 0, &dbg };
-	dbg.Ext->EnumerateThreadPoolQueues(EnumThreadPoolQueuesCallback, &s);
+	
+	CEnumThreadPoolAdaptorStack adapt;
+	adapt.Init(EnumThreadPoolQueuesCallback, &s);
+
+	dbg.Ext->EnumerateThreadPoolQueues(&adapt);
 
 	return S_OK;
 }

@@ -27,9 +27,6 @@ typedef struct ThreadPoolWorkItem
 	THREADPOOL_WORKITEM_TYPE Type;
 } ThreadPoolWorkItem;
 
-typedef BOOL (*EnumHashtableCallback)(DctEntry ent, PVOID state);
-typedef BOOL (*EnumThreadPoolItemsCallback)([in] AppDomainAndValue queue, [in] ThreadPoolWorkItem workItem, [in, out] PVOID state);
-
 [
 	object,
 	uuid(FF9B39EB-CCAC-4AA2-B3C4-63BDDFA0AC9F)
@@ -41,7 +38,15 @@ interface IEnumHashtableCallback : IUnknown
 
 [
 	object,
-	local,
+	uuid(0DAE7AEF-6671-48A0-AB96-D90931862882)
+]
+interface IEnumThreadPoolCallback : IUnknown
+{
+	HRESULT Callback(AppDomainAndValue queue, ThreadPoolWorkItem item);
+}
+
+[
+	object,
 	uuid(1F0565EB-95CE-48DE-BC4A-54AD9C034A2C)
 ]
 interface ISDbgExt : IUnknown
@@ -49,7 +54,7 @@ interface ISDbgExt : IUnknown
 	HRESULT GetProcess(IClrProcess **proc);
 	HRESULT GetObjectData(CLRDATA_ADDRESS objAddr, ClrObjectData *data);
 	HRESULT EvaluateExpression(CLRDATA_ADDRESS rootObj, LPCWSTR expression, CLRDATA_ADDRESS *result);
-	HRESULT EnumerateHashtable([in] CLRDATA_ADDRESS dctObj, [in] EnumHashtableCallback cb, [in] PVOID state);
-	HRESULT EnumerateThreadPoolQueues([in] EnumThreadPoolItemsCallback tpQueueCb, [in] PVOID state);
+	HRESULT EnumerateHashtable([in] CLRDATA_ADDRESS dctObj, [in] IEnumHashtableCallback *cb);
+	HRESULT EnumerateThreadPoolQueues([in] IEnumThreadPoolCallback *tpQueueCb);
 };
 

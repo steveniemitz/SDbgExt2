@@ -21,7 +21,10 @@ namespace SDbgExt2Tests2
 				return TRUE;
 			};
 			
-			auto hr = ext->EnumerateThreadPoolQueues(cb, &n);
+			CEnumThreadPoolAdaptorStack adapt;
+			adapt.Init(cb, &n);
+
+			auto hr = ext->EnumerateThreadPoolQueues(&adapt);
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual(0x311, n);
@@ -43,7 +46,10 @@ namespace SDbgExt2Tests2
 				return TRUE;
 			};
 			
-			auto hr = ext->EnumerateThreadPoolQueues(cb, &DelegateNameLookup);
+			CEnumThreadPoolAdaptorStack adapt;
+			adapt.Init(cb, &DelegateNameLookup);
+
+			auto hr = ext->EnumerateThreadPoolQueues(&adapt);
 
 			ASSERT_SOK(hr);
 		}

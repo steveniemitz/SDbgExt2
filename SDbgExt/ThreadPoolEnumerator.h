@@ -5,8 +5,8 @@
 class ThreadPoolEnumerator
 {
 public:
-	ThreadPoolEnumerator(CComPtr<ISDbgExt> ext, CComPtr<IClrProcess> dac, EnumThreadPoolItemsCallback tpQueueCb, PVOID state)
-		: m_ext(ext), m_dac(dac), m_tpQueueCb(tpQueueCb), m_state(state)
+	ThreadPoolEnumerator(CComPtr<ISDbgExt> ext, CComPtr<IClrProcess> dac, IEnumThreadPoolCallback *tpQueueCb)
+		: m_ext(ext), m_dac(dac), m_tpQueueCb(tpQueueCb)
 			, m_adAsyncWorkItemFinishAsyncWork(0), m_asyncWorkItemFinishAsyncWork(0)
 	{
 		m_sparseArrayArrayField.field = 0;
@@ -238,7 +238,7 @@ private:
 			}
 
 			ThreadPoolWorkItem ent = { workItem, statePtr, delegatePtr, cbMethod };	
-			m_tpQueueCb(queueAddr, ent, m_state);		
+			m_tpQueueCb->Callback(queueAddr, ent);		
 		}
 	}
 
@@ -302,14 +302,15 @@ private:
 		
 	CComPtr<ISDbgExt> m_ext;
 	CComPtr<IClrProcess> m_dac;
+	CComPtr<IEnumThreadPoolCallback>  m_tpQueueCb;
+	
 	CLRDATA_ADDRESS m_asyncWorkItemFinishAsyncWork;
 	CLRDATA_ADDRESS m_adAsyncWorkItemFinishAsyncWork;
 
 	ClrFieldDescData m_sparseArrayHeadField;
 	ClrFieldDescData m_sparseArrayTailField;
 	ClrFieldDescData m_sparseArrayArrayField;
-	EnumThreadPoolItemsCallback m_tpQueueCb;
-	PVOID m_state;
+	
 
 	std::hash_map<CLRDATA_ADDRESS, FieldOffsets> m_fieldLookup;
 };

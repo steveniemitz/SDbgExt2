@@ -19,6 +19,8 @@ library SDbgCore
 	interface IClrProcess;
 
 	interface IEnumHashtableCallback;
+	interface IEnumThreadPoolCallback;
+	struct ThreadPoolWorkItem;
 	//interface ISDbgExt;
 	enum CorElementType;
 }
