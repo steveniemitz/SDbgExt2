@@ -1,6 +1,6 @@
 #pragma once
 #include "..\SDbgCore\inc\SDbgCoreApi.h"
-#include "ISDbgExt.h"
+#include "SDbgExtApi.h"
 
 class DctEnumerator
 {

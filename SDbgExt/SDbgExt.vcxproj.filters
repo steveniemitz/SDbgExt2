@@ -30,9 +30,6 @@
     <ClInclude Include="SDbgExt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ISDbgExt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DbgEngCLRDataTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>

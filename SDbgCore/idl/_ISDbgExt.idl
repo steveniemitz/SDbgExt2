@@ -53,7 +53,7 @@ interface ISDbgExt : IUnknown
 {
 	HRESULT GetProcess(IClrProcess **proc);
 	HRESULT GetObjectData(CLRDATA_ADDRESS objAddr, ClrObjectData *data);
-	HRESULT EvaluateExpression(CLRDATA_ADDRESS rootObj, LPCWSTR expression, CLRDATA_ADDRESS *result);
+	HRESULT EvaluateExpression(CLRDATA_ADDRESS rootObj, LPWSTR expression, CLRDATA_ADDRESS *result);
 	HRESULT EnumerateHashtable([in] CLRDATA_ADDRESS dctObj, [in] IEnumHashtableCallback *cb);
 	HRESULT EnumerateThreadPoolQueues([in] IEnumThreadPoolCallback *tpQueueCb);
 };

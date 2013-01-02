@@ -1,5 +1,5 @@
 #pragma once
-#include "ISDbgExt.h"
+#include "SDbgExtApi.h"
 
 HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma);
 
@@ -39,7 +39,7 @@ public:
 
 	STDMETHODIMP EnumerateHashtable(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb);
 	STDMETHODIMP EnumerateThreadPoolQueues(IEnumThreadPoolCallback *tpQueueCb);
-	STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPCWSTR expression, CLRDATA_ADDRESS *result);
+	STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPWSTR expression, CLRDATA_ADDRESS *result);
 
 protected:
 	CSDbgExt()

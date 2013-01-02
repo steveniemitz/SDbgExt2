@@ -7,7 +7,7 @@
 					 bufferPos = 0;								\
 					 ZeroMemory((void*)buffer.data(), buffer.size() * sizeof(WCHAR)); 
 
-HRESULT CSDbgExt::EvaluateExpression(CLRDATA_ADDRESS rootAddr, LPCWSTR expression, CLRDATA_ADDRESS *result)
+HRESULT CSDbgExt::EvaluateExpression(CLRDATA_ADDRESS rootAddr, LPWSTR expression, CLRDATA_ADDRESS *result)
 {
 	std::wstring str(expression);
 	HRESULT hr = S_OK;

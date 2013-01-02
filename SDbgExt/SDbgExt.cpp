@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SDbgExt.h"
-#include "ISDbgExt.h"
+#include "SDbgExtApi.h"
 #include "DbgEngCLRDataTarget.h"
 #include "DbgEngMemoryAccess.h"
 #include <DbgHelp.h>

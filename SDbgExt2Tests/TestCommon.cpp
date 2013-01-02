@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "TestCommon.h"
 #include "..\SDbgCore\inc\SDbgCoreApi.h"
-#include "..\SDbgExt\ISDbgExt.h"
 
 HRESULT InitFromDump(WCHAR *dumpFile, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma)
 {
