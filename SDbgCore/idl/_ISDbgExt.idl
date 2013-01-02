@@ -33,7 +33,7 @@ typedef struct ThreadPoolWorkItem
 ]
 interface IEnumHashtableCallback : IUnknown
 {
-	HRESULT Callback(DctEntry ent);
+	HRESULT Callback([in] DctEntry ent);
 }
 
 [
@@ -42,7 +42,7 @@ interface IEnumHashtableCallback : IUnknown
 ]
 interface IEnumThreadPoolCallback : IUnknown
 {
-	HRESULT Callback(AppDomainAndValue queue, ThreadPoolWorkItem item);
+	HRESULT Callback([in] AppDomainAndValue queue, [in] ThreadPoolWorkItem item);
 }
 
 [
@@ -51,9 +51,9 @@ interface IEnumThreadPoolCallback : IUnknown
 ]
 interface ISDbgExt : IUnknown
 {
-	HRESULT GetProcess(IClrProcess **proc);
-	HRESULT GetObjectData(CLRDATA_ADDRESS objAddr, ClrObjectData *data);
-	HRESULT EvaluateExpression(CLRDATA_ADDRESS rootObj, LPWSTR expression, CLRDATA_ADDRESS *result);
+	HRESULT GetProcess([out, retval] IClrProcess **proc);
+	HRESULT GetObjectData([in] CLRDATA_ADDRESS objAddr, [out, retval] ClrObjectData *data);
+	HRESULT EvaluateExpression([in] CLRDATA_ADDRESS rootObj, [in, string] LPWSTR expression, [out, retval] CLRDATA_ADDRESS *result);
 	HRESULT EnumerateHashtable([in] CLRDATA_ADDRESS dctObj, [in] IEnumHashtableCallback *cb);
 	HRESULT EnumerateThreadPoolQueues([in] IEnumThreadPoolCallback *tpQueueCb);
 };

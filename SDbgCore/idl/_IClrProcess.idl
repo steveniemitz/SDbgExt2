@@ -57,6 +57,6 @@ interface IClrProcess : IUnknown
 	HRESULT EnumHeapObjects(IEnumObjectsCallback *cb);
 	HRESULT GetClrObject(CLRDATA_ADDRESS obj, IClrObject **ret);
 	HRESULT GetClrObjectArray(CLRDATA_ADDRESS objArray, IClrObjectArray **ret);
-	HRESULT FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, [in, out, string] LPWSTR buffer);
+	HRESULT FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, [out, string, size_is(cchBuffer)] LPWSTR buffer);
 	HRESULT GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc);
 }
