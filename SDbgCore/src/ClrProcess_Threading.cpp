@@ -3,6 +3,14 @@
 #include <iterator>
 #include <algorithm>
 #include "..\inc\ClrObject.h"
+#include "..\inc\IEnumAdaptor.h"
+
+void Test()
+{
+	auto cb = [](CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state)->BOOL {
+		return TRUE;
+	};
+}
 
 HRESULT ClrProcess::EnumThreads(IEnumThreadsCallback *cb)
 {
@@ -18,7 +26,7 @@ HRESULT ClrProcess::EnumThreads(IEnumThreadsCallback *cb)
 		ClrThreadData tData = {};
 		RETURN_IF_FAILED(m_pDac->GetThreadData(currThreadObj, &tData));
 
-		if (FAILED(cbPtr->OnEnumThread(currThreadObj, tData)))
+		if (FAILED(cbPtr->Callback(currThreadObj, tData)))
 			return S_OK;
 
 		currThreadObj = tData.NextThread;		
@@ -157,7 +165,7 @@ HRESULT ClrProcess::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnum
 				ClrObjectData od = {};
 				m_pDac->GetObjectData(stackPtr, &od);
 
-				if (FAILED(cbPtr->OnEnumObject(stackPtr, od)))
+				if (FAILED(cbPtr->Callback(stackPtr, od)))
 				{
 					return S_FALSE;
 				}

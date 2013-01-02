@@ -3,36 +3,24 @@
 
 HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma);
 
-class CSDbgExt : public ISDbgExt
+class CSDbgExt : 
+	public CComObjectRoot,
+	public ISDbgExt
 {
 public:
-	CSDbgExt(IClrProcess *p)
-		: m_proc(p), m_ref(1)
-	{	}
-
-	STDMETHODIMP_(ULONG) AddRef() { return ++m_ref; }
-	STDMETHODIMP_(ULONG) Release()
+	static ISDbgExt *Construct(IClrProcess *p)
 	{
-		ULONG newRef = --m_ref;
-		if (newRef == 0)
-			delete this;
-		return newRef;
+		CComObject<CSDbgExt> *obj;
+		CComObject<CSDbgExt>::CreateInstance(&obj);
+		obj->AddRef();
+		obj->Init(p);
+
+		return obj;
 	}
 
-	STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject)
-    {
-        IUnknown *punk = nullptr;
-
-        if (riid == IID_IUnknown)
-            punk = static_cast<IUnknown*>(this);
-		
-        *ppvObject = punk;
-        if (!punk)
-            return E_NOINTERFACE;
-
-        punk->AddRef();
-        return S_OK;
-    }
+	BEGIN_COM_MAP(CSDbgExt)
+		COM_INTERFACE_ENTRY(ISDbgExt)
+	END_COM_MAP()
 		
 	STDMETHODIMP GetProcess(IClrProcess **proc)
 	{
@@ -49,11 +37,20 @@ public:
 		return dac->GetObjectData(objAddr, data);
 	}
 
-	STDMETHODIMP EnumerateHashtable(CLRDATA_ADDRESS dctObj, EnumHashtableCallback callback, PVOID state);
+	STDMETHODIMP EnumerateHashtable(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb);
 	STDMETHODIMP EnumerateThreadPoolQueues(EnumThreadPoolItemsCallback tpQueueCb, PVOID state);
 	STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPCWSTR expression, CLRDATA_ADDRESS *result);
 
+protected:
+	CSDbgExt()
+	{ 
+	}
+
 private:
-	ULONG m_ref;
+	void Init(IClrProcess *p)
+	{
+		m_proc = p;
+	}
+
 	CComPtr<IClrProcess> m_proc;
 };

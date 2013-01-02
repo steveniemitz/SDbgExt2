@@ -31,7 +31,7 @@ HRESULT __stdcall CreateDbgEngMemoryAccess(IDebugDataSpaces *data, IDacMemoryAcc
 
 HRESULT __stdcall CreateSDbgExt(IClrProcess *p, ISDbgExt **ext)
 {
-	*ext = new CSDbgExt(p);
+	*ext = CSDbgExt::Construct(p);
 	return S_OK;
 }
 

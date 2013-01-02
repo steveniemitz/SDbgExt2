@@ -37,7 +37,7 @@ HRESULT ClrProcess::EnumHeapObjects(IEnumObjectsCallback *cb)
 			}
 			else
 			{
-				if (FAILED(ess->wrappedCb->OnEnumObject(currObj, od)))
+				if (FAILED(ess->wrappedCb->Callback(currObj, od)))
 				{
 					return FALSE;
 				}

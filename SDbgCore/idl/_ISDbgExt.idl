@@ -32,6 +32,15 @@ typedef BOOL (*EnumThreadPoolItemsCallback)([in] AppDomainAndValue queue, [in] T
 
 [
 	object,
+	uuid(FF9B39EB-CCAC-4AA2-B3C4-63BDDFA0AC9F)
+]
+interface IEnumHashtableCallback : IUnknown
+{
+	HRESULT Callback(DctEntry ent);
+}
+
+[
+	object,
 	local,
 	uuid(1F0565EB-95CE-48DE-BC4A-54AD9C034A2C)
 ]
@@ -43,3 +52,4 @@ interface ISDbgExt : IUnknown
 	HRESULT EnumerateHashtable([in] CLRDATA_ADDRESS dctObj, [in] EnumHashtableCallback cb, [in] PVOID state);
 	HRESULT EnumerateThreadPoolQueues([in] EnumThreadPoolItemsCallback tpQueueCb, [in] PVOID state);
 };
+

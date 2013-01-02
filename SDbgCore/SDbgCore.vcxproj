@@ -152,8 +152,7 @@
     <ClInclude Include="inc\ClrObject.h" />
     <ClInclude Include="inc\ClrObjectArray.h" />
     <ClInclude Include="inc\ClrProcess.h" />
-    <ClInclude Include="inc\EnumObjectsCallbackFunctionPointerAdapter.h" />
-    <ClInclude Include="inc\EnumThreadsCallbackFunctionPointerAdapter.h" />
+    <ClInclude Include="inc\IEnumAdaptor.h" />
     <ClInclude Include="inc\SDbgCoreApi.h" />
     <ClInclude Include="inc\targetver.h" />
     <ClInclude Include="stdafx.h" />
@@ -162,7 +161,9 @@
     <ClCompile Include="src\ClrProcess.cpp" />
     <ClCompile Include="src\ClrProcess_Fields.cpp" />
     <ClCompile Include="src\ClrProcess_Heap.cpp" />
-    <ClCompile Include="src\ClrProcess_Threading.cpp" />
+    <ClCompile Include="src\ClrProcess_Threading.cpp">
+      <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PreprocessToFile>
+    </ClCompile>
     <ClCompile Include="src\ClrProcess_Reflection.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

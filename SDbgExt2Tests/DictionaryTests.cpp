@@ -65,14 +65,19 @@ namespace SDbgExt2Tests2
 				((std::vector<DctEntry>*)state)->push_back(entry);
 				return TRUE;
 			};
+			
+			CEnumDctAdaptorStack adapt;
+			adapt.Init(cb, &entries);
 
-			auto hr = ext->EnumerateHashtable(dctAddr, cb, &entries);
+			auto hr = ext->EnumerateHashtable(dctAddr, &adapt);
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual((size_t)numEntriesExpected, entries.size());
 			for (int a = 0; a < countExpected; a++)
 			{
-				Assert::AreEqual(expected[a], entries[a]);
+				Assert::AreEqual(expected[a].EntryPtr, entries[a].EntryPtr);
+				Assert::AreEqual(expected[a].KeyPtr, entries[a].KeyPtr);
+				Assert::AreEqual(expected[a].ValuePtr, entries[a].ValuePtr);
 			}
 		}
 

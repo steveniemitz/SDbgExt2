@@ -14,7 +14,7 @@ import "ClrData.idl";
 ]
 interface IEnumObjectsCallback : IUnknown
 {
-	HRESULT OnEnumObject([in] CLRDATA_ADDRESS obj, [in] ClrObjectData objData);
+	HRESULT Callback([in] CLRDATA_ADDRESS obj, [in] ClrObjectData objData);
 };
 
 [
@@ -23,7 +23,7 @@ interface IEnumObjectsCallback : IUnknown
 ]
 interface IEnumThreadsCallback : IUnknown
 {
-	HRESULT OnEnumThread([in] CLRDATA_ADDRESS threadObj, [in] ClrThreadData threadData);
+	HRESULT Callback([in] CLRDATA_ADDRESS threadObj, [in] ClrThreadData threadData);
 }
 
 

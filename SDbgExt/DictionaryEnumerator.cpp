@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "DictionaryEnumerator.h"
 
-HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, EnumHashtableCallback callback, PVOID state)
+HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb)
 {
 	CComPtr<IXCLRDataProcess3> proc;
 	m_dac->GetProcess(&proc);
@@ -16,14 +16,14 @@ HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, EnumHashtable
 	hr = m_dac->FindFieldByName(od.MethodTable, L"entries", &field, &fd);
 	if (SUCCEEDED(hr))
 	{
-		return EnumerateDctEntriesImpl(dctObj, od.MethodTable, callback, state, L"entries", L"key", L"value", L"hashCode");
+		return EnumerateDctEntriesImpl(dctObj, od.MethodTable, L"entries", L"key", L"value", L"hashCode", cb);
 	}
 
 	// Hashtable?
 	hr = m_dac->FindFieldByName(od.MethodTable, L"buckets", &field, &fd);
 	if (SUCCEEDED(hr))
 	{
-		return EnumerateDctEntriesImpl(dctObj, od.MethodTable, callback, state, L"buckets", L"key", L"val", L"hash_coll");
+		return EnumerateDctEntriesImpl(dctObj, od.MethodTable, L"buckets", L"key", L"val", L"hash_coll", cb);
 	}
 
 	WCHAR typeName[50];
@@ -34,13 +34,13 @@ HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, EnumHashtable
 		hr = m_dac->GetFieldValuePtr(dctObj, L"hashtable", &htPtr);
 		if (SUCCEEDED(hr) && htPtr != NULL)
 		{
-			return EnumerateDctEntries(htPtr, callback, state);
+			return EnumerateDctEntries(htPtr, cb);
 		}
 		// It might still have data in it's list field
 		hr = m_dac->GetFieldValuePtr(dctObj, L"list", &htPtr);
 		if (SUCCEEDED(hr) && htPtr != NULL)
 		{
-			return EnumerateDctEntries(htPtr, callback, state);
+			return EnumerateDctEntries(htPtr, cb);
 		}
 		else
 		{
@@ -49,7 +49,7 @@ HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, EnumHashtable
 	}
 	else if (SUCCEEDED(hr) && wcscmp(typeName, L"System.Collections.Specialized.ListDictionary") == 0)
 	{
-		return EnumerateHybridListEntries(dctObj, callback, state);
+		return EnumerateHybridListEntries(dctObj, cb);
 	}
 	else
 	{
@@ -57,8 +57,8 @@ HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, EnumHashtable
 	}
 }
 
-HRESULT DctEnumerator::EnumerateDctEntriesImpl(CLRDATA_ADDRESS dctObj, CLRDATA_ADDRESS methodTable, EnumHashtableCallback cb, PVOID state
-												, WCHAR *bucketsName, WCHAR *keyFieldName, WCHAR *valFieldName, WCHAR *hashFieldName)
+HRESULT DctEnumerator::EnumerateDctEntriesImpl(CLRDATA_ADDRESS dctObj, CLRDATA_ADDRESS methodTable
+												, WCHAR *bucketsName, WCHAR *keyFieldName, WCHAR *valFieldName, WCHAR *hashFieldName, IEnumHashtableCallback *cb)
 {
 	CLRDATA_ADDRESS entriesPtr = NULL;
 	auto hr = m_dac->GetFieldValuePtr(dctObj, bucketsName, &entriesPtr);
@@ -76,7 +76,7 @@ HRESULT DctEnumerator::EnumerateDctEntriesImpl(CLRDATA_ADDRESS dctObj, CLRDATA_A
 	hr = GetEntryOffsets(entriesPtr, keyFieldName, valFieldName, hashFieldName, &keyOffset, &valOffset, &hashCodeOffset, 
 							&arrayDataBase, &arrayElementSize, &arrayEntries);
 
-	return ReadEntries(arrayEntries, entriesPtr, arrayDataBase, arrayElementSize, keyOffset, valOffset, hashCodeOffset, cb, state);
+	return ReadEntries(arrayEntries, entriesPtr, arrayDataBase, arrayElementSize, keyOffset, valOffset, hashCodeOffset, cb);
 }
 
 HRESULT DctEnumerator::GetEntryOffsets(CLRDATA_ADDRESS entriesPtr, WCHAR *keyFieldName, WCHAR *valFieldName, WCHAR *hashFieldName, 
@@ -108,12 +108,12 @@ HRESULT DctEnumerator::GetEntryOffsets(CLRDATA_ADDRESS entriesPtr, WCHAR *keyFie
 }
 
 HRESULT DctEnumerator::ReadEntries(DWORD arrayEntries, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataBase, ULONG arrayElementSize,
-									ULONG keyOffset, ULONG valOffset, ULONG hashCodeOffset, EnumHashtableCallback cb, PVOID state)
+									ULONG keyOffset, ULONG valOffset, ULONG hashCodeOffset, IEnumHashtableCallback *cb)
 {	
 	for (DWORD a = 0; a < arrayEntries; a++)
 	{
 		CLRDATA_ADDRESS arrayDataPtr = arrayDataBase + (arrayElementSize*a);
-		HRESULT hr = ReadEntry(keyOffset, valOffset, hashCodeOffset, bucketArrayBase, arrayDataPtr, cb, state);
+		HRESULT hr = ReadEntry(keyOffset, valOffset, hashCodeOffset, bucketArrayBase, arrayDataPtr, cb);
 
 		if (hr == S_FALSE)
 			return S_OK;
@@ -122,7 +122,7 @@ HRESULT DctEnumerator::ReadEntries(DWORD arrayEntries, CLRDATA_ADDRESS bucketArr
 }
 
 
-HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, EnumHashtableCallback cb, PVOID state)
+HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, IEnumHashtableCallback *cb)
 {
 	HRESULT hr = S_OK;
 
@@ -148,9 +148,7 @@ HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashC
 		if ((CLRDATA_ADDRESS)keyValue != bucketArrayBase) //unused bucket
 		{
 			DctEntry entry = { baseAddr, (CLRDATA_ADDRESS)keyValue, (CLRDATA_ADDRESS)valueValue, hashValue };
-		
-			BOOL ret = cb(entry, state);
-			if (!ret)
+			if (FAILED(cb->Callback(entry)))
 				return S_FALSE;
 		}
 	}
@@ -158,7 +156,7 @@ HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashC
 }
 
 
-HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, EnumHashtableCallback callback, PVOID state)
+HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, IEnumHashtableCallback *cb)
 {
 	ClrObjectData od = {};
 	HRESULT hr = S_OK;
@@ -205,7 +203,7 @@ HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, EnumH
 		}
 
 		DctEntry ent = { currNode, keyValue, valueValue, 0 }; 
-		callback(ent, state);
+		cb->Callback(ent);
 
 		currNode = nextValue;
 	}	
@@ -246,7 +244,10 @@ HRESULT DctEnumerator::FindDctEntryByKey(CLRDATA_ADDRESS dctObj, LPCWSTR key, CL
 		return TRUE;
 	};
 	
-	EnumerateDctEntries(dctObj, cb, &dkss);
+	CEnumDctAdaptorStack adapt;
+	adapt.Init(cb, &dkss);
+
+	EnumerateDctEntries(dctObj, &adapt);
 	*targetAddr = dkss.TargetValuePtr;
 
 	return dkss.TargetValuePtr != NULL ? S_OK : E_FAIL;
@@ -273,7 +274,10 @@ HRESULT DctEnumerator::FindDctEntryByHash(CLRDATA_ADDRESS dctObj, UINT32 hash, C
 		return TRUE;
 	};
 
-	EnumerateDctEntries(dctObj, cb, &dhss);
+	CEnumDctAdaptorStack adapt;
+	adapt.Init(cb, &dhss);
+
+	EnumerateDctEntries(dctObj, &adapt);
 	*targetAddr = dhss.TargetValuePtr;
 
 	return dhss.TargetValuePtr != NULL ? S_OK : E_FAIL;
