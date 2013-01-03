@@ -1,6 +1,7 @@
 #pragma once
 
-#define BEGIN_DEFINE_ENUM_ADAPTOR(ClassName, EnumInterface, CallbackType) \
+#define BEGIN_DEFINE_ENUM_ADAPTOR(ClassName, EnumInterface) \
+template<typename _State> \
 class ClassName : \
 	public CComObjectRoot, \
 	public EnumInterface \
@@ -12,17 +13,21 @@ public: \
 	ClassName() \
 		: m_cb(NULL), m_state(NULL) \
 	{ } \
-	HRESULT Init(CallbackType cb, PVOID state) \
+	
+#define DEFINE_ENUM_ADAPTOR_CALLBACK typedef BOOL (CALLBACK *CallbackFunc)
+
+#define BEGIN_DEFINE_ENUM_ADAPTOR_BODY() \
+	HRESULT Init(CallbackFunc cb, _State *state) \
 	{ m_cb = cb; \
 		m_state = state; \
 		return S_OK; \
 	} \
+	ULONG InternalAddRef() { return 1; } \
+	ULONG InternalRelease() { return 1; } \
 private: \
-	CallbackType m_cb; \
-	PVOID m_state; \
+	void* operator new(size_t s); \
+	CallbackFunc m_cb; \
+	_State *m_state; \
 public:
-
-#define DEFINE_ENUM_CALLBACK(CallbackName,...) \
-	HRESULT CallbackName(__VA_ARGS__) { return S_OK; }
 
 #define END_DEFINE_ENUM_ADAPTOR };

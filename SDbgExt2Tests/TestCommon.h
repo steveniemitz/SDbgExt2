@@ -3,6 +3,9 @@
 #include "..\SDbgCore\inc\SDbgCoreApi.h"
 #include "..\SDbgExt\SDbgExtApi.h"
 
+class CSDbgTestModule : public ATL::CAtlDllModuleT<CSDbgTestModule> { };
+extern class CSDbgTestModule _AtlModule;
+
 void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext, IXCLRDataProcess3 **proc);
 
 #ifndef _WIN64

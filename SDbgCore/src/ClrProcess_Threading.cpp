@@ -78,9 +78,8 @@ STDMETHODIMP ClrProcess::FindThreadById(DWORD id, DWORD fieldOffsetInClrThreadDa
 	
 	FindThreadState fts = { id, fieldOffsetInClrThreadData, 0 };
 
-	auto cb = [](CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state)->BOOL {
-		auto fts = ((FindThreadState*)state);
-
+	auto cb = [](CLRDATA_ADDRESS threadObj, ClrThreadData threadData, FindThreadState *fts)->BOOL {
+		
 		if (*(DWORD*)(&threadData + fts->FieldOffset) == fts->SearchThreadId)
 		{
 			fts->FoundThread = threadObj;
@@ -90,7 +89,7 @@ STDMETHODIMP ClrProcess::FindThreadById(DWORD id, DWORD fieldOffsetInClrThreadDa
 		return TRUE;
 	};
 
-	EnumThreadsCallbackFunctionPointerAdapter adapt;
+	CComObject<EnumThreadCallbackAdaptor<FindThreadState>> adapt;
 	adapt.Init(cb, &fts);
 
 	EnumThreads(&adapt);
@@ -155,21 +154,44 @@ HRESULT ClrProcess::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnum
 	CLRDATA_ADDRESS stackBase = 0, stackLimit = 0;
 	RETURN_IF_FAILED(m_dcma->GetThreadStack(td.osThreadId, &stackBase, &stackLimit));
 
+	struct AddrRange
+	{
+		CLRDATA_ADDRESS Begin;
+		CLRDATA_ADDRESS End;
+	};
+
+	auto buildHeapSnapshotCb = [](CLRDATA_ADDRESS heap, ClrGcHeapSegmentData segData, std::vector<AddrRange> *ranges)->BOOL {
+		AddrRange range = { segData.AllocBegin, segData.Allocated };
+		ranges->push_back(range);
+
+		return TRUE;
+	};
+
+	std::vector<AddrRange> ranges;
+	CComObject<EnumHeapSegmentsCallbackAdaptor<std::vector<AddrRange>>> adapt;
+	adapt.Init(buildHeapSnapshotCb, &ranges);
+	RETURN_IF_FAILED(this->EnumHeapSegments(&adapt));
+
 	for (CLRDATA_ADDRESS addr = stackLimit; addr < stackBase; addr += sizeof(void*))
 	{
 		CLRDATA_ADDRESS stackPtr = 0;
 		if (SUCCEEDED(m_dcma->ReadVirtual(addr, &stackPtr, sizeof(void*), NULL)) && stackPtr != 0)
 		{
-			if (IsValidObject(stackPtr))
+			if (std::any_of(ranges.cbegin(), ranges.cend(), [stackPtr](const AddrRange r)->bool {
+				return stackPtr >= r.Begin && stackPtr <= r.End;
+			}))
 			{
-				ClrObjectData od = {};
-				m_pDac->GetObjectData(stackPtr, &od);
-
-				if (FAILED(cbPtr->Callback(stackPtr, od)))
+				if (IsValidObject(stackPtr))
 				{
-					return S_FALSE;
-				}
-			}	
+					ClrObjectData od = {};
+					m_pDac->GetObjectData(stackPtr, &od);
+
+					if (FAILED(cbPtr->Callback(stackPtr, od)))
+					{
+						return S_FALSE;
+					}
+				}	
+			}
 		}
 	}
 	

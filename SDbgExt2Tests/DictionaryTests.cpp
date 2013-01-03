@@ -61,12 +61,12 @@ namespace SDbgExt2Tests2
 			int c = 0;
 			std::vector<DctEntry> entries;
 
-			auto cb = [](DctEntry entry, PVOID state)->BOOL {
-				((std::vector<DctEntry>*)state)->push_back(entry);
+			auto cb = [](DctEntry entry, std::vector<DctEntry> *state)->BOOL {
+				(state)->push_back(entry);
 				return TRUE;
 			};
 			
-			CEnumDctAdaptorStack adapt;
+			CComObject<EnumDctAdaptor<std::vector<DctEntry>>> adapt;
 			adapt.Init(cb, &entries);
 
 			auto hr = ext->EnumerateHashtable(dctAddr, &adapt);

@@ -18,21 +18,31 @@
 
 HRESULT SDBGAPI __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret);
 
-typedef BOOL (CALLBACK *EnumObjectsCallback)(CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state);
-BEGIN_DEFINE_ENUM_ADAPTOR(EnumObjectsCallbackFunctionPointerAdapterImpl, IEnumObjectsCallback, EnumObjectsCallback)
+BEGIN_DEFINE_ENUM_ADAPTOR(EnumObjectsCallbackAdaptor, IEnumObjectsCallback)
+	DEFINE_ENUM_ADAPTOR_CALLBACK(CLRDATA_ADDRESS object, ClrObjectData objData, _State *state);
+	BEGIN_DEFINE_ENUM_ADAPTOR_BODY()
 	STDMETHODIMP Callback(CLRDATA_ADDRESS obj, ClrObjectData objData)
 	{
 		return m_cb(obj, objData, m_state) == TRUE ? S_OK : E_ABORT;
 	}
 END_DEFINE_ENUM_ADAPTOR
-typedef CComObjectStack<EnumObjectsCallbackFunctionPointerAdapterImpl> EnumObjectsCallbackFunctionPointerAdapter;
 
 
-typedef BOOL (CALLBACK *EnumThreadsCallback)(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state);
-BEGIN_DEFINE_ENUM_ADAPTOR(EnumThreadAdaptor, IEnumThreadsCallback, EnumThreadsCallback)
+BEGIN_DEFINE_ENUM_ADAPTOR(EnumThreadCallbackAdaptor, IEnumThreadsCallback)
+	DEFINE_ENUM_ADAPTOR_CALLBACK(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, _State *state);
+	BEGIN_DEFINE_ENUM_ADAPTOR_BODY()
 	STDMETHODIMP Callback(CLRDATA_ADDRESS threadObj, ClrThreadData threadData)
 	{
 		return m_cb(threadObj, threadData, m_state) == TRUE ? S_OK : E_ABORT;
 	}
 END_DEFINE_ENUM_ADAPTOR
-typedef CComObjectStack<EnumThreadAdaptor> EnumThreadsCallbackFunctionPointerAdapter;
+
+
+BEGIN_DEFINE_ENUM_ADAPTOR(EnumHeapSegmentsCallbackAdaptor, IEnumHeapSegmentsCallback)
+	DEFINE_ENUM_ADAPTOR_CALLBACK(CLRDATA_ADDRESS segment, ClrGcHeapSegmentData segData, _State *state);	
+	BEGIN_DEFINE_ENUM_ADAPTOR_BODY()
+	STDMETHODIMP Callback(CLRDATA_ADDRESS segment, ClrGcHeapSegmentData segData)
+	{
+		return m_cb(segment, segData, m_state) == TRUE ? S_OK : E_ABORT;
+	}
+END_DEFINE_ENUM_ADAPTOR

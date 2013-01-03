@@ -2,6 +2,8 @@
 #include "TestCommon.h"
 #include "..\SDbgCore\inc\SDbgCoreApi.h"
 
+CSDbgTestModule _AtlModule;
+
 HRESULT InitFromDump(WCHAR *dumpFile, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma)
 {
 	CComPtr<IDebugClient> cli;

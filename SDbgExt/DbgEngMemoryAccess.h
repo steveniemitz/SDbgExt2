@@ -66,7 +66,7 @@ public:
 
 		*stackBase = (CLRDATA_ADDRESS)(threadTeb.stackBase);
 		*stackLimit = (CLRDATA_ADDRESS)(threadTeb.stackLimit);
-
+		
 		return S_OK;
 	}
 

@@ -55,7 +55,7 @@ public:
 	STDMETHODIMP GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, ClrThreadContext *ctx);
 	
 	STDMETHODIMP_(LONG) IsValidObject(CLRDATA_ADDRESS obj);
-
+	STDMETHODIMP EnumHeapSegments(IEnumHeapSegmentsCallback *cb);
 	STDMETHODIMP EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb);
 	STDMETHODIMP EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb);
 	STDMETHODIMP EnumHeapObjects(IEnumObjectsCallback *cb);
@@ -115,14 +115,10 @@ private:
 				return sizeof(PVOID);
 		}
 	}
-
-	typedef BOOL (CALLBACK *EnumHeapSegmentsCallback)(const CLRDATA_ADDRESS segment, const ClrGcHeapSegmentData &segData, PVOID state);
-
-	HRESULT EnumHeapSegments(EnumHeapSegmentsCallback cb, PVOID state);
-
-	HRESULT EnumHeapSegmentsWorkstation(EnumHeapSegmentsCallback cb, PVOID state);
-	HRESULT EnumHeapSegmentsServer(EnumHeapSegmentsCallback cb, PVOID state);
-	HRESULT EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, EnumHeapSegmentsCallback cb, PVOID state);
+	
+	HRESULT EnumHeapSegmentsWorkstation(IEnumHeapSegmentsCallback *cb);
+	HRESULT EnumHeapSegmentsServer(IEnumHeapSegmentsCallback *cb);
+	HRESULT EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, IEnumHeapSegmentsCallback *cb);
 };
 
 typedef CComObject<ClrProcess> CClrProcess;

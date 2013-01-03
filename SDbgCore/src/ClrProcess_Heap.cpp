@@ -23,8 +23,7 @@ HRESULT ClrProcess::EnumHeapObjects(IEnumObjectsCallback *cb)
 
 	EnumSegmentsState outerState = { cbPtr, m_pDac, ug.FreeMethodTable };
 	
-	auto heapCb = [](const CLRDATA_ADDRESS segmentAddr, const ClrGcHeapSegmentData &segment, PVOID innerState)->BOOL {
-		auto *ess = static_cast<EnumSegmentsState *>(innerState);
+	auto heapCb = [](CLRDATA_ADDRESS segmentAddr, ClrGcHeapSegmentData segment, EnumSegmentsState *ess)->BOOL {
 		
 		CLRDATA_ADDRESS currObj = segment.AllocBegin;
 		while(currObj < segment.Allocated)
@@ -48,12 +47,15 @@ HRESULT ClrProcess::EnumHeapObjects(IEnumObjectsCallback *cb)
 		return TRUE;
 	};
 
-	RETURN_IF_FAILED(EnumHeapSegments(heapCb, &outerState));
+	CComObject<EnumHeapSegmentsCallbackAdaptor<EnumSegmentsState>> adapt;
+	adapt.Init(heapCb, &outerState);
+
+	RETURN_IF_FAILED(EnumHeapSegments(&adapt));
 
 	return S_OK;
 }
 
-HRESULT ClrProcess::EnumHeapSegments(EnumHeapSegmentsCallback cb, PVOID state)
+HRESULT ClrProcess::EnumHeapSegments(IEnumHeapSegmentsCallback *cb)
 {
 	ClrGcHeapData gcData = {};
 	HRESULT hr = S_OK;
@@ -61,15 +63,15 @@ HRESULT ClrProcess::EnumHeapSegments(EnumHeapSegmentsCallback cb, PVOID state)
 
 	if (gcData.ServerMode)
 	{
-		return EnumHeapSegmentsServer(cb, state);
+		return EnumHeapSegmentsServer(cb);
 	}
 	else
 	{
-		return EnumHeapSegmentsWorkstation(cb, state);
+		return EnumHeapSegmentsWorkstation(cb);
 	}
 }
 
-HRESULT ClrProcess::EnumHeapSegmentsServer(EnumHeapSegmentsCallback cb, PVOID state)
+HRESULT ClrProcess::EnumHeapSegmentsServer(IEnumHeapSegmentsCallback *cb)
 {
 	ClrGcHeapData gcData = {};
 	m_pDac->GetGCHeapData(&gcData);
@@ -82,7 +84,7 @@ HRESULT ClrProcess::EnumHeapSegmentsServer(EnumHeapSegmentsCallback cb, PVOID st
 		ClrGcHeapStaticData gchData = {};
 		RETURN_IF_FAILED(m_pDac->GetGCHeapDetails(heap, &gchData));
 
-		hr = EnumHeapSegmentsImpl(gchData, cb, state);
+		hr = EnumHeapSegmentsImpl(gchData, cb);
 		if (hr == S_FALSE)
 			return S_FALSE;
 	}
@@ -90,16 +92,16 @@ HRESULT ClrProcess::EnumHeapSegmentsServer(EnumHeapSegmentsCallback cb, PVOID st
 	return E_NOTIMPL;	
 }
 
-HRESULT ClrProcess::EnumHeapSegmentsWorkstation(EnumHeapSegmentsCallback cb, PVOID state)
+HRESULT ClrProcess::EnumHeapSegmentsWorkstation(IEnumHeapSegmentsCallback *cb)
 {
 	ClrGcHeapStaticData gcsData = {};
 	HRESULT hr = S_OK;
 	RETURN_IF_FAILED(m_pDac->GetGCHeapStaticData(&gcsData));
 
-	return EnumHeapSegmentsImpl(gcsData, cb, state);
+	return EnumHeapSegmentsImpl(gcsData, cb);
 }
 
-HRESULT ClrProcess::EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, EnumHeapSegmentsCallback cb, PVOID state)
+HRESULT ClrProcess::EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, IEnumHeapSegmentsCallback *cb)
 {
 	CLRDATA_ADDRESS currSegment = gcsData.Generations[2].start_segment;
 	HRESULT hr = S_OK;
@@ -113,7 +115,7 @@ HRESULT ClrProcess::EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, EnumHeapS
 		{
 			segData.Allocated = gcsData.AllocAllocated;
 		}
-		if (!cb(currSegment, segData, state))
+		if (FAILED(cb->Callback(currSegment, segData)))
 		{
 			return S_FALSE;
 		}

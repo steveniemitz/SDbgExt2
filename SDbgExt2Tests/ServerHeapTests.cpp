@@ -48,12 +48,12 @@ namespace SDbgExt2Tests2
 		{
 			int n = 0;
 
-			auto cb = [](CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state)->BOOL {
-				(*((int*)state))++;
+			auto cb = [](CLRDATA_ADDRESS object, ClrObjectData objData, int *state)->BOOL {
+				(*(state))++;
 				return TRUE;
 			};
 
-			EnumObjectsCallbackFunctionPointerAdapter adapt;
+			CComObject<EnumObjectsCallbackAdaptor<int>> adapt;
 			adapt.Init(cb, &n);
 
 			p->EnumHeapObjects(&adapt);

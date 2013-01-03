@@ -26,6 +26,14 @@ interface IEnumThreadsCallback : IUnknown
 	HRESULT Callback([in] CLRDATA_ADDRESS threadObj, [in] ClrThreadData threadData);
 }
 
+[
+	object,
+	uuid(F78E3019-5F70-4F7A-A1DA-254F96FD849A)
+]
+interface IEnumHeapSegmentsCallback : IUnknown
+{
+	HRESULT Callback([in] CLRDATA_ADDRESS segment, [in] ClrGcHeapSegmentData segData);
+}
 
 [
 	object,
@@ -52,6 +60,7 @@ interface IClrProcess : IUnknown
 	HRESULT FindThreadByOsThreadId(DWORD osThreadId, CLRDATA_ADDRESS *unmanagedThreadObj);
 	HRESULT GetManagedThreadObject(CLRDATA_ADDRESS unmanagedThreadObj, CLRDATA_ADDRESS *managedThreadObj);
 	HRESULT GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, ClrThreadContext *ctx);
+	HRESULT EnumHeapSegments([in] IEnumHeapSegmentsCallback *cb);
 	HRESULT EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb);
 	HRESULT EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb);
 	HRESULT EnumHeapObjects(IEnumObjectsCallback *cb);

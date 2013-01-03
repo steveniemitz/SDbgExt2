@@ -9,10 +9,8 @@ struct EnumState
 	std::hash_map<CLRDATA_ADDRESS, std::wstring> DelegateNameLookup;
 };
 
-BOOL CALLBACK EnumThreadPoolQueuesCallback(const AppDomainAndValue queue, const ThreadPoolWorkItem &workItem, PVOID state)
+BOOL CALLBACK EnumThreadPoolQueuesCallback(const AppDomainAndValue queue, const ThreadPoolWorkItem &workItem, EnumState *es)
 {
-	EnumState *es = reinterpret_cast<EnumState *>(state);
-
 	if (es->LastQueue != queue.Value)
 	{
 		dwdprintf(es->dbg->Control, SR::DumpThreadPoolQueues_NewQueue(), queue.Value, queue.domain);
@@ -54,7 +52,7 @@ DBG_FUNC(dumpthreadpoolqueues)
 
 	EnumState s = { 0, &dbg };
 	
-	CEnumThreadPoolAdaptorStack adapt;
+	CComObject<EnumThreadPoolAdaptor<EnumState>> adapt;
 	adapt.Init(EnumThreadPoolQueuesCallback, &s);
 
 	dbg.Ext->EnumerateThreadPoolQueues(&adapt);

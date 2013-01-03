@@ -66,12 +66,12 @@ namespace SDbgExt2Tests2
 
 			EnumThreadState state = {};
 
-			auto func = [](CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state)->BOOL {
-				((EnumThreadState*)state)->NumTimesCalled++;
+			auto func = [](CLRDATA_ADDRESS threadObj, ClrThreadData threadData, EnumThreadState *state)->BOOL {
+				(state)->NumTimesCalled++;
 				return TRUE;
 			};
 
-			EnumThreadsCallbackFunctionPointerAdapter adapt;
+			CComObject<EnumThreadCallbackAdaptor<EnumThreadState>> adapt;
 			adapt.Init(func, &state);
 
 			p->EnumThreads(&adapt);
@@ -107,20 +107,14 @@ namespace SDbgExt2Tests2
 
 		TEST_METHOD(EnumStackObjects_Basic)
 		{
-			std::vector<ClrObjectData> seenObjects;
+			std::vector<CLRDATA_ADDRESS> seenObjects;
 
-			auto cb = [](CLRDATA_ADDRESS object, ClrObjectData objData, PVOID state)->BOOL {
-				auto so = (std::vector<ClrObjectData>*)state;
-
-				printf("%lx\r\n", object);
-				if (object == 0x02ec23ec)
-				{
-					so->push_back(objData);
-				}
+			auto cb = [](CLRDATA_ADDRESS object, ClrObjectData objData, std::vector<CLRDATA_ADDRESS> *so)->BOOL {
+				so->push_back(object);
 				return TRUE;
 			};
 
-			EnumObjectsCallbackFunctionPointerAdapter adapt;
+			CComObject<EnumObjectsCallbackAdaptor<std::vector<CLRDATA_ADDRESS>>> adapt;
 			adapt.Init(cb, &seenObjects);
 
 			auto hr = p->EnumStackObjects((DWORD)1, &adapt);

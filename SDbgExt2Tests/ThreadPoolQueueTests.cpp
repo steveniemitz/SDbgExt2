@@ -16,12 +16,12 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(DumpThreadPool_Baisc)
 		{
 			int n = 0;
-			auto cb = [](const AppDomainAndValue queueAddress, const ThreadPoolWorkItem &tpWorkItems, PVOID state)->BOOL {
-				(*((int*)state))++;
+			auto cb = [](const AppDomainAndValue queueAddress, const ThreadPoolWorkItem &tpWorkItems, int *state)->BOOL {
+				(*(state))++;
 				return TRUE;
 			};
 			
-			CEnumThreadPoolAdaptorStack adapt;
+			CComObject<EnumThreadPoolAdaptor<int>> adapt;
 			adapt.Init(cb, &n);
 
 			auto hr = ext->EnumerateThreadPoolQueues(&adapt);
@@ -34,8 +34,7 @@ namespace SDbgExt2Tests2
 		{
 			std::hash_map<CLRDATA_ADDRESS, std::wstring> DelegateNameLookup;
 
-			auto cb = [](const AppDomainAndValue queueAddress, const ThreadPoolWorkItem &workItem, PVOID state)->BOOL {
-				auto lookup = reinterpret_cast<std::hash_map<CLRDATA_ADDRESS, std::wstring>*>(state);
+			auto cb = [](const AppDomainAndValue queueAddress, const ThreadPoolWorkItem &workItem, std::hash_map<CLRDATA_ADDRESS, std::wstring> *lookup)->BOOL {
 				
 				auto item = lookup->find(workItem.DelegatePtr);
 				//std::wstring delegateName = (*lookup)[workItem.DelegatePtr];
@@ -46,7 +45,7 @@ namespace SDbgExt2Tests2
 				return TRUE;
 			};
 			
-			CEnumThreadPoolAdaptorStack adapt;
+			CComObject<EnumThreadPoolAdaptor<std::hash_map<CLRDATA_ADDRESS, std::wstring>>> adapt;
 			adapt.Init(cb, &DelegateNameLookup);
 
 			auto hr = ext->EnumerateThreadPoolQueues(&adapt);

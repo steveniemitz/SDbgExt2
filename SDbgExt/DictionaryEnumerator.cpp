@@ -227,9 +227,8 @@ HRESULT DctEnumerator::FindDctEntryByKey(CLRDATA_ADDRESS dctObj, LPCWSTR key, CL
 	m_dac->GetProcess(&dac);
 
 	DctKeySearchState dkss = { dac, key, wcslen(key), NULL };
-	auto cb = [](DctEntry entry, PVOID state)->BOOL {
+	auto cb = [](DctEntry entry, DctKeySearchState *ds)->BOOL {
 		BOOL ret = TRUE;
-		DctKeySearchState *ds = reinterpret_cast<DctKeySearchState *>(state);
 		std::wstring keyStr(ds->TargetKeyLen + 1, '\0');
 
 		if (SUCCEEDED(ds->pDac->GetObjectStringData(entry.KeyPtr, (UINT)ds->TargetKeyLen + 1, &keyStr[0], NULL)))
@@ -244,7 +243,7 @@ HRESULT DctEnumerator::FindDctEntryByKey(CLRDATA_ADDRESS dctObj, LPCWSTR key, CL
 		return TRUE;
 	};
 	
-	CEnumDctAdaptorStack adapt;
+	CComObject<EnumDctAdaptor<DctKeySearchState>> adapt;
 	adapt.Init(cb, &dkss);
 
 	EnumerateDctEntries(dctObj, &adapt);
@@ -264,8 +263,7 @@ HRESULT DctEnumerator::FindDctEntryByHash(CLRDATA_ADDRESS dctObj, UINT32 hash, C
 	};
 
 	DctHashSearchState dhss = { hash, NULL };
-	auto cb = [](DctEntry entry, PVOID state)->BOOL {
-		DctHashSearchState *ds = reinterpret_cast<DctHashSearchState *>(state);
+	auto cb = [](DctEntry entry, DctHashSearchState *ds)->BOOL {
 		if (entry.HashCode == ds->TargetHash)
 		{
 			ds->TargetValuePtr = entry.ValuePtr;
@@ -274,7 +272,7 @@ HRESULT DctEnumerator::FindDctEntryByHash(CLRDATA_ADDRESS dctObj, UINT32 hash, C
 		return TRUE;
 	};
 
-	CEnumDctAdaptorStack adapt;
+	CComObject<EnumDctAdaptor<DctHashSearchState>> adapt;
 	adapt.Init(cb, &dhss);
 
 	EnumerateDctEntries(dctObj, &adapt);
