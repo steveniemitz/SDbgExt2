@@ -78,19 +78,19 @@ STDMETHODIMP ClrProcess::FindThreadById(DWORD id, DWORD fieldOffsetInClrThreadDa
 	
 	FindThreadState fts = { id, fieldOffsetInClrThreadData, 0 };
 
-	auto cb = [](CLRDATA_ADDRESS threadObj, ClrThreadData threadData, FindThreadState *fts)->BOOL {
+	auto cb = [&fts](CLRDATA_ADDRESS threadObj, ClrThreadData threadData)->BOOL {
 		
-		if (*(DWORD*)(&threadData + fts->FieldOffset) == fts->SearchThreadId)
+		if (*(DWORD*)(&threadData + fts.FieldOffset) == fts.SearchThreadId)
 		{
-			fts->FoundThread = threadObj;
+			fts.FoundThread = threadObj;
 			return FALSE;
 		}	
 		
 		return TRUE;
 	};
 
-	CComObject<EnumThreadCallbackAdaptor<FindThreadState>> adapt;
-	adapt.Init(cb, &fts);
+	CComObject<EnumThreadCallbackAdaptor> adapt;
+	adapt.Init(cb);
 
 	EnumThreads(&adapt);
 	*threadObj = fts.FoundThread;

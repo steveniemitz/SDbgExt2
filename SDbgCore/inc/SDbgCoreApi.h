@@ -18,31 +18,16 @@
 
 HRESULT SDBGAPI __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret);
 
-BEGIN_DEFINE_ENUM_ADAPTOR(EnumObjectsCallbackAdaptor, IEnumObjectsCallback)
-	DEFINE_ENUM_ADAPTOR_CALLBACK(CLRDATA_ADDRESS object, ClrObjectData objData, _State *state);
-	BEGIN_DEFINE_ENUM_ADAPTOR_BODY()
-	STDMETHODIMP Callback(CLRDATA_ADDRESS obj, ClrObjectData objData)
-	{
-		return m_cb(obj, objData, m_state) == TRUE ? S_OK : E_ABORT;
-	}
-END_DEFINE_ENUM_ADAPTOR
-
-
-BEGIN_DEFINE_ENUM_ADAPTOR(EnumThreadCallbackAdaptor, IEnumThreadsCallback)
-	DEFINE_ENUM_ADAPTOR_CALLBACK(CLRDATA_ADDRESS threadObj, ClrThreadData threadData, _State *state);
-	BEGIN_DEFINE_ENUM_ADAPTOR_BODY()
+BEGIN_DEFINE_ENUM_ADAPTOR_FUNCTOR(EnumThreadCallbackAdaptor, IEnumThreadsCallback, BOOL(CLRDATA_ADDRESS, ClrThreadData))
 	STDMETHODIMP Callback(CLRDATA_ADDRESS threadObj, ClrThreadData threadData)
 	{
-		return m_cb(threadObj, threadData, m_state) == TRUE ? S_OK : E_ABORT;
+		return m_cb(threadObj, threadData) == TRUE ? S_OK : E_ABORT;
 	}
-END_DEFINE_ENUM_ADAPTOR
-
-
-BEGIN_DEFINE_ENUM_ADAPTOR(EnumHeapSegmentsCallbackAdaptor, IEnumHeapSegmentsCallback)
-	DEFINE_ENUM_ADAPTOR_CALLBACK(CLRDATA_ADDRESS segment, ClrGcHeapSegmentData segData, _State *state);	
-	BEGIN_DEFINE_ENUM_ADAPTOR_BODY()
+END_DEFINE_ENUM_ADAPTOR_FUNCTOR
+	
+BEGIN_DEFINE_ENUM_ADAPTOR_FUNCTOR(EnumHeapSegmentsCallbackAdaptor, IEnumHeapSegmentsCallback, BOOL(CLRDATA_ADDRESS, ClrGcHeapSegmentData))
 	STDMETHODIMP Callback(CLRDATA_ADDRESS segment, ClrGcHeapSegmentData segData)
 	{
-		return m_cb(segment, segData, m_state) == TRUE ? S_OK : E_ABORT;
+		return m_cb(segment, segData) == TRUE ? S_OK : E_ABORT;
 	}
-END_DEFINE_ENUM_ADAPTOR
+END_DEFINE_ENUM_ADAPTOR_FUNCTOR

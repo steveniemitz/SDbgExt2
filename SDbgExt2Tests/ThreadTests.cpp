@@ -2,6 +2,7 @@
 #include "CppUnitTest.h"
 #include "TestCommon.h"
 #include <vector>
+#include <functional>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -66,13 +67,13 @@ namespace SDbgExt2Tests2
 
 			EnumThreadState state = {};
 
-			auto func = [](CLRDATA_ADDRESS threadObj, ClrThreadData threadData, EnumThreadState *state)->BOOL {
-				(state)->NumTimesCalled++;
+			auto func = [&state](CLRDATA_ADDRESS threadObj, ClrThreadData threadData)->BOOL {
+				state.NumTimesCalled++;
 				return TRUE;
 			};
 
-			CComObject<EnumThreadCallbackAdaptor<EnumThreadState>> adapt;
-			adapt.Init(func, &state);
+			CComObject<EnumThreadCallbackAdaptor> adapt;
+			adapt.Init(func);
 
 			p->EnumThreads(&adapt);
 
@@ -109,13 +110,13 @@ namespace SDbgExt2Tests2
 		{
 			std::vector<CLRDATA_ADDRESS> seenObjects;
 
-			auto cb = [](CLRDATA_ADDRESS object, ClrObjectData objData, std::vector<CLRDATA_ADDRESS> *so)->BOOL {
-				so->push_back(object);
+			auto cb = [&seenObjects](CLRDATA_ADDRESS object, ClrObjectData objData)->BOOL {
+				seenObjects.push_back(object);
 				return TRUE;
 			};
-
-			CComObject<EnumObjectsCallbackAdaptor<std::vector<CLRDATA_ADDRESS>>> adapt;
-			adapt.Init(cb, &seenObjects);
+		
+			CComObject<EnumObjectsCallbackAdaptor> adapt;
+			adapt.Init(cb);
 
 			auto hr = ext->EnumStackObjects((DWORD)1, &adapt);
 

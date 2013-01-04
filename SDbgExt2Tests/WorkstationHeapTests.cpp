@@ -40,13 +40,13 @@ namespace SDbgExt2Tests2
 		{
 			int n = 0;
 
-			auto cb = [](CLRDATA_ADDRESS object, ClrObjectData objData, int *state)->BOOL {
-				(*(state))++;
+			auto cb = [&n](CLRDATA_ADDRESS object, ClrObjectData objData)->BOOL {
+				n++;
 				return TRUE;
 			};
 			
-			CComObject<EnumObjectsCallbackAdaptor<int>> adapt;
-			adapt.Init(cb, &n);
+			CComObject<EnumObjectsCallbackAdaptor> adapt;
+			adapt.Init(cb);
 
 			ext->EnumHeapObjects(&adapt);
 

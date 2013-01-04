@@ -61,13 +61,13 @@ namespace SDbgExt2Tests2
 			int c = 0;
 			std::vector<DctEntry> entries;
 
-			auto cb = [](DctEntry entry, std::vector<DctEntry> *state)->BOOL {
-				(state)->push_back(entry);
+			auto cb = [&entries](DctEntry entry)->BOOL {
+				entries.push_back(entry);
 				return TRUE;
 			};
 			
-			CComObject<EnumDctAdaptor<std::vector<DctEntry>>> adapt;
-			adapt.Init(cb, &entries);
+			CComObject<EnumDctAdaptor> adapt;
+			adapt.Init(cb);
 
 			auto hr = ext->EnumerateHashtable(dctAddr, &adapt);
 

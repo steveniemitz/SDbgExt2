@@ -24,20 +24,20 @@ HRESULT CSDbgExt::EnumHeapObjects(IEnumObjectsCallback *cb)
 
 	EnumSegmentsState outerState = { cbPtr, dac, ug.FreeMethodTable };
 	
-	auto heapCb = [](CLRDATA_ADDRESS segmentAddr, ClrGcHeapSegmentData segment, EnumSegmentsState *ess)->BOOL {
+	auto heapCb = [&outerState](CLRDATA_ADDRESS segmentAddr, ClrGcHeapSegmentData segment)->BOOL {
 		
 		CLRDATA_ADDRESS currObj = segment.AllocBegin;
 		while(currObj < segment.Allocated)
 		{
 			ClrObjectData od = {};
-			HRESULT hr = ess->pDac->GetObjectData(currObj, &od);
+			HRESULT hr = outerState.pDac->GetObjectData(currObj, &od);
 			if (FAILED(hr))
 			{
 				currObj += sizeof(void*);
 			}
 			else
 			{
-				if (FAILED(ess->wrappedCb->Callback(currObj, od)))
+				if (FAILED(outerState.wrappedCb->Callback(currObj, od)))
 				{
 					return FALSE;
 				}
@@ -48,8 +48,8 @@ HRESULT CSDbgExt::EnumHeapObjects(IEnumObjectsCallback *cb)
 		return TRUE;
 	};
 
-	CComObject<EnumHeapSegmentsCallbackAdaptor<EnumSegmentsState>> adapt;
-	adapt.Init(heapCb, &outerState);
+	CComObject<EnumHeapSegmentsCallbackAdaptor> adapt;
+	adapt.Init(heapCb);
 
 	RETURN_IF_FAILED(m_proc->EnumHeapSegments(&adapt));
 

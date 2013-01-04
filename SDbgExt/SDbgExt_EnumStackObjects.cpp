@@ -35,16 +35,16 @@ HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumOb
 		CLRDATA_ADDRESS End;
 	};
 
-	auto buildHeapSnapshotCb = [](CLRDATA_ADDRESS heap, ClrGcHeapSegmentData segData, std::vector<AddrRange> *ranges)->BOOL {
+	std::vector<AddrRange> ranges;
+	auto buildHeapSnapshotCb = [&ranges](CLRDATA_ADDRESS heap, ClrGcHeapSegmentData segData)->BOOL {
 		AddrRange range = { segData.AllocBegin, segData.Allocated };
-		ranges->push_back(range);
+		ranges.push_back(range);
 
 		return TRUE;
 	};
-
-	std::vector<AddrRange> ranges;
-	CComObject<EnumHeapSegmentsCallbackAdaptor<std::vector<AddrRange>>> adapt;
-	adapt.Init(buildHeapSnapshotCb, &ranges);
+		
+	CComObject<EnumHeapSegmentsCallbackAdaptor> adapt;
+	adapt.Init(buildHeapSnapshotCb);
 	RETURN_IF_FAILED(m_proc->EnumHeapSegments(&adapt));
 
 	for (CLRDATA_ADDRESS addr = stackLimit; addr < stackBase; addr += sizeof(void*))

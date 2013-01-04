@@ -1,4 +1,7 @@
 #pragma once
+#include <functional>
+
+//std::for_each
 
 #define BEGIN_DEFINE_ENUM_ADAPTOR(ClassName, EnumInterface) \
 template<typename _State> \
@@ -31,3 +34,26 @@ private: \
 public:
 
 #define END_DEFINE_ENUM_ADAPTOR };
+
+#define BEGIN_DEFINE_ENUM_ADAPTOR_FUNCTOR(ClassName, EnumInterface, FuncType) \
+class ClassName : \
+	public CComObjectRoot, \
+	public EnumInterface \
+{ \
+	BEGIN_COM_MAP(ClassName) \
+		COM_INTERFACE_ENTRY(EnumInterface) \
+	END_COM_MAP() \
+public: \
+	HRESULT Init(std::function<FuncType> cb) \
+	{ \
+		m_cb = cb; \
+		return S_OK; \
+	} \
+	ULONG InternalAddRef() { return 1; } \
+	ULONG InternalRelease() { return 1; } \
+private: \
+	void* operator new(size_t s); \
+	std::function<FuncType> m_cb; \
+public:
+
+#define END_DEFINE_ENUM_ADAPTOR_FUNCTOR };
