@@ -25,7 +25,12 @@
 
 HRESULT __stdcall CreateDbgEngMemoryAccess(IDebugDataSpaces *data, IDacMemoryAccess **ret)
 {
-	*ret = new DbgEngMemoryAccess(data);
+	CComObject<DbgEngMemoryAccess> *tmp;
+	CComObject<DbgEngMemoryAccess>::CreateInstance(&tmp);
+	tmp->AddRef();
+	tmp->Init(data);
+
+	*ret = tmp;
 	return S_OK;
 }
 
@@ -62,7 +67,10 @@ HRESULT InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 		return FALSE;
 	}
 	CLRDataCreateInstancePtr clrData = (CLRDataCreateInstancePtr)GetProcAddress(hCorDac, "CLRDataCreateInstance");
-	DbgEngCLRDataTarget *dataTarget = new DbgEngCLRDataTarget(dSym, dds, dso);
+	CComObject<DbgEngCLRDataTarget> *dataTarget;
+	CComObject<DbgEngCLRDataTarget>::CreateInstance(&dataTarget);
+	dataTarget->AddRef();
+	dataTarget->Init(dSym, dds, dso);
 	
 	RETURN_IF_FAILED(clrData(__uuidof(IXCLRDataProcess3), dataTarget, (PVOID*)ppDac));
 		

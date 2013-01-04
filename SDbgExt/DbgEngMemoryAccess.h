@@ -2,13 +2,19 @@
 #include "..\SDbgCore\inc\SDbgCoreApi.h"
 #include <DbgEng.h>
 
-class DbgEngMemoryAccess : public IDacMemoryAccess
+class DbgEngMemoryAccess : 
+	public CComObjectRoot,
+	public IDacMemoryAccess
 {
 public:
 
-	DbgEngMemoryAccess(IDebugDataSpaces *data)
-		: m_pData(data), m_dwRef(1)
+	BEGIN_COM_MAP(DbgEngMemoryAccess)
+		COM_INTERFACE_ENTRY(IDacMemoryAccess)
+	END_COM_MAP()
+
+	void Init(IDebugDataSpaces *data)
 	{
+		m_pData = data;
 	}
 
 	STDMETHODIMP ReadVirtual(
@@ -69,40 +75,6 @@ public:
 		
 		return S_OK;
 	}
-
-	STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject)
-    {
-        IUnknown *punk = nullptr;
-
-        if (riid == IID_IUnknown)
-            punk = static_cast<IUnknown*>(this);
-		else if (riid == __uuidof(IDacMemoryAccess))
-			punk = static_cast<IDacMemoryAccess*>(this);
-		
-        *ppvObject = punk;
-        if (!punk)
-            return E_NOINTERFACE;
-
-        punk->AddRef();
-        return S_OK;
-    }
-
-    STDMETHODIMP_(ULONG) AddRef()
-    {
-        return ++m_dwRef;
-    }
-
-    STDMETHODIMP_(ULONG) Release()
-    {
-        ULONG cRef = --m_dwRef;
-
-        if (cRef == 0)
-            delete this;
-
-        return cRef;
-    }
-
 private:
 	CComPtr<IDebugDataSpaces> m_pData;
-	ULONG m_dwRef;
 };

@@ -6,50 +6,23 @@
 #include <atlbase.h>
 #include <atlcom.h>
 
-class DbgEngCLRDataTarget : public ICLRDataTarget
+class DbgEngCLRDataTarget :
+	public CComObjectRoot, 
+	public ICLRDataTarget
 {
 public:
 
-	DbgEngCLRDataTarget(IDebugSymbols3 *sym, IDebugDataSpaces *ds, IDebugSystemObjects *sysobj)
-		: m_dwRef(1), m_pDs(ds), m_pSym(sym), m_sysobj(sysobj)
+	BEGIN_COM_MAP(DbgEngCLRDataTarget)
+		COM_INTERFACE_ENTRY(ICLRDataTarget)
+	END_COM_MAP()
+
+	void Init(IDebugSymbols3 *sym, IDebugDataSpaces *ds, IDebugSystemObjects *sysobj)
 	{
+		m_pDs = ds;
+		m_pSym = sym;
+		m_sysobj = sysobj;
 	}
-	
-	// ICLRDataTarget2
-	// ICLRMetaDataLocator
-	// ICLRDataTarget3
-	STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject)
-    {
-        IUnknown *punk = nullptr;
-
-        if (riid == IID_IUnknown)
-            punk = static_cast<IUnknown*>(this);
-		if (riid == __uuidof(ICLRDataTarget))
-			punk = static_cast<ICLRDataTarget*>(this);
-
-        *ppvObject = punk;
-        if (!punk)
-            return E_NOINTERFACE;
-
-        punk->AddRef();
-        return S_OK;
-    }
-
-    STDMETHODIMP_(ULONG) AddRef()
-    {
-        return ++m_dwRef;
-    }
-
-    STDMETHODIMP_(ULONG) Release()
-    {
-        ULONG cRef = --m_dwRef;
-
-        if (cRef == 0)
-            delete this;
-
-        return cRef;
-    }
-	
+			
 	HRESULT STDMETHODCALLTYPE GetMachineType( 
             /* [out] */ ULONG32 *machineType);
         
@@ -104,10 +77,8 @@ public:
         /* [size_is][out] */ BYTE *outBuffer);
 
 private:
-
 	ULONG64 GetModuleAddress(LPCWSTR moduleName);
 
-	DWORD m_dwRef;
 	CComPtr<IDebugSymbols3> m_pSym;
 	CComPtr<IDebugDataSpaces> m_pDs;
 	CComPtr<IDebugSystemObjects> m_sysobj;
