@@ -56,6 +56,15 @@ namespace SDbgExt2Tests2
 			DumpDictionary_TestImpl((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x023c238c, 0), 58, expected, ARRAYSIZE(expected));
 		}
 
+		TEST_METHOD(FindDctEntryByKey)
+		{
+			CLRDATA_ADDRESS addr;
+			auto hr = ext->FindDctEntryByHash(BITNESS_CONDITIONAL(0x023c2318, 0), 1, &addr);
+
+			ASSERT_SOK(hr);
+			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x00000000023c2424, 0), addr);
+		}
+
 		void DumpDictionary_TestImpl(CLRDATA_ADDRESS dctAddr, size_t numEntriesExpected, DctEntry *expected, int countExpected)
 		{
 			int c = 0;

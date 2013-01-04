@@ -183,6 +183,7 @@
     <ClCompile Include="SDbgExt_EnumHeapObjects.cpp" />
     <ClCompile Include="SDbgExt_EnumStackObjects.cpp" />
     <ClCompile Include="SDbgExt_EvaluateExpression.cpp" />
+    <ClCompile Include="SDbgExt_GetHttpContextFromThread.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

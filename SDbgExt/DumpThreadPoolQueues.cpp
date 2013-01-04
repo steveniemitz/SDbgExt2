@@ -54,7 +54,7 @@ public:
 	}
 private:
 	EnumState *es;
-
+	void *operator new(size_t s) {}
 };
 
 DBG_FUNC(dumpthreadpoolqueues)

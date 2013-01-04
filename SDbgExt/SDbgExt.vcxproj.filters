@@ -95,5 +95,8 @@
     <ClCompile Include="SDbgExt_EnumHeapObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SDbgExt_GetHttpContextFromThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

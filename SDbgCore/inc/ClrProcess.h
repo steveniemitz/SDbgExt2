@@ -59,6 +59,7 @@ public:
 		return S_OK;
 	}
 
+	STDMETHODIMP GetDateTimeFromTicks(ULONG64 ticks, ClrDateTime *dt);
 	STDMETHODIMP FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, WCHAR *buffer);
 	STDMETHODIMP GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc);
 

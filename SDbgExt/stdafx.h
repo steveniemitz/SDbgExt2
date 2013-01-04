@@ -15,3 +15,5 @@
 #include <atlcom.h>
 #include <string>
 #include "..\SDbgCore\inc\SDbgCoreApi.h"
+#include "SDbgExt.h"
+#include "SDbgExtApi.h"

@@ -45,6 +45,9 @@ public:
 	STDMETHODIMP EnumerateThreadPoolQueues(IEnumThreadPoolCallback *tpQueueCb);
 	STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPWSTR expression, CLRDATA_ADDRESS *result);
 
+	STDMETHODIMP FindDctEntryByHash(CLRDATA_ADDRESS dctObj, UINT32 hash, CLRDATA_ADDRESS *entryAddr);
+	STDMETHODIMP GetHttpContextFromThread(ClrThreadContext ctx, ClrHttpContext *httpContext);
+
 protected:
 	CSDbgExt()
 	{ 

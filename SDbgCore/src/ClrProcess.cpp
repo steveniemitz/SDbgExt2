@@ -70,6 +70,31 @@ int GetDateTimeDatePart(ULONG64 ticks, int part)
 	return ((num2 - numArray[index - 1]) + 1);
 }
 
+STDMETHODIMP ClrProcess::GetDateTimeFromTicks(ULONG64 ticks, ClrDateTime *dt)
+{
+	ULONG64 kind = ticks & 0x1333333333333333;
+		   ticks = ticks & 0x3FFFFFFFFFFFFFFF;
+
+	dt->Ticks = ticks;
+	if (kind == 0x4000000000000000)
+		dt->Kind = KIND_UTC;
+	else if (kind == 0)
+		dt->Kind = KIND_UNSPECIFIED;
+	else
+		dt->Kind = KIND_LOCAL;
+
+	dt->Month = GetDateTimeDatePart(ticks, 2);
+	dt->Day = GetDateTimeDatePart(ticks, 3);
+	dt->Year = GetDateTimeDatePart(ticks, 0);
+
+	dt->Hour = (int) ((ticks / 0x861c46800L) % 0x18L);
+	dt->Minute = (int) ((ticks / 0x23c34600L) % 60L);
+	dt->Second = (int) ((ticks / 0x989680L) % 60L);
+	dt->Millisecond = (int) ((ticks / 0x2710L) % 0x3e8L);
+
+	return S_OK;
+}
+
 HRESULT ClrProcess::FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, WCHAR *buffer)
 {
 	ticks = ticks % 0x3FFFFFFFFFFFFFFF;

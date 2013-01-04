@@ -116,19 +116,25 @@ HRESULT ClrProcess::GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, 
 	if (!execCtx->Address())
 	{
 		ctx->ExecutionContext = ctx->IllogicalCallContext = ctx->LogicalCallContext = ctx->HostContext = 0;
-		return S_OK;
+		return E_INVALIDARG;
 	}
 
 	ctx->ExecutionContext = execCtx->Address();
 
 	CComPtr<IClrObject> hostCtx, illogicalCallCtx, logicalCallCtx;
-	RETURN_IF_FAILED(execCtx->GetFieldValueObj(L"_illogicalCallContext", &illogicalCallCtx));
-	RETURN_IF_FAILED(execCtx->GetFieldValueObj(L"_logicalCallContext", &logicalCallCtx));
-	RETURN_IF_FAILED(execCtx->GetFieldValueObj(L"m_HostContext", &hostCtx));
+	if (SUCCEEDED(execCtx->GetFieldValueObj(L"_illogicalCallContext", &illogicalCallCtx)))
+	{
+		ctx->IllogicalCallContext = illogicalCallCtx->Address();
+		
+		if (SUCCEEDED(illogicalCallCtx->GetFieldValueObj(L"m_HostContext", &hostCtx)))
+		{
+			ctx->HostContext = hostCtx->Address();	
+		}
+	}
+	if (SUCCEEDED(execCtx->GetFieldValueObj(L"_logicalCallContext", &logicalCallCtx)))
+	{
+		ctx->LogicalCallContext = logicalCallCtx->Address();
+	}
 
-	ctx->IllogicalCallContext = illogicalCallCtx->Address();
-	ctx->LogicalCallContext = logicalCallCtx->Address();
-	ctx->HostContext = hostCtx->Address();	
-
-	return E_NOTIMPL;
+	return S_OK;
 }

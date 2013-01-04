@@ -15,3 +15,27 @@ typedef struct ClrThreadContext
 	CLRDATA_ADDRESS LogicalCallContext;
 	CLRDATA_ADDRESS HostContext;
 } ClrThreadContext;
+
+typedef enum ClrDateTimeKind { KIND_UNSPECIFIED, KIND_UTC, KIND_LOCAL } ClrDateTimeKind;
+
+typedef struct ClrDateTime
+{
+	ULONG64 Ticks;
+	ClrDateTimeKind Kind;
+	
+	UINT Year;
+	UINT Month;
+	UINT Day;
+	
+	UINT Hour;
+	UINT Minute;
+	UINT Second;
+	UINT Millisecond;
+} ClrDateTime;
+
+typedef struct ClrHttpContext
+{
+	ClrDateTime RequestStartTime; 
+	[string] BSTR RequestUrl;
+	[string] BSTR QueryString;
+} ClrHttpContext;

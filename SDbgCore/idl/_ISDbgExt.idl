@@ -70,5 +70,8 @@ interface ISDbgExt : IUnknown
 	
 	HRESULT EnumerateHashtable([in] CLRDATA_ADDRESS dctObj, [in] IEnumHashtableCallback *cb);
 	HRESULT EnumerateThreadPoolQueues([in] IEnumThreadPoolCallback *tpQueueCb);
+
+	HRESULT FindDctEntryByHash([in] CLRDATA_ADDRESS dctObj, [in] UINT32 hash, [out, retval] CLRDATA_ADDRESS *entryAddr);
+	HRESULT GetHttpContextFromThread([in] ClrThreadContext ctx, [out, retval] ClrHttpContext *httpContext);
 };
 
