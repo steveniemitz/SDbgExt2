@@ -29,6 +29,15 @@ typedef struct ThreadPoolWorkItem
 
 [
 	object,
+	uuid(10D69AE4-80AA-4D87-AF18-86DD0010AA8C)
+]
+interface IEnumObjectsCallback : IUnknown
+{
+	HRESULT Callback([in] CLRDATA_ADDRESS obj, [in] ClrObjectData objData);
+};
+
+[
+	object,
 	uuid(FF9B39EB-CCAC-4AA2-B3C4-63BDDFA0AC9F)
 ]
 interface IEnumHashtableCallback : IUnknown
@@ -54,6 +63,11 @@ interface ISDbgExt : IUnknown
 	HRESULT GetProcess([out, retval] IClrProcess **proc);
 	HRESULT GetObjectData([in] CLRDATA_ADDRESS objAddr, [out, retval] ClrObjectData *data);
 	HRESULT EvaluateExpression([in] CLRDATA_ADDRESS rootObj, [in, string] LPWSTR expression, [out, retval] CLRDATA_ADDRESS *result);
+	
+	HRESULT EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb);
+	HRESULT EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb);
+	HRESULT EnumHeapObjects(IEnumObjectsCallback *cb);
+	
 	HRESULT EnumerateHashtable([in] CLRDATA_ADDRESS dctObj, [in] IEnumHashtableCallback *cb);
 	HRESULT EnumerateThreadPoolQueues([in] IEnumThreadPoolCallback *tpQueueCb);
 };

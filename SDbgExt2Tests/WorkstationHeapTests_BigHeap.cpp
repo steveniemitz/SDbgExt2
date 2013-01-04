@@ -25,7 +25,7 @@ namespace SDbgExt2Tests2
 			CComObject<EnumObjectsCallbackAdaptor<int>> adapt;
 			adapt.Init(cb, &n);
 
-			p->EnumHeapObjects(&adapt);
+			ext->EnumHeapObjects(&adapt);
 
 			Assert::AreEqual(1000322, n);
 		}

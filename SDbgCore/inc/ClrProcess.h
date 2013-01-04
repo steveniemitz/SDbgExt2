@@ -39,27 +39,19 @@ public:
 	STDMETHODIMP FindFieldByName(CLRDATA_ADDRESS methodTable, LPWSTR fieldName, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData);
 	STDMETHODIMP FindTypeByName(LPWSTR assemblyName, LPWSTR typeName, CLRDATA_ADDRESS *ret);
 	STDMETHODIMP FindMethodByName(CLRDATA_ADDRESS methodTable, LPWSTR methodSig, CLRDATA_ADDRESS *methodDesc);
-
 	STDMETHODIMP GetStaticFieldValues(CLRDATA_ADDRESS field, ULONG32 iValues, AppDomainAndValue *pValues, ULONG32 *numValues);
 	STDMETHODIMP GetStaticFieldValue(CLRDATA_ADDRESS field, CLRDATA_ADDRESS appDomain, AppDomainAndValue *ret);
-
 	STDMETHODIMP GetFieldValuePtr(CLRDATA_ADDRESS obj, LPWSTR fieldName, CLRDATA_ADDRESS *addr);
 	STDMETHODIMP GetFieldValueBuffer(CLRDATA_ADDRESS obj, LPWSTR fieldName, ULONG32 bufferSize, PVOID buffer, PULONG bytesRead);
 	STDMETHODIMP GetFieldValueString(CLRDATA_ADDRESS obj, LPWSTR fieldName, ULONG32 bufferSize, WCHAR *buffer, PULONG bytesRead);
 	STDMETHODIMP ReadFieldValueBuffer(CLRDATA_ADDRESS obj, ClrFieldDescData fd, ULONG32 numBytes, PVOID buffer, PULONG bytesRead);
-
 	STDMETHODIMP EnumThreads(IEnumThreadsCallback *cb);
 	STDMETHODIMP FindThreadByCorThreadId(DWORD corThreadId, CLRDATA_ADDRESS *unmanagedThreadObj);
 	STDMETHODIMP FindThreadByOsThreadId(DWORD osThreadId, CLRDATA_ADDRESS *unmanagedThreadObj);
 	STDMETHODIMP GetManagedThreadObject(CLRDATA_ADDRESS unmanagedThreadObj, CLRDATA_ADDRESS *managedThreadObj);
 	STDMETHODIMP GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, ClrThreadContext *ctx);
-	
 	STDMETHODIMP_(LONG) IsValidObject(CLRDATA_ADDRESS obj);
-	STDMETHODIMP EnumHeapSegments(IEnumHeapSegmentsCallback *cb);
-	STDMETHODIMP EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb);
-	STDMETHODIMP EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb);
-	STDMETHODIMP EnumHeapObjects(IEnumObjectsCallback *cb);
-		
+	STDMETHODIMP EnumHeapSegments(IEnumHeapSegmentsCallback *cb);		
 	STDMETHODIMP GetClrObject(CLRDATA_ADDRESS obj, IClrObject **ret);
 	STDMETHODIMP GetClrObjectArray(CLRDATA_ADDRESS objArray, IClrObjectArray **ret)
 	{

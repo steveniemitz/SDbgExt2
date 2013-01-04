@@ -117,7 +117,7 @@ namespace SDbgExt2Tests2
 			CComObject<EnumObjectsCallbackAdaptor<std::vector<CLRDATA_ADDRESS>>> adapt;
 			adapt.Init(cb, &seenObjects);
 
-			auto hr = p->EnumStackObjects((DWORD)1, &adapt);
+			auto hr = ext->EnumStackObjects((DWORD)1, &adapt);
 
 			ASSERT_SOK(hr);
 		}

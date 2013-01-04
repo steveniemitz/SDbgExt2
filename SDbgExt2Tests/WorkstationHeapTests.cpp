@@ -48,7 +48,7 @@ namespace SDbgExt2Tests2
 			CComObject<EnumObjectsCallbackAdaptor<int>> adapt;
 			adapt.Init(cb, &n);
 
-			p->EnumHeapObjects(&adapt);
+			ext->EnumHeapObjects(&adapt);
 
 #ifndef _WIN64
 	#define ExpectedHeapObjects 547

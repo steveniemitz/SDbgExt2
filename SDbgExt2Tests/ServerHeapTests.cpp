@@ -56,7 +56,7 @@ namespace SDbgExt2Tests2
 			CComObject<EnumObjectsCallbackAdaptor<int>> adapt;
 			adapt.Init(cb, &n);
 
-			p->EnumHeapObjects(&adapt);
+			ext->EnumHeapObjects(&adapt);
 
 			Assert::AreEqual(BITNESS_CONDITIONAL(50475, 52100), n);
 		}

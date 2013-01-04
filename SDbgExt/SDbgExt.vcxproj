@@ -180,6 +180,8 @@
     <ClCompile Include="SDbgExt.cpp" />
     <ClCompile Include="SDbgExt_DumpThreadPool.cpp" />
     <ClCompile Include="SDbgExt_EnumerateHashtable.cpp" />
+    <ClCompile Include="SDbgExt_EnumHeapObjects.cpp" />
+    <ClCompile Include="SDbgExt_EnumStackObjects.cpp" />
     <ClCompile Include="SDbgExt_EvaluateExpression.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -4,57 +4,6 @@
 #include <algorithm>
 #include "..\inc\ClrObject.h"
 
-#define Align(addr) (addr + (sizeof(void*) - 1)) & ~(sizeof(void*) - 1)
-
-HRESULT ClrProcess::EnumHeapObjects(IEnumObjectsCallback *cb)
-{
-	CComPtr<IEnumObjectsCallback> cbPtr(cb);
-	struct EnumSegmentsState
-	{
-		CComPtr<IEnumObjectsCallback> wrappedCb;
-		IXCLRDataProcess3 *pDac;
-		CLRDATA_ADDRESS FreeMT;
-	};
-	
-	HRESULT hr = S_OK;
-
-	ClrUsefulGlobalsData ug = {};
-	RETURN_IF_FAILED(m_pDac->GetUsefulGlobals(&ug));
-
-	EnumSegmentsState outerState = { cbPtr, m_pDac, ug.FreeMethodTable };
-	
-	auto heapCb = [](CLRDATA_ADDRESS segmentAddr, ClrGcHeapSegmentData segment, EnumSegmentsState *ess)->BOOL {
-		
-		CLRDATA_ADDRESS currObj = segment.AllocBegin;
-		while(currObj < segment.Allocated)
-		{
-			ClrObjectData od = {};
-			HRESULT hr = ess->pDac->GetObjectData(currObj, &od);
-			if (FAILED(hr))
-			{
-				currObj += sizeof(void*);
-			}
-			else
-			{
-				if (FAILED(ess->wrappedCb->Callback(currObj, od)))
-				{
-					return FALSE;
-				}
-				currObj = Align(currObj + od.Size);
-			}
-		}
-
-		return TRUE;
-	};
-
-	CComObject<EnumHeapSegmentsCallbackAdaptor<EnumSegmentsState>> adapt;
-	adapt.Init(heapCb, &outerState);
-
-	RETURN_IF_FAILED(EnumHeapSegments(&adapt));
-
-	return S_OK;
-}
-
 HRESULT ClrProcess::EnumHeapSegments(IEnumHeapSegmentsCallback *cb)
 {
 	ClrGcHeapData gcData = {};
