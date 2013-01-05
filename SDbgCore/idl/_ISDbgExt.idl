@@ -56,6 +56,17 @@ interface IEnumThreadPoolCallback : IUnknown
 
 [
 	object,
+	uuid(6A175A7A-F99B-4EBC-AC6D-7D13D98539A2)
+]
+interface IEnumSqlConnectionPoolsCallback : IUnknown
+{
+	HRESULT OnFactory([in] CLRDATA_ADDRESS factory);
+	HRESULT OnPoolGroup([in, string] LPWSTR connString, [in] CLRDATA_ADDRESS poolGroup);
+	HRESULT OnPool([in, string] LPWSTR sid, [in] UINT state, [in] UINT waitCount, [in] UINT totalObjects);
+}
+
+[
+	object,
 	uuid(1F0565EB-95CE-48DE-BC4A-54AD9C034A2C)
 ]
 interface ISDbgExt : IUnknown
@@ -63,14 +74,12 @@ interface ISDbgExt : IUnknown
 	HRESULT GetProcess([out, retval] IClrProcess **proc);
 	HRESULT GetObjectData([in] CLRDATA_ADDRESS objAddr, [out, retval] ClrObjectData *data);
 	HRESULT EvaluateExpression([in] CLRDATA_ADDRESS rootObj, [in, string] LPWSTR expression, [out, retval] CLRDATA_ADDRESS *result);
-	
 	HRESULT EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb);
 	HRESULT EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb);
 	HRESULT EnumHeapObjects(IEnumObjectsCallback *cb);
-	
 	HRESULT EnumerateHashtable([in] CLRDATA_ADDRESS dctObj, [in] IEnumHashtableCallback *cb);
 	HRESULT EnumerateThreadPoolQueues([in] IEnumThreadPoolCallback *tpQueueCb);
-
+	HRESULT EnumSqlConnectionPools([in] IEnumSqlConnectionPoolsCallback *cb, CLRDATA_ADDRESS targetFactory);
 	HRESULT FindDctEntryByHash([in] CLRDATA_ADDRESS dctObj, [in] UINT32 hash, [out, retval] CLRDATA_ADDRESS *entryAddr);
 	HRESULT GetHttpContextFromThread([in] ClrThreadContext ctx, [out, retval] ClrHttpContext *httpContext);
 };

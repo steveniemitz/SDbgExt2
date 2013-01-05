@@ -103,7 +103,7 @@ HRESULT ClrProcess::GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, 
 	HRESULT hr = S_OK;
 
 	CComPtr<IClrObject> clrThread;
-	GetClrObject(managedThreadObj, &clrThread);
+	RETURN_IF_FAILED(GetClrObject(managedThreadObj, &clrThread));
 
 	WCHAR typeNameBuffer[200] = { 0 };
 	clrThread->GetTypeName(ARRAYSIZE(typeNameBuffer), typeNameBuffer, NULL);

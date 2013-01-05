@@ -109,7 +109,6 @@ typedef struct ClrModuleData
 	CLRDATA_ADDRESS Assembly;
 	BOOL IsReflection;
 	BOOL IsPEFile;
-	// Note: these SIZE_T's might be wrong, TODO: test this on x64;
 	ULONG64 BaseClassIndex;
 	ULONG64 DomainNeutralIndex;
 
@@ -136,12 +135,12 @@ typedef struct ClrThreadData
 
 	CLRDATA_ADDRESS GCAllocContext;
 	CLRDATA_ADDRESS GCAllocContextLimit;
-	CLRDATA_ADDRESS Unknown05;
+	CLRDATA_ADDRESS Context;
 	CLRDATA_ADDRESS Domain;
 	CLRDATA_ADDRESS SharedStaticData;
 	DWORD LockCount;
 	DWORD unused;
-	CLRDATA_ADDRESS Unknown10;
+	CLRDATA_ADDRESS UnsharedStaticData;
 	CLRDATA_ADDRESS FirstNestedException;
 	CLRDATA_ADDRESS FiberData;
 	CLRDATA_ADDRESS LastThrownObjectHandle;

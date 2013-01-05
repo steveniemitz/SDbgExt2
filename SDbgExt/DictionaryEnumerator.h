@@ -22,12 +22,13 @@ private:
 
 	HRESULT GetEntryOffsets(CLRDATA_ADDRESS entriesPtr, WCHAR *keyFieldName, WCHAR *valFieldName, WCHAR *hashFieldName, 
 							ULONG *keyOffset, ULONG *valueOffset, ULONG *hashCodeOffset,
-							CLRDATA_ADDRESS *arrayBase, ULONG *arrayElementSize, ULONG *arrayEntries);
+							CLRDATA_ADDRESS *arrayBase, ULONG *arrayElementSize, ULONG *arrayEntries, BOOL *elementsAreClass);
 
 	HRESULT ReadEntries(DWORD arrayEntries, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataBase, ULONG arrayElementSize,
-						ULONG keyOffset, ULONG valOffset, ULONG hashCodeOffset, IEnumHashtableCallback *cb);
+						ULONG keyOffset, ULONG valOffset, ULONG hashCodeOffset, BOOL elementsAreClass, IEnumHashtableCallback *cb);
 
-	HRESULT ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, IEnumHashtableCallback *cb);
+	HRESULT ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, BOOL elementIsClass, IEnumHashtableCallback *cb);
 
 	HRESULT EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, IEnumHashtableCallback *cb);
+	HRESULT EnumerateConcurrentDictionaryEntries(CLRDATA_ADDRESS listObj, IEnumHashtableCallback *cb);
 };

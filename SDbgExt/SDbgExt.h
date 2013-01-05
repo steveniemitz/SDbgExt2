@@ -40,7 +40,7 @@ public:
 	STDMETHODIMP EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb);
 	STDMETHODIMP EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb);
 	STDMETHODIMP EnumHeapObjects(IEnumObjectsCallback *cb);
-
+	STDMETHODIMP EnumSqlConnectionPools(IEnumSqlConnectionPoolsCallback *cb, CLRDATA_ADDRESS targetFactory);
 	STDMETHODIMP EnumerateHashtable(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb);
 	STDMETHODIMP EnumerateThreadPoolQueues(IEnumThreadPoolCallback *tpQueueCb);
 	STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPWSTR expression, CLRDATA_ADDRESS *result);
