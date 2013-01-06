@@ -1,5 +1,3 @@
-import "oaidl.idl";
-import "ocidl.idl";
 import "ClrData.idl";
 
 #define PADIMPL(prefix,bytes)	BYTE padding##prefix[##bytes]

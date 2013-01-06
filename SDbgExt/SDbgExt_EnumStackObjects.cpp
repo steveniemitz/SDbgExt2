@@ -2,6 +2,7 @@
 #include "SDbgExt.h"
 #include <vector>
 #include <algorithm>
+#include "..\SDbgCore\inc\EnumAdaptors.h"
 
 HRESULT CSDbgExt::EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb)
 {

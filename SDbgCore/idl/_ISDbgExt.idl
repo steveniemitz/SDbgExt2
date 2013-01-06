@@ -1,5 +1,3 @@
-import "oaidl.idl";
-import "ocidl.idl";
 import "idl\_ClrTypes.idl";
 
 interface IClrProcess;

@@ -1,8 +1,6 @@
 #pragma once
 #include <functional>
 
-//std::for_each
-
 #define BEGIN_DEFINE_ENUM_ADAPTOR(ClassName, EnumInterface) \
 template<typename _State> \
 class ClassName : \

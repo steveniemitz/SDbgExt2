@@ -152,6 +152,7 @@
     <ClInclude Include="inc\ClrObject.h" />
     <ClInclude Include="inc\ClrObjectArray.h" />
     <ClInclude Include="inc\ClrProcess.h" />
+    <ClInclude Include="inc\EnumAdaptors.h" />
     <ClInclude Include="inc\IEnumAdaptor.h" />
     <ClInclude Include="inc\SDbgCoreApi.h" />
     <ClInclude Include="inc\targetver.h" />

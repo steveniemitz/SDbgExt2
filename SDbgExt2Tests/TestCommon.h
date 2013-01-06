@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "..\SDbgCore\inc\SDbgCoreApi.h"
 #include "..\SDbgExt\SDbgExtApi.h"
+#include "..\SDbgExt\SDbgExt.h"
+#include "..\SDbgExt\EnumAdaptors.h"
 
 class CSDbgTestModule : public ATL::CAtlDllModuleT<CSDbgTestModule> { };
 extern class CSDbgTestModule _AtlModule;

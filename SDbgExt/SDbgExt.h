@@ -1,5 +1,7 @@
 #pragma once
 #include "SDbgExtApi.h"
+#include "..\SDbgCore\inc\IEnumAdaptor.h"
+#include "EnumAdaptors.h"
 
 class CSDbgExt : 
 	public CComObjectRoot,

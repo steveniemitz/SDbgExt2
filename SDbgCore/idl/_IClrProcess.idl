@@ -1,5 +1,3 @@
-import "oaidl.idl";
-import "ocidl.idl";
 import "idl\_ClrTypes.idl";
 import "idl\_IClrObject.idl";
 import "idl\_IXCLRDataProcess3.idl";
@@ -40,7 +38,7 @@ interface IClrProcess : IUnknown
 	HRESULT FindFieldByName([in] CLRDATA_ADDRESS methodTable, [in, string] LPWSTR fieldName, [out] CLRDATA_ADDRESS *field, [out] ClrFieldDescData *fieldData);
 	HRESULT FindTypeByName([in, string] LPWSTR assemblyName, [in, string] LPWSTR typeName, [out, retval] CLRDATA_ADDRESS *ret);
 	HRESULT FindMethodByName([in] CLRDATA_ADDRESS methodTable, [in, string] LPWSTR methodSig, [out, retval] CLRDATA_ADDRESS *methodDesc);
-	HRESULT GetStaticFieldValues([in] CLRDATA_ADDRESS field, [in] ULONG32 iValues, [out] AppDomainAndValue *pValues, [out] ULONG32 *numValues);
+	HRESULT GetStaticFieldValues([in] CLRDATA_ADDRESS field, [in] ULONG32 iValues, [out, size_is(iValues), length_is(*numValues)] AppDomainAndValue *pValues, [out] ULONG32 *numValues);
 	HRESULT GetStaticFieldValue([in] CLRDATA_ADDRESS field, [in] CLRDATA_ADDRESS appDomain, [out, retval] AppDomainAndValue *ret);
 	HRESULT GetFieldValuePtr([in] CLRDATA_ADDRESS obj, [in, string] LPWSTR fieldName, [out, retval] CLRDATA_ADDRESS *addr);
 	HRESULT GetFieldValueBuffer([in] CLRDATA_ADDRESS obj, [in, string] LPWSTR fieldName, [in] ULONG32 bufferSize, [out, size_is(bufferSize)] PVOID buffer, [out] ULONG *bytesRead);

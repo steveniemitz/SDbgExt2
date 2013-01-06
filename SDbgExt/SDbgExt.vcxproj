@@ -162,6 +162,8 @@
     <ClInclude Include="DbgEngMemoryAccess.h" />
     <ClInclude Include="DictionaryEnumerator.h" />
     <ClInclude Include="dllmain.h" />
+    <ClInclude Include="EnumAdaptors.h" />
+    <ClInclude Include="SDbgExtApiExports.h" />
     <ClInclude Include="SDbgExt.h" />
     <ClInclude Include="SDbgExtApi.h" />
     <ClInclude Include="SqlConnectionEnumerator.h" />

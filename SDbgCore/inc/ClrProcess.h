@@ -3,6 +3,7 @@
 #include "SDbgCoreApi.h"
 #include "ClrObjectArray.h"
 #include <CorHdr.h>
+#include <functional>
 
 class ClrProcess : 
 	public CComObjectRoot,

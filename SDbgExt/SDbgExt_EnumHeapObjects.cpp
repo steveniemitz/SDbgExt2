@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SDbgExt.h"
+#include "..\SDbgCore\inc\EnumAdaptors.h"
 
 #define Align(addr) (addr + (sizeof(void*) - 1)) & ~(sizeof(void*) - 1)
 

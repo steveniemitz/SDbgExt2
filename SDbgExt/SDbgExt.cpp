@@ -98,7 +98,7 @@ HRESULT SDBGEXT_API InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppD
 	return S_OK;
 }
 
-HRESULT SDBGEXT_API InitFromDump(WCHAR *dumpFile, ISDbgExt **ext)
+HRESULT SDBGEXT_API InitFromDump(const WCHAR *dumpFile, ISDbgExt **ext)
 {
 	CComPtr<IDebugClient> cli;
 	CComPtr<IDebugClient4> cli4;

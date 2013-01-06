@@ -3,14 +3,7 @@
 #include <iterator>
 #include <algorithm>
 #include "..\inc\ClrObject.h"
-#include "..\inc\IEnumAdaptor.h"
-
-void Test()
-{
-	auto cb = [](CLRDATA_ADDRESS threadObj, ClrThreadData threadData, PVOID state)->BOOL {
-		return TRUE;
-	};
-}
+#include "..\inc\EnumAdaptors.h"
 
 HRESULT ClrProcess::EnumThreads(IEnumThreadsCallback *cb)
 {

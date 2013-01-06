@@ -1,6 +1,3 @@
-import "oaidl.idl";
-import "ocidl.idl";
-
 typedef struct AppDomainAndValue
 {
 	CLRDATA_ADDRESS Domain;
