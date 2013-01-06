@@ -7,17 +7,17 @@ DBG_FUNC(getdelegatemethod)
 
 	ULONG64 addr = GetExpression(args);
 
-	CLRDATA_ADDRESS target, methodDesc;
-	RETURN_IF_FAILED(dbg.Process->GetDelegateInfo(addr, &target, &methodDesc));
+	ClrDelegateInfo di = {};
+	RETURN_IF_FAILED(dbg.Process->GetDelegateInfo(addr, &di));
 
 	WCHAR buffer[512];
-	if (FAILED(dbg.XCLR->GetMethodDescName(methodDesc, ARRAYSIZE(buffer), buffer, NULL)))
+	if (FAILED(dbg.XCLR->GetMethodDescName(di.methodDesc, ARRAYSIZE(buffer), buffer, NULL)))
 	{
 		dwdprintf(dbg.Control, SR::GetDelegateMethod_Error());
 	}
 	else
 	{
-		dwdprintf(dbg.Control, SR::GetDelegateMethod_Format(), methodDesc, buffer);
+		dwdprintf(dbg.Control, SR::GetDelegateMethod_Format(), di.methodDesc, buffer);
 	}
 
 	return S_OK;

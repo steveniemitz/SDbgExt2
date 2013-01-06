@@ -39,3 +39,9 @@ typedef struct ClrHttpContext
 	[string] BSTR RequestUrl;
 	[string] BSTR QueryString;
 } ClrHttpContext;
+
+typedef struct ClrDelegateInfo
+{
+	CLRDATA_ADDRESS Target;
+	CLRDATA_ADDRESS MethodDesc;
+} ClrDelegateInfo;

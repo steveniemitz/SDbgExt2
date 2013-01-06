@@ -112,7 +112,7 @@ HRESULT ClrProcess::FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, WCHAR *buff
 	return S_OK;
 }
 
-HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc)
+HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, ClrDelegateInfo *ret)
 {
 	HRESULT hr = S_OK;
 
@@ -131,10 +131,9 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRES
 	CLRDATA_ADDRESS methodPtr = NULL;
 	CLRDATA_ADDRESS methodPtrAux = NULL;
 
-	if (target)
 	{
-		*target = NULL;
-		hr = ReadFieldValueBuffer(delegateAddr, s_usefulFields.Delegate_Target, 0, target, NULL);
+		ret->Target = NULL;
+		hr = ReadFieldValueBuffer(delegateAddr, s_usefulFields.Delegate_Target, 0, &(ret->Target), NULL);
 	}
 
 	hr = ReadFieldValueBuffer(delegateAddr, s_usefulFields.Delegate_MethodPtr, 0, &methodPtr, NULL);
@@ -145,12 +144,12 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRES
 		ClrCodeHeaderData chData = {};
 		RETURN_IF_FAILED(m_pDac->GetCodeHeaderData(methodPtrAux, &chData));
 
-		*methodDesc = chData.methodDescPtr;
+		ret->methodDesc = chData.methodDescPtr;
 		return S_OK;
 	}
 	else if (methodPtr != NULL)
 	{
-		hr = m_pDac->GetMethodDescPtrFromIP(methodPtr, methodDesc);
+		hr = m_pDac->GetMethodDescPtrFromIP(methodPtr, &(ret->methodDesc));
 		if (SUCCEEDED(hr))
 		{
 			return S_OK;
@@ -159,7 +158,7 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRES
 		{
 			ClrCodeHeaderData chData = {};
 			RETURN_IF_FAILED(m_pDac->GetCodeHeaderData(methodPtr, &chData));
-			*methodDesc = chData.methodDescPtr;
+			ret->methodDesc = chData.methodDescPtr;
 			return S_OK;
 		}
 		

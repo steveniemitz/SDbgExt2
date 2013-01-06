@@ -35,26 +35,26 @@ interface IClrProcess : IUnknown
 {
 	BOOL IsValidObject(CLRDATA_ADDRESS obj);
 
-	HRESULT GetProcess(IXCLRDataProcess3 **ppDac);
-	HRESULT GetDataAccess(IDacMemoryAccess **ppDcma);
-	HRESULT FindFieldByName(CLRDATA_ADDRESS methodTable, LPWSTR fieldName, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData);
-	HRESULT FindTypeByName(LPWSTR assemblyName, LPWSTR typeName, CLRDATA_ADDRESS *ret);
-	HRESULT FindMethodByName(CLRDATA_ADDRESS methodTable, LPWSTR methodSig, CLRDATA_ADDRESS *methodDesc);
-	HRESULT GetStaticFieldValues(CLRDATA_ADDRESS field, ULONG32 iValues, AppDomainAndValue *pValues, ULONG32 *numValues);
-	HRESULT GetStaticFieldValue(CLRDATA_ADDRESS field, CLRDATA_ADDRESS appDomain, AppDomainAndValue *ret);
-	HRESULT GetFieldValuePtr(CLRDATA_ADDRESS obj, LPWSTR fieldName, CLRDATA_ADDRESS *addr);
-	HRESULT GetFieldValueBuffer(CLRDATA_ADDRESS obj, LPWSTR fieldName, ULONG32 bufferSize, PVOID buffer, ULONG *bytesRead);
-	HRESULT GetFieldValueString(CLRDATA_ADDRESS obj, LPWSTR fieldName, ULONG32 bufferSize, LPWSTR buffer, ULONG *bytesRead);
-	HRESULT ReadFieldValueBuffer(CLRDATA_ADDRESS obj, ClrFieldDescData fd, ULONG32 numBytes, PVOID buffer, ULONG *bytesRead); 
-	HRESULT EnumThreads(IEnumThreadsCallback *cb);
-	HRESULT FindThreadByCorThreadId(DWORD corThreadId, CLRDATA_ADDRESS *unmanagedThreadObj);
-	HRESULT FindThreadByOsThreadId(DWORD osThreadId, CLRDATA_ADDRESS *unmanagedThreadObj);
-	HRESULT GetManagedThreadObject(CLRDATA_ADDRESS unmanagedThreadObj, CLRDATA_ADDRESS *managedThreadObj);
-	HRESULT GetThreadExecutionContext(CLRDATA_ADDRESS managedThreadObj, ClrThreadContext *ctx);
+	HRESULT GetProcess([out, retval] IXCLRDataProcess3 **ppDac);
+	HRESULT GetDataAccess([out, retval] IDacMemoryAccess **ppDcma);
+	HRESULT FindFieldByName([in] CLRDATA_ADDRESS methodTable, [in, string] LPWSTR fieldName, [out] CLRDATA_ADDRESS *field, [out] ClrFieldDescData *fieldData);
+	HRESULT FindTypeByName([in, string] LPWSTR assemblyName, [in, string] LPWSTR typeName, [out, retval] CLRDATA_ADDRESS *ret);
+	HRESULT FindMethodByName([in] CLRDATA_ADDRESS methodTable, [in, string] LPWSTR methodSig, [out, retval] CLRDATA_ADDRESS *methodDesc);
+	HRESULT GetStaticFieldValues([in] CLRDATA_ADDRESS field, [in] ULONG32 iValues, [out] AppDomainAndValue *pValues, [out] ULONG32 *numValues);
+	HRESULT GetStaticFieldValue([in] CLRDATA_ADDRESS field, [in] CLRDATA_ADDRESS appDomain, [out, retval] AppDomainAndValue *ret);
+	HRESULT GetFieldValuePtr([in] CLRDATA_ADDRESS obj, [in, string] LPWSTR fieldName, [out, retval] CLRDATA_ADDRESS *addr);
+	HRESULT GetFieldValueBuffer([in] CLRDATA_ADDRESS obj, [in, string] LPWSTR fieldName, [in] ULONG32 bufferSize, [out, size_is(bufferSize)] PVOID buffer, [out] ULONG *bytesRead);
+	HRESULT GetFieldValueString([in] CLRDATA_ADDRESS obj, [in, string] LPWSTR fieldName, [in] ULONG32 bufferSize, [out, size_is(bufferSize)] LPWSTR buffer, [out] ULONG *bytesRead);
+	HRESULT ReadFieldValueBuffer([in] CLRDATA_ADDRESS obj, [in] ClrFieldDescData fd, [in] ULONG32 numBytes, [out, size_is(numBytes)] PVOID buffer, [out] ULONG *bytesRead); 
+	HRESULT EnumThreads([in] IEnumThreadsCallback *cb);
+	HRESULT FindThreadByCorThreadId([in] DWORD corThreadId, [out, retval] CLRDATA_ADDRESS *unmanagedThreadObj);
+	HRESULT FindThreadByOsThreadId([in] DWORD osThreadId, [out, retval] CLRDATA_ADDRESS *unmanagedThreadObj);
+	HRESULT GetManagedThreadObject([in] CLRDATA_ADDRESS unmanagedThreadObj, [out, retval] CLRDATA_ADDRESS *managedThreadObj);
+	HRESULT GetThreadExecutionContext([in] CLRDATA_ADDRESS managedThreadObj, [out, retval] ClrThreadContext *ctx);
 	HRESULT EnumHeapSegments([in] IEnumHeapSegmentsCallback *cb);
-	HRESULT GetClrObject(CLRDATA_ADDRESS obj, IClrObject **ret);
-	HRESULT GetClrObjectArray(CLRDATA_ADDRESS objArray, IClrObjectArray **ret);
+	HRESULT GetClrObject([in] CLRDATA_ADDRESS obj, [out, retval] IClrObject **ret);
+	HRESULT GetClrObjectArray([in] CLRDATA_ADDRESS objArray, [out, retval] IClrObjectArray **ret);
 	HRESULT GetDateTimeFromTicks([in] ULONG64 ticks, [out, retval] ClrDateTime *dt);
-	HRESULT FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, [out, string, size_is(cchBuffer)] LPWSTR buffer);
-	HRESULT GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, CLRDATA_ADDRESS *target, CLRDATA_ADDRESS *methodDesc);
+	HRESULT FormatDateTime([in] ULONG64 ticks, [in] ULONG32 cchBuffer, [out, string, size_is(cchBuffer)] LPWSTR buffer);
+	HRESULT GetDelegateInfo([in] CLRDATA_ADDRESS delegateAddr, [out, retval] ClrDelegateInfo *ret);
 }

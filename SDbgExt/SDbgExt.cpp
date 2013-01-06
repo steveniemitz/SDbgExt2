@@ -5,10 +5,6 @@
 #include "DbgEngMemoryAccess.h"
 #include <DbgHelp.h>
 
-#ifdef WDBG_EXT
-#include <wdbgexts.h>
-#endif
-
 #define CORDAC_FORMAT L"%s\\Microsoft.NET\\Framework%s\\v%s\\mscordacwks.dll"
 
 #ifdef _M_IX86
