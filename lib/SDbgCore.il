@@ -1035,7 +1035,7 @@
   .method public hidebysig newslot abstract virtual 
           instance void  GetStaticFieldValues([in] uint64 'field',
                                               [in] uint32 iValues,
-                                              [out] valuetype SDbgCore.AppDomainAndValue& pValues,
+                                              [out] valuetype SDbgCore.AppDomainAndValue[] marshal([+1]) pValues,
                                               [out] uint32& numValues) runtime managed internalcall
   {
   } // end of method IClrProcess::GetStaticFieldValues
