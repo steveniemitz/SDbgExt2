@@ -2,7 +2,7 @@
 #include "SDbgExt.h"
 #include "ThreadPoolEnumerator.h"
 
-STDMETHODIMP CSDbgExt::EnumerateThreadPoolQueues(IEnumThreadPoolCallback *tpQueueCb)
+STDMETHODIMP CSDbgExt::EnumThreadPoolQueues(IEnumThreadPoolCallback *tpQueueCb)
 {
 	ThreadPoolEnumerator tp(this, m_proc, tpQueueCb);
 	return tp.DumpThreadPools();

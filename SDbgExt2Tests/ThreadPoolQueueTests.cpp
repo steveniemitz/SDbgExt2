@@ -24,7 +24,7 @@ namespace SDbgExt2Tests2
 			CComObject<EnumThreadPoolAdaptor> adapt;
 			adapt.Init(cb);
 
-			auto hr = ext->EnumerateThreadPoolQueues(&adapt);
+			auto hr = ext->EnumThreadPoolQueues(&adapt);
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual(0x311, n);
@@ -48,7 +48,7 @@ namespace SDbgExt2Tests2
 			CComObject<EnumThreadPoolAdaptor> adapt;
 			adapt.Init(cb);
 
-			auto hr = ext->EnumerateThreadPoolQueues(&adapt);
+			auto hr = ext->EnumThreadPoolQueues(&adapt);
 
 			ASSERT_SOK(hr);
 		}

@@ -79,8 +79,7 @@ STDMETHODIMP ClrProcess::FindThreadById(DWORD id, DWORD fieldOffsetInClrThreadDa
 	FindThreadState fts = { id, fieldOffsetInClrThreadData, 0 };
 
 	auto cb = [&fts](CLRDATA_ADDRESS threadObj, ClrThreadData threadData)->BOOL {
-		
-		if (*(DWORD*)(&threadData + fts.FieldOffset) == fts.SearchThreadId)
+		if (*(DWORD*)((BYTE*)(&threadData) + fts.FieldOffset) == fts.SearchThreadId)
 		{
 			fts.FoundThread = threadObj;
 			return FALSE;

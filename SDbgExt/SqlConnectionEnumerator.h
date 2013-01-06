@@ -108,7 +108,7 @@ public:
 			CComObject<EnumDctAdaptor> adapt;
 			adapt.Init(cb);
 
-			m_ext->EnumerateHashtable(pools, &adapt);
+			m_ext->EnumHashtable(pools, &adapt);
 		}
 	}
 
@@ -127,7 +127,7 @@ public:
 			CComObject<EnumDctAdaptor> adapt;
 			adapt.Init(cb);
 
-			m_ext->EnumerateHashtable(pools, &adapt);
+			m_ext->EnumHashtable(pools, &adapt);
 		}
 	}
 

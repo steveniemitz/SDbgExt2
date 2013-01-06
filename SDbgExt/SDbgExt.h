@@ -41,8 +41,8 @@ public:
 	STDMETHODIMP EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb);
 	STDMETHODIMP EnumHeapObjects(IEnumObjectsCallback *cb);
 	STDMETHODIMP EnumSqlConnectionPools(IEnumSqlConnectionPoolsCallback *cb, CLRDATA_ADDRESS targetFactory);
-	STDMETHODIMP EnumerateHashtable(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb);
-	STDMETHODIMP EnumerateThreadPoolQueues(IEnumThreadPoolCallback *tpQueueCb);
+	STDMETHODIMP EnumHashtable(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb);
+	STDMETHODIMP EnumThreadPoolQueues(IEnumThreadPoolCallback *tpQueueCb);
 	STDMETHODIMP EvaluateExpression(CLRDATA_ADDRESS rootObj, LPWSTR expression, CLRDATA_ADDRESS *result);
 
 	STDMETHODIMP FindDctEntryByHash(CLRDATA_ADDRESS dctObj, UINT32 hash, CLRDATA_ADDRESS *entryAddr);

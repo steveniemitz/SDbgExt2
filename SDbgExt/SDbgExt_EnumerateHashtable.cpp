@@ -2,7 +2,7 @@
 #include "SDbgExt.h"
 #include "DictionaryEnumerator.h"
 
-STDMETHODIMP CSDbgExt::EnumerateHashtable(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb)
+STDMETHODIMP CSDbgExt::EnumHashtable(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb)
 {
 	DctEnumerator enumer(m_proc);
 	return enumer.EnumerateDctEntries(dctObj, cb);

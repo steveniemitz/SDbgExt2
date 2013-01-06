@@ -66,7 +66,7 @@ DBG_FUNC(dumpthreadpoolqueues)
 	CComObject<EnumThreadPoolAdaptor> adapt;
 	adapt.Init(EnumThreadPoolQueuesCallback(&s));
 
-	dbg.Ext->EnumerateThreadPoolQueues(&adapt);
+	dbg.Ext->EnumThreadPoolQueues(&adapt);
 
 	return S_OK;
 }

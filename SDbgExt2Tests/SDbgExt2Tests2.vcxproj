@@ -164,6 +164,7 @@
     <ClCompile Include="ExpressionTests.cpp" />
     <ClCompile Include="FieldTests.cpp" />
     <ClCompile Include="MethodDescTests.cpp" />
+    <ClCompile Include="Net4.cpp" />
     <ClCompile Include="RandomTests.cpp" />
     <ClCompile Include="RequestTests.cpp" />
     <ClCompile Include="ServerHeapTests.cpp" />

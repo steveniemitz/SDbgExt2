@@ -78,7 +78,7 @@ namespace SDbgExt2Tests2
 			CComObject<EnumDctAdaptor> adapt;
 			adapt.Init(cb);
 
-			auto hr = ext->EnumerateHashtable(dctAddr, &adapt);
+			auto hr = ext->EnumHashtable(dctAddr, &adapt);
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual((size_t)numEntriesExpected, entries.size());

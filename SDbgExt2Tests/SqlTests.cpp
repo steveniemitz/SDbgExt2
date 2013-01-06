@@ -89,11 +89,12 @@ namespace SDbgExt2Tests2
 			CComObject<TestCallbacks> *cb;
 			CComObject<TestCallbacks>::CreateInstance(&cb);
 			cb->AddRef();
-
 			auto hr = ext->EnumSqlConnectionPools(cb, NULL);
+			
+			ASSERT_SOK(hr);
+			Assert::AreEqual((size_t)7, cb->seenConnections.size());
 
 			cb->Release();
-			ASSERT_SOK(hr);
 		}	
 
 	};
