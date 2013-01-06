@@ -78,7 +78,7 @@ private:
 
 	static UsefulFields s_usefulFields;
 	
-	STDMETHODIMP FindThreadById(DWORD id, DWORD fieldOffsetInClrThreadData, CLRDATA_ADDRESS *threadObj);
+	STDMETHODIMP FindThread(std::function<BOOL(ClrThreadData)> match, CLRDATA_ADDRESS *threadObj);
 	STDMETHODIMP GetManagedThreadObj(CLRDATA_ADDRESS unmanagedThreadObj, CLRDATA_ADDRESS *managedThreadObj);
 
 	CLRDATA_ADDRESS SearchAssembly(const CLRDATA_ADDRESS appDomain, const CLRDATA_ADDRESS assembly, LPCWSTR typeName);

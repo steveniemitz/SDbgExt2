@@ -59,27 +59,32 @@ HRESULT ClrProcess::GetManagedThreadObject(CLRDATA_ADDRESS unmanagedThreadObj, C
 
 HRESULT ClrProcess::FindThreadByOsThreadId(DWORD osThreadId, CLRDATA_ADDRESS *threadObj)
 {
-	return FindThreadById(osThreadId, FIELD_OFFSET(ClrThreadData, osThreadId), threadObj);
+	return FindThread( 
+		[&osThreadId](ClrThreadData td) {
+			return td.osThreadId == osThreadId;
+		}, threadObj);
 }
 
 HRESULT ClrProcess::FindThreadByCorThreadId(DWORD corThreadId, CLRDATA_ADDRESS *threadObj)
 {
-	return FindThreadById(corThreadId, FIELD_OFFSET(ClrThreadData, CorThreadId), threadObj);
+	return FindThread( 
+		[&corThreadId](ClrThreadData td) {
+			return td.CorThreadId == corThreadId;
+		}, threadObj);
 }
 
-STDMETHODIMP ClrProcess::FindThreadById(DWORD id, DWORD fieldOffsetInClrThreadData, CLRDATA_ADDRESS *threadObj)
+STDMETHODIMP ClrProcess::FindThread(std::function<BOOL(ClrThreadData)> match, CLRDATA_ADDRESS *threadObj)
 {
 	struct FindThreadState
 	{
-		DWORD SearchThreadId;
-		DWORD FieldOffset;
+		std::function<BOOL(ClrThreadData)> Match;
 		CLRDATA_ADDRESS FoundThread;
 	};
 	
-	FindThreadState fts = { id, fieldOffsetInClrThreadData, 0 };
+	FindThreadState fts = { match, 0 };
 
 	auto cb = [&fts](CLRDATA_ADDRESS threadObj, ClrThreadData threadData)->BOOL {
-		if (*(DWORD*)((BYTE*)(&threadData) + fts.FieldOffset) == fts.SearchThreadId)
+		if (fts.Match(threadData))
 		{
 			fts.FoundThread = threadObj;
 			return FALSE;
