@@ -26,12 +26,15 @@ public:
 		m_proc->GetFieldValueBuffer(conn, L"_fConnectionOpen", sizeof(connectionOpen), &connectionOpen, nullptr);
 		m_proc->GetFieldValueBuffer(conn, L"_asyncCommandCount", sizeof(asyncCommandCount), &asyncCommandCount, nullptr);
 
+		ClrDateTime dt;
+		m_proc->GetDateTimeFromTicks(createTime, &dt);
+
 		CLRDATA_ADDRESS activeReaderHandle = 0;
 		CLRDATA_ADDRESS activeReader = 0;
 		CLRDATA_ADDRESS activeCommand = 0;
 		WCHAR cmdText[255] = { 0 };
-		UINT32 timeout = 0;
-		ClrDateTime dt;
+		UINT32 timeout = 0;		
+		BOOL validCommand = FALSE;
 
 		if (SUCCEEDED(m_ext->EvaluateExpression(conn, L"_parser._physicalStateObj._owner.m_handle", &activeReaderHandle)) && activeReaderHandle)
 		{
@@ -43,7 +46,7 @@ public:
 				&& SUCCEEDED(m_proc->GetFieldValueString(activeCommand, L"_commandText", ARRAYSIZE(cmdText), cmdText, nullptr))
 				&& SUCCEEDED(m_proc->GetFieldValueBuffer(activeCommand, L"_commandTimeout", sizeof(timeout), &timeout, nullptr)))
 			{
-				m_proc->GetDateTimeFromTicks(createTime, &dt);
+				validCommand = TRUE;
 			}
 		}	
 
@@ -137,7 +140,7 @@ public:
 				ProcessFactory(f);
 			}
 		}
-		return E_NOTIMPL;
+		return S_OK;
 	}
 
 private:
