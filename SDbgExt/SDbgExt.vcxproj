@@ -92,7 +92,7 @@
       <AdditionalDependencies>dbgeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(TargetPath) $(SolutionDir)lib\$(Configuration)\$(Platform)\$(TargetFileName)</Command>
+      <Command>copy $(TargetPath) $(SolutionDir)lib\$(Configuration)\$(TargetFileName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

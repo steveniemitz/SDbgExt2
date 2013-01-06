@@ -19,7 +19,7 @@
 	#define CORDAC_CLRVER L"4.0.30319"
 #endif
 
-HRESULT __stdcall CreateDbgEngMemoryAccess(IDebugDataSpaces *data, IDacMemoryAccess **ret)
+HRESULT SDBGEXT_API CreateDbgEngMemoryAccess(IDebugDataSpaces *data, IDacMemoryAccess **ret)
 {
 	CComObject<DbgEngMemoryAccess> *tmp;
 	CComObject<DbgEngMemoryAccess>::CreateInstance(&tmp);
@@ -30,7 +30,7 @@ HRESULT __stdcall CreateDbgEngMemoryAccess(IDebugDataSpaces *data, IDacMemoryAcc
 	return S_OK;
 }
 
-HRESULT __stdcall CreateSDbgExt(IClrProcess *p, ISDbgExt **ext)
+HRESULT SDBGEXT_API CreateSDbgExt(IClrProcess *p, ISDbgExt **ext)
 {
 	*ext = CSDbgExt::Construct(p);
 	return S_OK;
@@ -38,7 +38,7 @@ HRESULT __stdcall CreateSDbgExt(IClrProcess *p, ISDbgExt **ext)
 
 typedef HRESULT (__stdcall *CLRDataCreateInstancePtr)(REFIID iid, ICLRDataTarget* target, void** iface);
 
-HRESULT InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
+HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 {
 	CComPtr<IDebugSymbols3> dSym;
 	CComPtr<IDebugDataSpaces> dds;
@@ -73,7 +73,7 @@ HRESULT InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 	return S_OK;
 }
 
-HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma)
+HRESULT SDBGEXT_API InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma)
 {
 	CComPtr<IDebugClient> cli;
 	CComPtr<IDebugControl> ctrl;
@@ -96,4 +96,33 @@ HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemo
 	CreateDbgEngMemoryAccess(dds, ppDcma);
 
 	return S_OK;
+}
+
+HRESULT SDBGEXT_API InitFromDump(WCHAR *dumpFile, ISDbgExt **ext)
+{
+	CComPtr<IDebugClient> cli;
+	CComPtr<IDebugClient4> cli4;
+	CComPtr<IDebugControl> ctrl;
+	CComPtr<IXCLRDataProcess3> dac; 
+	CComPtr<IDacMemoryAccess> dcma;
+	CComPtr<IClrProcess> p;
+		
+	HRESULT hr = S_OK;
+	RETURN_IF_FAILED(DebugCreate(__uuidof(IDebugClient), (PVOID*)&cli));
+	RETURN_IF_FAILED(cli.QueryInterface<IDebugClient4>(&cli4));
+	RETURN_IF_FAILED(cli.QueryInterface<IDebugControl>(&ctrl));
+	RETURN_IF_FAILED(cli4->OpenDumpFileWide(dumpFile, NULL));
+	RETURN_IF_FAILED(ctrl->WaitForEvent(DEBUG_WAIT_DEFAULT, INFINITE));
+
+	RETURN_IF_FAILED(InitIXCLRData(cli, &dac));
+
+	CComPtr<IDebugDataSpaces> dds;
+	cli.QueryInterface<IDebugDataSpaces>(&dds);
+
+	CreateDbgEngMemoryAccess(dds, &dcma);
+
+	CreateClrProcess(dac, dcma, &p);
+	CreateSDbgExt(p, ext);
+
+	return hr;
 }

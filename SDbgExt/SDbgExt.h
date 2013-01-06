@@ -1,8 +1,6 @@
 #pragma once
 #include "SDbgExtApi.h"
 
-HRESULT InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma);
-
 class CSDbgExt : 
 	public CComObjectRoot,
 	public ISDbgExt

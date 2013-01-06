@@ -16,7 +16,7 @@
 
 #define RETURN_IF_FAILED(exp) if (FAILED(hr = (exp))) return hr;
 
-HRESULT SDBGAPI __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret);
+HRESULT SDBGAPI CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret);
 
 BEGIN_DEFINE_ENUM_ADAPTOR_FUNCTOR(EnumThreadCallbackAdaptor, IEnumThreadsCallback, BOOL(CLRDATA_ADDRESS, ClrThreadData))
 	STDMETHODIMP Callback(CLRDATA_ADDRESS threadObj, ClrThreadData threadData)

@@ -4,7 +4,7 @@
 
 ClrProcess::UsefulFields ClrProcess::s_usefulFields = {};
 
-HRESULT __stdcall CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret)
+HRESULT CreateClrProcess(IXCLRDataProcess3 *pDac, IDacMemoryAccess *dcma, IClrProcess **ret)
 {
 	CClrProcess *p;
 	CClrProcess::CreateInstance(&p);
