@@ -177,6 +177,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="DumpAspNetRequests.cpp" />
+    <ClCompile Include="DumpSqlConnectionPools.cpp" />
     <ClCompile Include="DumpThreadPoolQueues.cpp" />
     <ClCompile Include="GetDelegateMethod.cpp" />
     <ClCompile Include="SDbgExt.cpp" />

@@ -107,5 +107,8 @@
     <ClCompile Include="SDbgExt_EnumSqlConnectionPools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DumpSqlConnectionPools.cpp">
+      <Filter>Source Files\WinDbg</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

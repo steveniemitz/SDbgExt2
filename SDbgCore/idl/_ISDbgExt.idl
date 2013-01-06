@@ -62,7 +62,9 @@ interface IEnumSqlConnectionPoolsCallback : IUnknown
 {
 	HRESULT OnFactory([in] CLRDATA_ADDRESS factory);
 	HRESULT OnPoolGroup([in, string] LPWSTR connString, [in] CLRDATA_ADDRESS poolGroup);
-	HRESULT OnPool([in, string] LPWSTR sid, [in] UINT state, [in] UINT waitCount, [in] UINT totalObjects);
+	HRESULT OnPool([in] CLRDATA_ADDRESS pool, [in, string] LPWSTR sid, [in] UINT state, [in] UINT waitCount, [in] UINT totalObjects);
+	HRESULT OnConnection([in] CLRDATA_ADDRESS conn, [in] UINT32 state, [in] ClrDateTime createTime, [in] UINT32 pooledCount, [in] BOOL isOpen, [in] UINT32 asyncCommandCount,
+		[in] CLRDATA_ADDRESS cmd, [in, string] LPWSTR cmdText, [in] UINT32 timeout);
 }
 
 [

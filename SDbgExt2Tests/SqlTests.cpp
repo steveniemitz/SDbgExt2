@@ -28,7 +28,12 @@ namespace SDbgExt2Tests2
 				return S_OK;
 			}
 
-			STDMETHODIMP OnPool(LPWSTR sid, UINT state, UINT waitCount, UINT totalObjects)
+			STDMETHODIMP OnPool(CLRDATA_ADDRESS conn, LPWSTR sid, UINT state, UINT waitCount, UINT totalObjects)
+			{
+				return S_OK;
+			}
+
+			STDMETHODIMP OnConnection(CLRDATA_ADDRESS conn, UINT32 state, ClrDateTime createTime, UINT32 pooledCount, LONG isOpen, UINT32 asyncCommandCount, CLRDATA_ADDRESS cmd, LPWSTR cmdText, UINT32 timeout)
 			{
 				return S_OK;
 			}

@@ -11,6 +11,65 @@ public:
 		m_proc->GetProcess(&m_dac);
 	}
 
+	void GetActiveReadersFromConnection(CLRDATA_ADDRESS conn)
+	{
+
+	}
+
+	void ProcessConnection(CLRDATA_ADDRESS conn)
+	{
+		UINT32 state = 0, pooledCount = 0, asyncCommandCount = 0; BOOL connectionOpen = FALSE; ULONG64 createTime = 0;
+
+		m_proc->GetFieldValueBuffer(conn, L"_state", sizeof(state), &state, nullptr);
+		m_proc->GetFieldValueBuffer(conn, L"_createTime", sizeof(createTime), &createTime, nullptr);
+		m_proc->GetFieldValueBuffer(conn, L"_pooledCount", sizeof(pooledCount), &pooledCount, nullptr);
+		m_proc->GetFieldValueBuffer(conn, L"_fConnectionOpen", sizeof(connectionOpen), &connectionOpen, nullptr);
+		m_proc->GetFieldValueBuffer(conn, L"_asyncCommandCount", sizeof(asyncCommandCount), &asyncCommandCount, nullptr);
+
+		CLRDATA_ADDRESS activeReaderHandle = 0;
+		CLRDATA_ADDRESS activeReader = 0;
+		CLRDATA_ADDRESS activeCommand = 0;
+		WCHAR cmdText[255] = { 0 };
+		UINT32 timeout = 0;
+		ClrDateTime dt;
+
+		if (SUCCEEDED(m_ext->EvaluateExpression(conn, L"_parser._physicalStateObj._owner.m_handle", &activeReaderHandle)) && activeReaderHandle)
+		{
+			IDacMemoryAccessPtr dcma;
+			m_proc->GetDataAccess(&dcma);
+			
+			if (SUCCEEDED(dcma->ReadVirtual(activeReaderHandle, &activeReader, sizeof(void*), nullptr)) && activeReader
+			    && SUCCEEDED(m_proc->GetFieldValuePtr(activeReader, L"_command", &activeCommand))
+				&& SUCCEEDED(m_proc->GetFieldValueString(activeCommand, L"_commandText", ARRAYSIZE(cmdText), cmdText, nullptr))
+				&& SUCCEEDED(m_proc->GetFieldValueBuffer(activeCommand, L"_commandTimeout", sizeof(timeout), &timeout, nullptr)))
+			{
+				m_proc->GetDateTimeFromTicks(createTime, &dt);
+			}
+		}	
+
+		m_cb->OnConnection(conn, state, dt, pooledCount, connectionOpen, asyncCommandCount, activeCommand, cmdText, timeout);
+	}
+
+	void ProcessConnectionList(CLRDATA_ADDRESS connList)
+	{
+		UINT32 size = 0; CLRDATA_ADDRESS items = 0;
+		m_proc->GetFieldValueBuffer(connList, L"_size", sizeof(size), &size, nullptr);
+		m_proc->GetFieldValuePtr(connList, L"_items", &items);
+		
+		IClrObjectArrayPtr connArr;
+		if (FAILED(m_proc->GetClrObjectArray(items, &connArr)))
+			return;
+
+		for (ULONG a = 0; a < size; a++)
+		{
+			CLRDATA_ADDRESS obj = 0;
+			if (SUCCEEDED(connArr->GetItemAddr(a, &obj)) && obj)
+			{
+				ProcessConnection(obj);
+			}
+		}
+	}
+
 	void ProcessPool(DctEntry ent)
 	{
 		WCHAR sid[50] = {0};
@@ -24,7 +83,9 @@ public:
 		m_proc->GetFieldValuePtr(ent.ValuePtr, L"_totalObjects", &totalObjects);
 		m_proc->GetFieldValuePtr(ent.ValuePtr, L"_objectList", &connList);
 
-		m_cb->OnPool(sid, (UINT)state, (UINT)waitCount, (UINT)totalObjects);
+		m_cb->OnPool(ent.ValuePtr, sid, (UINT)state, (UINT)waitCount, (UINT)totalObjects);
+
+		ProcessConnectionList(connList);
 	}
 
 	void ProcessPoolGroup(DctEntry ent)
