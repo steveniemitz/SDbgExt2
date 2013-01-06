@@ -61,7 +61,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClrProcess.cs" />
+    <Compile Include="HeapSegment.cs" />
+    <Compile Include="MClrProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SafeNativeMethods.cs" />
   </ItemGroup>

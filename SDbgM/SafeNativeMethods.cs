@@ -10,7 +10,7 @@ namespace SDbgM
 {
     internal static class SafeNativeMethods
     {
-        //[DllImport("sdbgext.dll")]
-        //static extern void InitFromDump(string dumpfile, out IXCLRDataProcess3
+        [DllImport("sdbgext.dll", CallingConvention=CallingConvention.Cdecl)]
+        public static extern void InitFromDump([MarshalAs(UnmanagedType.LPWStr)] string dumpfile, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
     }
 }

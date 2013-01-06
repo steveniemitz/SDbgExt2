@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDbgExt", "SDbgExt\SDbgExt.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDbgM", "SDbgM\SDbgM.csproj", "{3583D0E5-3AC2-4597-83A3-45D3A610500B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDbgMTests", "SDbgMTests\SDbgMTests.csproj", "{C4B3F342-3734-4DE2-BC4F-2EF80CED3683}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -40,11 +42,19 @@ Global
 		{5F22CF78-8740-4419-B863-4628DCCFF1D2}.Release|x64.ActiveCfg = Release|Win32
 		{5F22CF78-8740-4419-B863-4628DCCFF1D2}.Release|x86.ActiveCfg = Release|Win32
 		{5F22CF78-8740-4419-B863-4628DCCFF1D2}.Release|x86.Build.0 = Release|Win32
-		{3583D0E5-3AC2-4597-83A3-45D3A610500B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3583D0E5-3AC2-4597-83A3-45D3A610500B}.Debug|x64.ActiveCfg = Debug|x86
+		{3583D0E5-3AC2-4597-83A3-45D3A610500B}.Debug|x64.Build.0 = Debug|x86
 		{3583D0E5-3AC2-4597-83A3-45D3A610500B}.Debug|x86.ActiveCfg = Debug|x86
 		{3583D0E5-3AC2-4597-83A3-45D3A610500B}.Debug|x86.Build.0 = Debug|x86
 		{3583D0E5-3AC2-4597-83A3-45D3A610500B}.Release|x64.ActiveCfg = Release|Any CPU
 		{3583D0E5-3AC2-4597-83A3-45D3A610500B}.Release|x86.ActiveCfg = Release|Any CPU
+		{C4B3F342-3734-4DE2-BC4F-2EF80CED3683}.Debug|x64.ActiveCfg = Debug|x86
+		{C4B3F342-3734-4DE2-BC4F-2EF80CED3683}.Debug|x64.Build.0 = Debug|x86
+		{C4B3F342-3734-4DE2-BC4F-2EF80CED3683}.Debug|x86.ActiveCfg = Debug|x86
+		{C4B3F342-3734-4DE2-BC4F-2EF80CED3683}.Debug|x86.Build.0 = Debug|x86
+		{C4B3F342-3734-4DE2-BC4F-2EF80CED3683}.Release|x64.ActiveCfg = Release|x86
+		{C4B3F342-3734-4DE2-BC4F-2EF80CED3683}.Release|x86.ActiveCfg = Release|x86
+		{C4B3F342-3734-4DE2-BC4F-2EF80CED3683}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
