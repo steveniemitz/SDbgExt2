@@ -29,6 +29,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <CLRSupport>false</CLRSupport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -89,7 +90,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dbgeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbgeng.lib;mscoree.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy $(TargetPath) $(SolutionDir)lib\$(Configuration)\$(TargetFileName)</Command>
@@ -106,7 +107,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dbgeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbgeng.lib;mscoree.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy $(TargetPath) $(SolutionDir)lib\$(Configuration)\$(Platform)\$(TargetFileName)</Command>
@@ -194,6 +195,7 @@
     <ClCompile Include="DumpSqlConnectionPools.cpp" />
     <ClCompile Include="DumpThreadPoolQueues.cpp" />
     <ClCompile Include="GetDelegateMethod.cpp" />
+    <ClCompile Include="ScriptIt.cpp" />
     <ClCompile Include="SDbgExt.cpp" />
     <ClCompile Include="SDbgExt_DumpThreadPool.cpp" />
     <ClCompile Include="SDbgExt_EnumerateHashtable.cpp" />

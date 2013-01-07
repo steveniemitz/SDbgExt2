@@ -14,11 +14,30 @@ namespace SDbgM
         private IClrProcess _proc;
         private IXCLRDataProcess3 _dac;
 
+        internal MSDbgExt(ISDbgExt wrapped)
+        {
+            _wrapped = wrapped;
+            Init();
+        }
+
+        private void Init()
+        {
+            _proc = _wrapped.GetProcess();
+            _dac = _proc.GetProcess();
+        }
+
         public MSDbgExt(string dumpFile)
         {
             SafeNativeMethods.InitFromDump(dumpFile, out _wrapped);
-            _proc = _wrapped.GetProcess();
-            _dac = _proc.GetProcess();
+            Init();
+        }
+
+        internal static MSDbgExt CreateInProcess(string arg)
+        {
+            ulong value = ulong.Parse(arg);
+            
+            var wrapped = (ISDbgExt)Marshal.GetObjectForIUnknown(new IntPtr((long)value));
+            return new MSDbgExt(wrapped);
         }
 
         public ISDbgExt Wrapped { get { return _wrapped; } }
