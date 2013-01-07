@@ -123,9 +123,9 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, ClrDelegateInf
 
 		ClrFieldDescData fd = {};
 
-		RETURN_IF_FAILED(FindFieldByName(od.MethodTable, L"_target", NULL, &(s_usefulFields.Delegate_Target)));
-		RETURN_IF_FAILED(FindFieldByName(od.MethodTable, L"_methodPtr", NULL, &(s_usefulFields.Delegate_MethodPtr)));
-		RETURN_IF_FAILED(FindFieldByName(od.MethodTable, L"_methodPtrAux", NULL, &(s_usefulFields.Delegate_MethodPtrAux)));
+		RETURN_IF_FAILED(FindFieldByNameEx(od.MethodTable, L"_target", NULL, &(s_usefulFields.Delegate_Target)));
+		RETURN_IF_FAILED(FindFieldByNameEx(od.MethodTable, L"_methodPtr", NULL, &(s_usefulFields.Delegate_MethodPtr)));
+		RETURN_IF_FAILED(FindFieldByNameEx(od.MethodTable, L"_methodPtrAux", NULL, &(s_usefulFields.Delegate_MethodPtrAux)));
 	}
 		
 	CLRDATA_ADDRESS methodPtr = NULL;

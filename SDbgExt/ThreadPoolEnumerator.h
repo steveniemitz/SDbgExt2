@@ -26,7 +26,7 @@ public:
 		ULONG32 numValues;
 		CLRDATA_ADDRESS tpGlobalsMT, workQueueField;
 		if (SUCCEEDED(m_dac->FindTypeByName(L"mscorlib.dll", L"System.Threading.ThreadPoolGlobals", &tpGlobalsMT)) 
-			&& SUCCEEDED(m_dac->FindFieldByName(tpGlobalsMT, L"workQueue", &workQueueField, NULL))
+			&& SUCCEEDED(m_dac->FindFieldByNameEx(tpGlobalsMT, L"workQueue", &workQueueField, NULL))
 			&& SUCCEEDED(m_dac->GetStaticFieldValues(workQueueField, (ULONG32)values.size(), values.data(), &numValues))
 			&& numValues > 0)
 		{
@@ -47,7 +47,7 @@ public:
 		CLRDATA_ADDRESS localQueuesMT, allThreadQueuesField;
 
 		if (SUCCEEDED(m_dac->FindTypeByName(L"mscorlib.dll", L"System.Threading.ThreadPoolWorkQueue", &localQueuesMT)) 
-			&& SUCCEEDED(m_dac->FindFieldByName(localQueuesMT, L"allThreadQueues", &allThreadQueuesField, NULL))
+			&& SUCCEEDED(m_dac->FindFieldByNameEx(localQueuesMT, L"allThreadQueues", &allThreadQueuesField, NULL))
 			&& SUCCEEDED(m_dac->GetStaticFieldValues(allThreadQueuesField, (ULONG32)values.size(), values.data(), &numValues))
 			&& numValues > 0)
 		if (SUCCEEDED(hr) && numValues > 0)
@@ -109,9 +109,9 @@ private:
 			{
 				ClrObjectData od = {};
 				RETURN_IF_FAILED(m_ext->GetObjectData(queueNode, &od));
-				RETURN_IF_FAILED(proc->FindFieldByName(od.MethodTable, L"indexes", NULL, &indexesField));
-				RETURN_IF_FAILED(proc->FindFieldByName(od.MethodTable, L"nodes", NULL, &nodesField));
-				RETURN_IF_FAILED(proc->FindFieldByName(od.MethodTable, L"Next", NULL, &nextField));
+				RETURN_IF_FAILED(proc->FindFieldByNameEx(od.MethodTable, L"indexes", NULL, &indexesField));
+				RETURN_IF_FAILED(proc->FindFieldByNameEx(od.MethodTable, L"nodes", NULL, &nodesField));
+				RETURN_IF_FAILED(proc->FindFieldByNameEx(od.MethodTable, L"Next", NULL, &nextField));
 			}
 
 			UINT32 indexes = 0;
@@ -143,19 +143,19 @@ private:
 	{
 		FieldOffsets foTemp = { TRUE };
 		HRESULT hr;
-		if (FAILED(proc->FindFieldByName(methodTable, L"callback", NULL, &(foTemp.WorkItem_Callback))))
+		if (FAILED(proc->FindFieldByNameEx(methodTable, L"callback", NULL, &(foTemp.WorkItem_Callback))))
 		{
 			// Might be a Task
-			RETURN_IF_FAILED(proc->FindFieldByName(methodTable, L"m_action", NULL, &(foTemp.WorkItem_Callback)));
+			RETURN_IF_FAILED(proc->FindFieldByNameEx(methodTable, L"m_action", NULL, &(foTemp.WorkItem_Callback)));
 			foTemp.IsTask = TRUE;
 		}
 		if (!foTemp.IsTask)
 		{
-			RETURN_IF_FAILED(proc->FindFieldByName(methodTable, L"state", NULL, &(foTemp.WorkItem_State)));
+			RETURN_IF_FAILED(proc->FindFieldByNameEx(methodTable, L"state", NULL, &(foTemp.WorkItem_State)));
 		}
 		else
 		{
-			RETURN_IF_FAILED(proc->FindFieldByName(methodTable, L"m_stateObject", NULL, &(foTemp.WorkItem_State)));
+			RETURN_IF_FAILED(proc->FindFieldByNameEx(methodTable, L"m_stateObject", NULL, &(foTemp.WorkItem_State)));
 		}
 		*fo = foTemp;
 		return S_OK;
@@ -275,9 +275,9 @@ private:
 		{
 			ClrObjectData od = {};
 			RETURN_IF_FAILED(m_ext->GetObjectData(queue.Value, &od));
-			RETURN_IF_FAILED(proc->FindFieldByName(od.MethodTable, L"m_headIndex", NULL, &m_sparseArrayHeadField));
-			RETURN_IF_FAILED(proc->FindFieldByName(od.MethodTable, L"m_tailIndex", NULL, &m_sparseArrayTailField));
-			RETURN_IF_FAILED(proc->FindFieldByName(od.MethodTable, L"m_array",     NULL, &m_sparseArrayArrayField));
+			RETURN_IF_FAILED(proc->FindFieldByNameEx(od.MethodTable, L"m_headIndex", NULL, &m_sparseArrayHeadField));
+			RETURN_IF_FAILED(proc->FindFieldByNameEx(od.MethodTable, L"m_tailIndex", NULL, &m_sparseArrayTailField));
+			RETURN_IF_FAILED(proc->FindFieldByNameEx(od.MethodTable, L"m_array",     NULL, &m_sparseArrayArrayField));
 		}
 
 		UINT32 bottom = 0;

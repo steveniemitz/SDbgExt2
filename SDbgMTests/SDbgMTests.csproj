@@ -61,8 +61,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SDbgM\SDbgM.vcxproj">
-      <Project>{53848423-fe5d-4456-aaae-0dc3bb79342e}</Project>
+    <ProjectReference Include="..\SDbgM\SDbgM.csproj">
+      <Project>{74dab335-8c02-4d48-bef0-ba0a133acef7}</Project>
       <Name>SDbgM</Name>
     </ProjectReference>
   </ItemGroup>

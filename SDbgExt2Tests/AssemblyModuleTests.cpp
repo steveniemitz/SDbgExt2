@@ -100,7 +100,7 @@ namespace SDbgExt2Tests2
 			ClrFieldDescData fdData = {};
 			CLRDATA_ADDRESS typeMT;
 			auto hr = p->FindTypeByName(L"SOSRevHelper.exe", L"SOSRevHelper.TestThreadLocal", &typeMT);
-			hr = p->FindFieldByName(typeMT, L"_field1", &field, &fdData);
+			hr = p->FindFieldByNameEx(typeMT, L"_field1", &field, &fdData);
 			hr = p->GetStaticFieldValues(field, 1, &values, &iValues);
 
 			ASSERT_SOK(hr);
@@ -121,7 +121,7 @@ namespace SDbgExt2Tests2
 			ClrFieldDescData fdData = {};
 			CLRDATA_ADDRESS typeMT;
 			auto hr = p->FindTypeByName(L"SOSRevHelper.exe", L"SOSRevHelper.TestThreadLocal", &typeMT);
-			hr = p->FindFieldByName(typeMT, L"_field2", &field, &fdData);
+			hr = p->FindFieldByNameEx(typeMT, L"_field2", &field, &fdData);
 			hr = p->GetStaticFieldValues(field, 1, &values, &iValues);
 	
 			ASSERT_SOK(hr);

@@ -13,14 +13,14 @@ HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, IEnumHashtabl
 	RETURN_IF_FAILED(proc->GetObjectData(dctObj, &od));
 
 	// Dictionary<K,V>?
-	hr = m_dac->FindFieldByName(od.MethodTable, L"entries", &field, &fd);
+	hr = m_dac->FindFieldByNameEx(od.MethodTable, L"entries", &field, &fd);
 	if (SUCCEEDED(hr))
 	{
 		return EnumerateDctEntriesImpl(dctObj, od.MethodTable, L"entries", L"key", L"value", L"hashCode", cb);
 	}
 
 	// Hashtable?
-	hr = m_dac->FindFieldByName(od.MethodTable, L"buckets", &field, &fd);
+	hr = m_dac->FindFieldByNameEx(od.MethodTable, L"buckets", &field, &fd);
 	if (SUCCEEDED(hr))
 	{
 		return EnumerateDctEntriesImpl(dctObj, od.MethodTable, L"buckets", L"key", L"val", L"hash_coll", cb);
@@ -68,7 +68,7 @@ HRESULT DctEnumerator::EnumerateDctEntriesImpl(CLRDATA_ADDRESS dctObj, CLRDATA_A
 	auto hr = m_dac->GetFieldValuePtr(dctObj, bucketsName, &entriesPtr);
 
 	ClrFieldDescData bucketField = {};
-	RETURN_IF_FAILED(m_dac->FindFieldByName(methodTable, bucketsName, NULL, &bucketField));
+	RETURN_IF_FAILED(m_dac->FindFieldByNameEx(methodTable, bucketsName, NULL, &bucketField));
 
 	DWORD arrayEntries = 0;
 	ULONG keyOffset, valOffset, hashCodeOffset, arrayElementSize;
@@ -98,13 +98,13 @@ HRESULT DctEnumerator::GetEntryOffsets(CLRDATA_ADDRESS entriesPtr, WCHAR *keyFie
 
 	ClrFieldDescData field;
 	HRESULT hr = S_OK;
-	RETURN_IF_FAILED(m_dac->FindFieldByName(typeMt, keyFieldName, NULL, &field))
+	RETURN_IF_FAILED(m_dac->FindFieldByNameEx(typeMt, keyFieldName, NULL, &field))
 	*keyOffset = field.Offset + baseOffset;
 
-	RETURN_IF_FAILED(m_dac->FindFieldByName(typeMt, valFieldName, NULL, &field))
+	RETURN_IF_FAILED(m_dac->FindFieldByNameEx(typeMt, valFieldName, NULL, &field))
 	*valueOffset = field.Offset + baseOffset;
 	
-	RETURN_IF_FAILED(m_dac->FindFieldByName(typeMt, hashFieldName, NULL, &field));
+	RETURN_IF_FAILED(m_dac->FindFieldByNameEx(typeMt, hashFieldName, NULL, &field));
 	*hashCodeOffset = field.Offset + baseOffset;
 
 	*arrayBase = entriesData.ArrayData.FirstElement;
@@ -210,9 +210,9 @@ HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, IEnum
 	RETURN_IF_FAILED(dac->GetObjectData(currNode, &od));
 
 	ClrFieldDescData keyField, valueField, nextField;
-	RETURN_IF_FAILED(m_dac->FindFieldByName(od.MethodTable, L"key", NULL, &keyField))
-	RETURN_IF_FAILED(m_dac->FindFieldByName(od.MethodTable, L"value", NULL, &valueField));
-	RETURN_IF_FAILED(m_dac->FindFieldByName(od.MethodTable, L"next", NULL, &nextField));
+	RETURN_IF_FAILED(m_dac->FindFieldByNameEx(od.MethodTable, L"key", NULL, &keyField))
+	RETURN_IF_FAILED(m_dac->FindFieldByNameEx(od.MethodTable, L"value", NULL, &valueField));
+	RETURN_IF_FAILED(m_dac->FindFieldByNameEx(od.MethodTable, L"next", NULL, &nextField));
 
 	CComPtr<IDacMemoryAccess> dcma;
 	m_dac->GetDataAccess(&dcma);

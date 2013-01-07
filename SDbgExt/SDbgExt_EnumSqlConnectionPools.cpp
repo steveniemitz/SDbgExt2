@@ -17,7 +17,7 @@ STDMETHODIMP CSDbgExt::EnumSqlConnectionPools(IEnumSqlConnectionPoolsCallback *c
 
 		CLRDATA_ADDRESS typeMt, field; UINT numValues;
 		if (   FAILED(m_proc->FindTypeByName(L"System.Data.dll", L"System.Data.SqlClient.SqlConnectionFactory", &typeMt))
-			|| FAILED(m_proc->FindFieldByName(typeMt, L"SingletonInstance", &field, NULL))
+			|| FAILED(m_proc->FindFieldByNameEx(typeMt, L"SingletonInstance", &field, NULL))
 			|| FAILED(m_proc->GetStaticFieldValues(field, ad.DomainCount, fieldValues.data(), &numValues))
 			)
 		{

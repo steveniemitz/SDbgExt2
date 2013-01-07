@@ -3,10 +3,15 @@
 #include "..\inc\ClrObject.h"
 #include <cor.h>
 
-HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, BSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData)
+HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, BSTR pwszField, CLRDATA_ADDRESS *field)
+{
+	return FindFieldByNameEx(methodTable, pwszField, field, NULL);
+}
+
+HRESULT ClrProcess::FindFieldByNameEx(CLRDATA_ADDRESS methodTable, BSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData)
 {
 	UINT32 instanceFields = 0, staticFields = 0;
-	BOOL found = FindFieldByNameImpl(methodTable, pwszField, field, fieldData, &instanceFields);
+	BOOL found = FindFieldByNameExImpl(methodTable, pwszField, field, fieldData, &instanceFields);
 
 	if (!found)
 		return E_INVALIDARG;
@@ -14,7 +19,7 @@ HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, BSTR pwszField,
 		return S_OK;
 }
 
-BOOL ClrProcess::FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, BSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen)
+BOOL ClrProcess::FindFieldByNameExImpl(CLRDATA_ADDRESS methodTable, BSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen)
 {
 	ClrMethodTableData mtData = {};
 	if (FAILED(m_pDac->GetMethodTableData(methodTable, &mtData)))
@@ -22,7 +27,7 @@ BOOL ClrProcess::FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, BSTR pwszField
 
 	if (mtData.ParentMT != NULL)
 	{
-		if (FindFieldByNameImpl(mtData.ParentMT, pwszField, field, fieldData, numInstanceFieldsSeen))
+		if (FindFieldByNameExImpl(mtData.ParentMT, pwszField, field, fieldData, numInstanceFieldsSeen))
 			return TRUE;
 	}
 

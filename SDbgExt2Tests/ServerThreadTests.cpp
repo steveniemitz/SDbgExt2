@@ -31,7 +31,7 @@ namespace SDbgExt2Tests2
 
 			CLRDATA_ADDRESS methodTable, field;
 			p->FindTypeByName(L"System.Web.dll", L"System.Web.HttpRuntime", &methodTable);
-			p->FindFieldByName(methodTable, L"_theRuntime", &field, NULL);
+			p->FindFieldByNameEx(methodTable, L"_theRuntime", &field, NULL);
 			p->GetStaticFieldValues(field, 3, values, &numValues);
 			Assert::AreEqual((ULONG32)2, numValues);
 

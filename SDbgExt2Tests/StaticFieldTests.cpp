@@ -50,7 +50,7 @@ namespace SDbgExt2Tests2
 			ULONG32 iValues;
 			CLRDATA_ADDRESS fieldAddr, methodTable;
 			p->FindTypeByName(L"SOSRevHelper.exe", L"SOSRevHelper.TestStaticsClass", &methodTable);
-			p->FindFieldByName(methodTable, field, &fieldAddr, NULL);
+			p->FindFieldByNameEx(methodTable, field, &fieldAddr, NULL);
 			auto hr = p->GetStaticFieldValues(fieldAddr, 1, &values, &iValues);
 
 			ASSERT_SOK(hr);

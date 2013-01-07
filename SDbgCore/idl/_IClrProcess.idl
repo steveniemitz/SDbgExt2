@@ -35,7 +35,8 @@ interface IClrProcess : IUnknown
 
 	HRESULT GetProcess([out, retval] IXCLRDataProcess3 **ppDac);
 	HRESULT GetDataAccess([out, retval] IDacMemoryAccess **ppDcma);
-	HRESULT FindFieldByName([in] CLRDATA_ADDRESS methodTable, [in, string] LPWSTR fieldName, [out] CLRDATA_ADDRESS *field, [out] ClrFieldDescData *fieldData);
+	HRESULT FindFieldByName([in] CLRDATA_ADDRESS methodTable, [in, string] LPWSTR fieldName, [out, retval] CLRDATA_ADDRESS *field);
+	HRESULT FindFieldByNameEx([in] CLRDATA_ADDRESS methodTable, [in, string] LPWSTR fieldName, [out] CLRDATA_ADDRESS *field, [out] ClrFieldDescData *fieldData);
 	HRESULT FindTypeByName([in, string] LPWSTR assemblyName, [in, string] LPWSTR typeName, [out, retval] CLRDATA_ADDRESS *ret);
 	HRESULT FindMethodByName([in] CLRDATA_ADDRESS methodTable, [in, string] LPWSTR methodSig, [out, retval] CLRDATA_ADDRESS *methodDesc);
 	HRESULT GetStaticFieldValues([in] CLRDATA_ADDRESS field, [in] ULONG32 iValues, [out, size_is(iValues), length_is(*numValues)] AppDomainAndValue *pValues, [out] ULONG32 *numValues);

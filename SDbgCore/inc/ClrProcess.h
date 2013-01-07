@@ -37,7 +37,8 @@ public:
 		return S_OK;
 	}
 
-	STDMETHODIMP FindFieldByName(CLRDATA_ADDRESS methodTable, LPWSTR fieldName, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData);
+	STDMETHODIMP FindFieldByName(CLRDATA_ADDRESS methodTable, LPWSTR fieldName, CLRDATA_ADDRESS *field);
+	STDMETHODIMP FindFieldByNameEx(CLRDATA_ADDRESS methodTable, LPWSTR fieldName, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData);
 	STDMETHODIMP FindTypeByName(LPWSTR assemblyName, LPWSTR typeName, CLRDATA_ADDRESS *ret);
 	STDMETHODIMP FindMethodByName(CLRDATA_ADDRESS methodTable, LPWSTR methodSig, CLRDATA_ADDRESS *methodDesc);
 	STDMETHODIMP GetStaticFieldValues(CLRDATA_ADDRESS field, ULONG32 iValues, AppDomainAndValue *pValues, ULONG32 *numValues);
@@ -85,7 +86,7 @@ private:
 	CLRDATA_ADDRESS SearchAssembly(const CLRDATA_ADDRESS appDomain, const CLRDATA_ADDRESS assembly, LPCWSTR typeName);
 	CLRDATA_ADDRESS SearchModule(CLRDATA_ADDRESS module, LPCWSTR typeName);
 
-	BOOL FindFieldByNameImpl(CLRDATA_ADDRESS methodTable, LPWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen);
+	BOOL FindFieldByNameExImpl(CLRDATA_ADDRESS methodTable, LPWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen);
 	ULONG GetSizeForType(CorElementType cet)
 	{
 		switch (cet)
