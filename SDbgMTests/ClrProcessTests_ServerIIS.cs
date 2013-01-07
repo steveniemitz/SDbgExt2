@@ -21,7 +21,7 @@ namespace SDbgMTests
         public void GetStaticFieldValues_Managed()
         {
             var type = _proc.Process.FindTypeByName("System.Web.dll", "System.Web.HttpRuntime");
-            ulong field = _proc.Process.FindFieldByName(type, "_theRuntime");
+            var field = _proc.Process.FindFieldByName(type, "_theRuntime");
             var values = _proc.GetStaticFieldValues(field);
 
             Assert.AreEqual(2, values.Length);

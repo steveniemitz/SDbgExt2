@@ -6,12 +6,12 @@ WINDBG_EXTENSION_APIS ExtensionApis;
 USHORT SavedMajorVersion;
 USHORT SavedMinorVersion;
 
-HRESULT InitIXCLRDataFromWinDBG(IXCLRDataProcess3 **ppDac)
+HRESULT InitIXCLRDataFromWinDBG(WINDBG_EXTENSION_APIS *apis, IXCLRDataProcess3 **ppDac)
 {
     WDBGEXTS_CLR_DATA_INTERFACE ixDataQuery;
 
     ixDataQuery.Iid = &__uuidof(IXCLRDataProcess3);
-    if (!Ioctl(IG_GET_CLR_DATA_INTERFACE, &ixDataQuery, sizeof(ixDataQuery)))
+    if (!(apis->lpIoctlRoutine)(IG_GET_CLR_DATA_INTERFACE, &ixDataQuery, sizeof(ixDataQuery)))
     {
         return E_FAIL;
     }
@@ -36,7 +36,7 @@ DBG_API DebugExtensionInitialize(PULONG Version, PULONG Flags)
 	return S_OK;
 }
 
-HRESULT CreateClrProcessFromWinDbg(CComPtr<IDebugClient> client, IClrProcess **proc)
+HRESULT CreateClrProcessFromWinDbg(WINDBG_EXTENSION_APIS *apis, CComPtr<IDebugClient> client, IClrProcess **proc)
 {
 	HRESULT hr = S_OK;
 	
@@ -45,9 +45,24 @@ HRESULT CreateClrProcessFromWinDbg(CComPtr<IDebugClient> client, IClrProcess **p
 	
 	CComPtr<IDacMemoryAccess> dcma; CComPtr<IXCLRDataProcess3> dac;
 	RETURN_IF_FAILED(CreateDbgEngMemoryAccess(dds, &dcma));
-	RETURN_IF_FAILED(InitIXCLRDataFromWinDBG(&dac));
+	RETURN_IF_FAILED(InitIXCLRDataFromWinDBG(apis, &dac));
 
 	return CreateClrProcess(dac, dcma, proc);
+}
+
+HRESULT SDBGEXT_API CreateFromWinDBG(IDebugClient *cli, ISDbgExt **ret)
+{
+	CComPtr<IDebugClient> cliPtr(cli);
+	IClrProcessPtr proc;
+	HRESULT hr = S_OK;
+	CComPtr<IDebugControl> ctrl;
+	cliPtr.QueryInterface<IDebugControl>(&ctrl);
+
+	WINDBG_EXTENSION_APIS64 apis;
+	apis.nSize = sizeof(apis);
+	RETURN_IF_FAILED(ctrl->GetWindbgExtensionApis64((PWINDBG_EXTENSION_APIS64)&apis));
+	RETURN_IF_FAILED(CreateClrProcessFromWinDbg(&apis, cliPtr, &proc));
+	return CreateSDbgExt(proc, ret);
 }
 
 DBG_FUNC(spt_test)

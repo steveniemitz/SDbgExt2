@@ -73,7 +73,7 @@ HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 	return S_OK;
 }
 
-HRESULT SDBGEXT_API InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppDac, IDacMemoryAccess **ppDcma)
+HRESULT SDBGEXT_API InitRemoteProcess(DWORD dwProcessId, ISDbgExt **ret)
 {
 	CComPtr<IDebugClient> cli;
 	CComPtr<IDebugControl> ctrl;
@@ -86,16 +86,18 @@ HRESULT SDBGEXT_API InitRemoteProcess(DWORD dwProcessId, IXCLRDataProcess3 **ppD
 
 	RETURN_IF_FAILED(ctrl->WaitForEvent(DEBUG_WAIT_DEFAULT, INFINITE));	
 
-	IXCLRDataProcess3 *pcdp;
+	IXCLRDataProcess3Ptr pcdp;
 	RETURN_IF_FAILED(InitIXCLRData(cli, &pcdp));
-	*ppDac = pcdp;
 
 	CComPtr<IDebugDataSpaces> dds;
 	cli.QueryInterface<IDebugDataSpaces>(&dds);
 
-	CreateDbgEngMemoryAccess(dds, ppDcma);
+	IDacMemoryAccessPtr dcma;
+	RETURN_IF_FAILED(CreateDbgEngMemoryAccess(dds, &dcma));
 
-	return S_OK;
+	IClrProcessPtr proc;
+	RETURN_IF_FAILED(CreateClrProcess(pcdp, dcma, &proc));
+	return CreateSDbgExt(proc, ret);
 }
 
 HRESULT SDBGEXT_API InitFromDump(const WCHAR *dumpFile, ISDbgExt **ext)

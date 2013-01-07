@@ -13,7 +13,7 @@
 #define dwdprintf(ctrl, x,...) ctrl->ControlledOutputWide(DEBUG_OUTCTL_AMBIENT_DML, DEBUG_OUTPUT_NORMAL, ##x, __VA_ARGS__)
 //#define dwdprintf_res(ctrl, resName, ...) dwdprintf(ctrl, SR::resName(), __VA_ARGS__);
 
-HRESULT CreateClrProcessFromWinDbg(CComPtr<IDebugClient> client, IClrProcess **proc);
+HRESULT CreateClrProcessFromWinDbg(WINDBG_EXTENSION_APIS *apis, CComPtr<IDebugClient> client, IClrProcess **proc);
 
 #define DBG_PREAMBLE	HRESULT hr = S_OK; \
 						CComPtr<IDebugClient> client(clientPtr); \
@@ -25,7 +25,7 @@ struct WinDbgInterfaces
 {
 	WinDbgInterfaces(CComPtr<IDebugClient> client)
 	{
-		CreateClrProcessFromWinDbg(client, &Process);
+		CreateClrProcessFromWinDbg(&ExtensionApis, client, &Process);
 		CreateSDbgExt(Process, &Ext);
 
 		Client = client;
