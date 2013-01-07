@@ -21,9 +21,7 @@ namespace SDbgMTests
         public void GetStaticFieldValues_IISSmall()
         {
             var type = _proc.Process.FindTypeByName("System.Web.dll", "System.Web.HttpRuntime");
-            ulong field;
-            ClrFieldDescData fd;
-            _proc.Process.FindFieldByNameEx(type, "_theRuntime", out field, out fd);
+            ulong field = _proc.Process.FindFieldByName(type, "_theRuntime");
             
             var values = _proc.GetStaticFieldValues(field);
 

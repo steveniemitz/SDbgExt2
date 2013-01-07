@@ -22,13 +22,13 @@
   .ver 0:0:0:0
 }
 .module SDbgCore.dll
-// MVID: {47B3B693-252B-4B60-AA87-07DB96025622}
+// MVID: {A9067D33-41EE-4F65-9C5B-8D9132461B4D}
 .imagebase 0x00400000
 .file alignment 0x00000200
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000001    //  ILONLY
-// Image base: 0x00CA0000
+// Image base: 0x00BE0000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -1013,12 +1013,18 @@
   } // end of method IClrProcess::GetDataAccess
 
   .method public hidebysig newslot abstract virtual 
-          instance void  FindFieldByName([in] uint64 MethodTable,
-                                         [in] string  marshal( lpwstr) fieldName,
-                                         [out] uint64& 'field',
-                                         [out] valuetype SDbgCore.ClrFieldDescData& fieldData) runtime managed internalcall
+          instance uint64  FindFieldByName([in] uint64 MethodTable,
+                                           [in] string  marshal( lpwstr) fieldName) runtime managed internalcall
   {
   } // end of method IClrProcess::FindFieldByName
+
+  .method public hidebysig newslot abstract virtual 
+          instance void  FindFieldByNameEx([in] uint64 MethodTable,
+                                           [in] string  marshal( lpwstr) fieldName,
+                                           [out] uint64& 'field',
+                                           [out] valuetype SDbgCore.ClrFieldDescData& fieldData) runtime managed internalcall
+  {
+  } // end of method IClrProcess::FindFieldByNameEx
 
   .method public hidebysig newslot abstract virtual 
           instance uint64  FindTypeByName([in] string  marshal( lpwstr) assemblyName,
