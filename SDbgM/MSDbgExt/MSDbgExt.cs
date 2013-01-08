@@ -8,11 +8,12 @@ using SDbgCore;
 
 namespace SDbgM
 {
-    public partial class MSDbgExt
+    public partial class MSDbgExt : IDisposable
     {
         private ISDbgExt _wrapped;
         private IClrProcess _proc;
         private IXCLRDataProcess3 _dac;
+        private bool _disposed;
 
         internal MSDbgExt(ISDbgExt wrapped)
         {
@@ -32,11 +33,38 @@ namespace SDbgM
             Init();
         }
 
+        ~MSDbgExt()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing && !_disposed)
+            {
+                Marshal.FinalReleaseComObject(_proc);
+                Marshal.FinalReleaseComObject(_dac);
+                Marshal.FinalReleaseComObject(_wrapped);
+                _disposed = true;
+                GC.SuppressFinalize(this);
+            }
+        }
+
         internal static MSDbgExt CreateInProcess(string arg)
         {
             ulong value = ulong.Parse(arg);
+
+            IntPtr targetObject = new IntPtr((long)value);
+            object iunk = Marshal.GetObjectForIUnknown(targetObject);
+            var wrapped = (ISDbgExt)iunk;
+
+            Marshal.Release(targetObject);
             
-            var wrapped = (ISDbgExt)Marshal.GetObjectForIUnknown(new IntPtr((long)value));
             return new MSDbgExt(wrapped);
         }
 

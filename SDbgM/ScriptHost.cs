@@ -12,18 +12,18 @@ namespace SDbgM
     {
         public static int InitHost(string arg)
         {
+            var ext = MSDbgExt.CreateInProcess(arg);
+
             Thread t = new Thread(InitHostImpl);
             t.SetApartmentState(ApartmentState.STA);
-            t.Start(arg);
+            t.Start(ext);
             
             return 1;
         }
 
         private static void InitHostImpl(object arg)
         {
-            var ext = MSDbgExt.CreateInProcess((string)arg);
-
-            MDbgScriptForm tf = new MDbgScriptForm(ext);
+            MDbgScriptForm tf = new MDbgScriptForm((MSDbgExt)arg);
             tf.Show();
             Application.Run(tf);
         }

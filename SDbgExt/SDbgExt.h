@@ -48,6 +48,12 @@ public:
 	STDMETHODIMP FindDctEntryByHash(CLRDATA_ADDRESS dctObj, UINT32 hash, CLRDATA_ADDRESS *entryAddr);
 	STDMETHODIMP GetHttpContextFromThread(ClrThreadContext ctx, ClrHttpContext *httpContext);
 
+	~CSDbgExt()
+	{
+		int a = 1;
+		a++;
+	}
+
 protected:
 	CSDbgExt()
 	{ 

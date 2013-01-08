@@ -25,7 +25,7 @@ namespace SDbgMTests
             var values = _proc.GetStaticFieldValues(field);
 
             Assert.AreEqual(2, values.Length);
-            Assert.AreEqual((ulong)0x00000000013a35d8, values[0].domain);
+            Assert.AreEqual((ulong)0x0000000013fa6300, values[0].Value);
         }
 
         [TestMethod]

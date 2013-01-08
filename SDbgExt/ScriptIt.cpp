@@ -14,8 +14,10 @@ HRESULT InitClr()
 	RETURN_IF_FAILED(metaHost->GetRuntime(L"v4.0.30319", IID_ICLRRuntimeInfo, (LPVOID*)&runtime));
 	RETURN_IF_FAILED(runtime->GetInterface(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (LPVOID*)&g_ClrHost));
 
+	g_ClrLoaded = TRUE;
 	hr = g_ClrHost->Start();
 	
+
 	return S_OK;
 }
 
@@ -34,7 +36,7 @@ DBG_FUNC(scriptit)
 
 	((ISDbgExt*)dbg.Ext)->AddRef();
 	RETURN_IF_FAILED(hr = g_ClrHost->ExecuteInDefaultAppDomain(L"Q:\\Dev\\SDbgExt2\\SDbgM\\bin\\Debug\\SDbgM.dll", L"SDbgM.ScriptHost", L"InitHost", buffer, &returnValue));
-	
+	((ISDbgExt*)dbg.Ext)->Release();
 	if (returnValue != 1)
 	{
 		return E_FAIL;

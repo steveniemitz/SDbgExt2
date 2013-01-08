@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Dynamic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -76,6 +77,13 @@ namespace SDbgM
                 AddText(ex.ToString());
             }
             
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            _ext.Dispose();
+
+            base.OnClosed(e);            
         }
     }
 }
