@@ -22,13 +22,13 @@
   .ver 0:0:0:0
 }
 .module SDbgCore.dll
-// MVID: {A9067D33-41EE-4F65-9C5B-8D9132461B4D}
+// MVID: {63547F58-D363-40FA-B078-5165FE7DE291}
 .imagebase 0x00400000
 .file alignment 0x00000200
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000001    //  ILONLY
-// Image base: 0x00BE0000
+// Image base: 0x00750000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -1001,16 +1001,16 @@
   .method public hidebysig newslot abstract virtual 
           instance class SDbgCore.IXCLRDataProcess3 
           marshal( interface ) 
-          GetProcess() runtime managed internalcall
+          GetCorDataAccess() runtime managed internalcall
   {
-  } // end of method IClrProcess::GetProcess
+  } // end of method IClrProcess::GetCorDataAccess
 
   .method public hidebysig newslot abstract virtual 
           instance class SDbgCore.IDacMemoryAccess 
           marshal( interface ) 
-          GetDataAccess() runtime managed internalcall
+          GetMemoryAccess() runtime managed internalcall
   {
-  } // end of method IClrProcess::GetDataAccess
+  } // end of method IClrProcess::GetMemoryAccess
 
   .method public hidebysig newslot abstract virtual 
           instance uint64  FindFieldByName([in] uint64 MethodTable,
