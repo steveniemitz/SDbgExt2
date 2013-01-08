@@ -10,8 +10,11 @@ namespace SDbgExt2Tests2
 	TEST_CLASS(ThreadPoolQueueTests)
 	{
 	public:
+#ifndef _WIN64
 		ADD_TEST_INIT(L"..\\Dumps\\x86\\threadpool_queue.dmp")
-
+#else
+		ADD_TEST_INIT(L"..\\..\\Dumps\\x64\\threadpool.dmp")
+#endif
 		
 		TEST_METHOD(DumpThreadPool_Baisc)
 		{
@@ -27,30 +30,7 @@ namespace SDbgExt2Tests2
 			auto hr = ext->EnumThreadPoolQueues(&adapt);
 
 			ASSERT_SOK(hr);
-			Assert::AreEqual(0x311, n);
-		}
-
-		TEST_METHOD(DumpThreadPool_MethodNameCache)
-		{
-			std::hash_map<CLRDATA_ADDRESS, std::wstring> DelegateNameLookup;
-
-			auto cb = [&DelegateNameLookup](AppDomainAndValue queueAddress, ThreadPoolWorkItem workItem)->BOOL {
-				
-				auto item = DelegateNameLookup.find(workItem.DelegatePtr);
-				//std::wstring delegateName = (*lookup)[workItem.DelegatePtr];
-				if (item == DelegateNameLookup.end())
-				{
-					return FALSE;
-				}
-				return TRUE;
-			};
-			
-			CComObject<EnumThreadPoolAdaptor> adapt;
-			adapt.Init(cb);
-
-			auto hr = ext->EnumThreadPoolQueues(&adapt);
-
-			ASSERT_SOK(hr);
+			Assert::AreEqual(BITNESS_CONDITIONAL(0x311, 0x1B), n);
 		}
 	};
 }

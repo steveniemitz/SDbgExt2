@@ -6,6 +6,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace SDbgExt2Tests2
 {
+#ifndef _WIN64
 	TEST_CLASS(RequestTests)
 	{
 	public:
@@ -31,4 +32,5 @@ namespace SDbgExt2Tests2
 		}	
 
 	};
+#endif
 }

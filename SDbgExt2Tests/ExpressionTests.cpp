@@ -6,6 +6,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace SDbgExt2Tests2
 {
+#ifndef _WIN64
 	TEST_CLASS(ExpressionTests)
 	{
 	public:
@@ -47,4 +48,5 @@ namespace SDbgExt2Tests2
 			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x023c59f4, "boom"), ret);
 		}
 	};
+#endif
 }

@@ -116,17 +116,28 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, ClrDelegateInf
 {
 	HRESULT hr = S_OK;
 
-	if (s_usefulFields.Delegate_MethodPtr.field == NULL || s_usefulFields.Delegate_MethodPtrAux.field == NULL || s_usefulFields.Delegate_Target.field == NULL)
+	if (s_usefulFields.Delegate_MethodPtr.field == NULL 
+		|| s_usefulFields.Delegate_MethodPtrAux.field == NULL 
+		|| s_usefulFields.Delegate_Target.field == NULL
+		|| s_usefulFields.Delegate_InvocationList.field == NULL)
 	{
 		ClrObjectData od = {};
 		RETURN_IF_FAILED(m_pDac->GetObjectData(delegateAddr, &od));
 		RETURN_IF_FAILED(FindFieldByNameEx(od.MethodTable, L"_target", NULL, &(s_usefulFields.Delegate_Target)));
 		RETURN_IF_FAILED(FindFieldByNameEx(od.MethodTable, L"_methodPtr", NULL, &(s_usefulFields.Delegate_MethodPtr)));
 		RETURN_IF_FAILED(FindFieldByNameEx(od.MethodTable, L"_methodPtrAux", NULL, &(s_usefulFields.Delegate_MethodPtrAux)));
+		RETURN_IF_FAILED(FindFieldByNameEx(od.MethodTable, L"_invocationList", NULL, &(s_usefulFields.Delegate_InvocationList)));
 	}
 		
 	CLRDATA_ADDRESS methodPtr = NULL;
 	CLRDATA_ADDRESS methodPtrAux = NULL;
+	CLRDATA_ADDRESS invocationList = NULL;
+
+	hr = ReadFieldValueBuffer(delegateAddr, s_usefulFields.Delegate_InvocationList, 0, &invocationList, NULL);
+	if (SUCCEEDED(hr) && invocationList > 0)
+	{
+		return S_FALSE;
+	}
 
 	{
 		ret->Target = NULL;

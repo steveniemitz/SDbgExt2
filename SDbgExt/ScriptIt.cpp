@@ -5,6 +5,8 @@
 BOOL g_ClrLoaded = FALSE;
 CComPtr<ICLRRuntimeHost> g_ClrHost;
 
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+
 HRESULT InitClr()
 {
 	CComPtr<ICLRMetaHost> metaHost;
@@ -35,8 +37,26 @@ DBG_FUNC(scriptit)
 	WCHAR buffer[20];
 	_ui64tow_s((ULONG64)(void*)(dbg.Ext), buffer, ARRAYSIZE(buffer), 10);
 
+	WCHAR dllPathBuffer[MAX_PATH];
+	GetModuleFileNameW((HINSTANCE)&__ImageBase, dllPathBuffer, ARRAYSIZE(dllPathBuffer));
+	
+	std::wstring dllPath(dllPathBuffer);
+
+#ifndef _WIN64
+	dllPath = dllPath.substr(0, dllPath.length() - 11);
+#else
+	dllPath = dllPath.substr(0, dllPath.length() - 15);
+#endif
+
+	dllPath += L"SDbgM.dll";
+	
 	((ISDbgExt*)dbg.Ext)->AddRef();
-	RETURN_IF_FAILED(hr = g_ClrHost->ExecuteInDefaultAppDomain(L"Q:\\Dev\\SDbgExt2\\SDbgM\\bin\\Debug\\SDbgM.dll", L"SDbgM.ScriptHost", L"InitHost", buffer, &returnValue));
+	hr = g_ClrHost->ExecuteInDefaultAppDomain(dllPath.c_str(), L"SDbgM.ScriptHost", L"InitHost", buffer, &returnValue);
+	if (FAILED(hr))
+	{
+		dwdprintf(dbg.Control, L"Unable to load SDbgM.dll, please make sure it's in the same directory as SDbgExt.dll");
+	}
+
 	((ISDbgExt*)dbg.Ext)->Release();
 	if (returnValue != 1)
 	{

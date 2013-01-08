@@ -69,15 +69,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)lib\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>$(ProjectName)_x64</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)lib\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <TargetName>$(ProjectName)_x64</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -91,10 +95,11 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dbgeng.lib;mscoree.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbgeng.lib;mscoree.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(TargetPath) $(SolutionDir)lib\$(Configuration)\$(TargetFileName)</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -109,10 +114,10 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>dbgeng.lib;mscoree.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbgeng.lib;mscoree.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(TargetPath) $(SolutionDir)lib\$(Configuration)\$(Platform)\$(TargetFileName)</Command>
+      <Command>copy $(TargetPath) $(SolutionDir)lib\$(Configuration)\$(TargetFileName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,16 +130,18 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SDBGEXT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>dbgeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbgeng.lib;mscoree.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(TargetPath) $(SolutionDir)lib\$(Configuration)\$(Platform)\$(TargetFileName)</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,16 +154,17 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;SDBGEXT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>dbgeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbgeng.lib;mscoree.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(TargetPath) $(SolutionDir)lib\$(Configuration)\$(Platform)\$(TargetFileName)</Command>
+      <Command>copy $(TargetPath) $(SolutionDir)lib\$(Configuration)\$(TargetFileName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

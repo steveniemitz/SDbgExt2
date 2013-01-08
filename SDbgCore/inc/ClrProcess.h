@@ -72,6 +72,7 @@ private:
 		ClrFieldDescData Delegate_Target;
 		ClrFieldDescData Delegate_MethodPtr;
 		ClrFieldDescData Delegate_MethodPtrAux;
+		ClrFieldDescData Delegate_InvocationList;
 	};	
 
 	//ULONG m_dwRef;

@@ -64,7 +64,7 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(GetDelegateInfo_MethodPtr)
 		{
 			ClrDelegateInfo di;
-			auto hr = p->GetDelegateInfo((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x01a3630c, "boom"), &di);
+			auto hr = p->GetDelegateInfo((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x01a3630c, 0x000000925feb8e40), &di);
 
 			ASSERT_SOK(hr);
 		}

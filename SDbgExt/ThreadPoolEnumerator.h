@@ -22,7 +22,7 @@ public:
 		m_proc->GetCorDataAccess(&dac);
 		dac->GetAppDomainStoreData(&ads);
 	
-		std::vector<AppDomainAndValue> values(ads.DomainCount + 2);
+		std::vector<AppDomainAndValue> values(ads.DomainCount);
 		ULONG32 numValues;
 		CLRDATA_ADDRESS tpGlobalsMT, workQueueField;
 		if (SUCCEEDED(m_proc->FindTypeByName(L"mscorlib.dll", L"System.Threading.ThreadPoolGlobals", &tpGlobalsMT)) 
@@ -75,9 +75,9 @@ private:
 	HRESULT DumpThreadPool(AppDomainAndValue tpWorkQueueAddr)
 	{
 		CComPtr<IClrObject> tpWorkQueue; 
-		m_proc->GetClrObject(tpWorkQueueAddr.Value, &tpWorkQueue);
+		HRESULT hr = m_proc->GetClrObject(tpWorkQueueAddr.Value, &tpWorkQueue);
 
-		if (!tpWorkQueue->IsValid())
+		if (FAILED(hr) || !tpWorkQueue->IsValid())
 			return E_INVALIDARG;
 
 		WCHAR typeName[200];
@@ -86,8 +86,7 @@ private:
 		{
 			return E_INVALIDARG;
 		}
-
-		HRESULT hr = S_OK;		
+	
 		CLRDATA_ADDRESS queueNode = 0;
 		if (FAILED(tpWorkQueue->GetFieldValueAddr(L"queueTail", &queueNode)) || !queueNode)
 		{
@@ -99,7 +98,7 @@ private:
 
 		CComPtr<IClrProcess> proc;
 		m_ext->GetProcess(&proc);
-		ClrFieldDescData indexesField = {}, nodesField, nextField;
+		ClrFieldDescData indexesField = {}, nodesField = {}, nextField = {};
 		
 		while (queueNode)
 		{
