@@ -27,9 +27,14 @@ namespace SDbgM
                 _form = form;
             }
 
-            public void Output(object text)
+            public void OutputLocal(object text)
             {
                 _form.txtResults.Text += text.ToString() + "\r\n";
+            }
+
+            public void Output(object text)
+            {
+                //_form._ext.
             }
         }
 

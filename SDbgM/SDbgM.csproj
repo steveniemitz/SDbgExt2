@@ -65,8 +65,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HeapSegment.cs" />
-    <Compile Include="MSDbgExt.cs" />
+    <Compile Include="ClrObjects\ClrAddress.cs" />
+    <Compile Include="ClrObjects\HeapSegment.cs" />
+    <Compile Include="ClrObjects\ObjectInfo.cs" />
+    <Compile Include="ClrObjects\SqlConnection.cs" />
+    <Compile Include="ClrObjects\SqlFactory.cs" />
+    <Compile Include="ClrObjects\SqlPool.cs" />
+    <Compile Include="ClrObjects\SqlPoolGroup.cs" />
+    <Compile Include="MSDbgExt\MSDbgExt.cs" />
+    <Compile Include="MSDbgExt\MSDbgExt_Fields.cs" />
+    <Compile Include="MSDbgExt\MSDbgExt_Objects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SafeNativeMethods.cs" />
     <Compile Include="ScriptHost.cs" />

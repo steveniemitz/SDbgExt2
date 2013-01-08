@@ -20,8 +20,8 @@ namespace SDbgMTests
         [TestMethod]
         public void GetStaticFieldValues_Managed()
         {
-            var type = _proc.Process.FindTypeByName("System.Web.dll", "System.Web.HttpRuntime");
-            var field = _proc.Process.FindFieldByName(type, "_theRuntime");
+            var type = _proc.Proc.FindTypeByName("System.Web.dll", "System.Web.HttpRuntime");
+            var field = _proc.Proc.FindFieldByName(type, "_theRuntime");
             var values = _proc.GetStaticFieldValues(field);
 
             Assert.AreEqual(2, values.Length);
