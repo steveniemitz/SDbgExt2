@@ -10,7 +10,7 @@ HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, BSTR pwszField,
 
 HRESULT ClrProcess::FindFieldByNameEx(CLRDATA_ADDRESS methodTable, BSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData)
 {
-	UINT32 instanceFields = 0, staticFields = 0;
+	UINT32 instanceFields = 0;
 	BOOL found = FindFieldByNameExImpl(methodTable, pwszField, field, fieldData, &instanceFields);
 
 	if (!found)
@@ -126,7 +126,7 @@ HRESULT ClrProcess::FindTypeByName(const BSTR assemblyName, const BSTR typeName,
 			if (match)
 			{
 				CLRDATA_ADDRESS mtAddr = 0;
-				if ((mtAddr = SearchAssembly(domain, assembly, typeName)))
+				if ((mtAddr = SearchAssembly(domain, assembly, typeName)) != NULL)
 				{
 					*ret = mtAddr;
 					return S_OK;
@@ -151,7 +151,7 @@ CLRDATA_ADDRESS ClrProcess::SearchAssembly(CLRDATA_ADDRESS appDomain, CLRDATA_AD
 	CLRDATA_ADDRESS ret = 0;
 	for (CLRDATA_ADDRESS module : modules)
 	{
-		if ((ret = SearchModule(module, typeName)))
+		if ((ret = SearchModule(module, typeName)) != NULL)
 		{
 			return ret;
 		}		

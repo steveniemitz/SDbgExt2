@@ -20,5 +20,5 @@ void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext, IXCLRDataProce
 
 	InitFromDump(dumpFile, ext);
 	(*ext)->GetProcess(p);
-	(*p)->GetProcess(proc);
+	(*p)->GetCorDataAccess(proc);
 }

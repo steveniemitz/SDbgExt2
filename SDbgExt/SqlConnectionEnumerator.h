@@ -8,12 +8,7 @@ public:
 		: m_cb(cb), m_ext(ext)
 	{	
 		ext->GetProcess(&m_proc);
-		m_proc->GetProcess(&m_dac);
-	}
-
-	void GetActiveReadersFromConnection(CLRDATA_ADDRESS conn)
-	{
-
+		m_proc->GetCorDataAccess(&m_dac);
 	}
 
 	void ProcessConnection(CLRDATA_ADDRESS conn)
@@ -39,7 +34,7 @@ public:
 		if (SUCCEEDED(m_ext->EvaluateExpression(conn, L"_parser._physicalStateObj._owner.m_handle", &activeReaderHandle)) && activeReaderHandle)
 		{
 			IDacMemoryAccessPtr dcma;
-			m_proc->GetDataAccess(&dcma);
+			m_proc->GetMemoryAccess(&dcma);
 			
 			if (SUCCEEDED(dcma->ReadVirtual(activeReaderHandle, &activeReader, sizeof(void*), nullptr)) && activeReader
 			    && SUCCEEDED(m_proc->GetFieldValuePtr(activeReader, L"_command", &activeCommand))

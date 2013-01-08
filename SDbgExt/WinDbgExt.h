@@ -31,7 +31,7 @@ struct WinDbgInterfaces
 		Client = client;
 		client.QueryInterface<IDebugControl4>(&Control);
 		
-		Process->GetProcess(&XCLR);
+		Process->GetCorDataAccess(&XCLR);
 	}
 
 	CComPtr<IXCLRDataProcess3> XCLR;

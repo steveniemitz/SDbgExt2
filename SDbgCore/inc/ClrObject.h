@@ -56,13 +56,11 @@ public:
 
 	STDMETHODIMP GetFieldValueUInt32(LPWSTR field, UINT32 *val)
 	{
-		HRESULT hr = S_OK;
 		return m_proc->GetFieldValueBuffer(m_addr, field, sizeof(UINT32), (PVOID)val, NULL);
 	}
 
 	STDMETHODIMP GetFieldValueWSTR(LPWSTR field, ULONG32 iNumChars, LPWSTR buffer, PULONG bytesRead)
 	{
-		HRESULT hr = S_OK;
 		return m_proc->GetFieldValueString(m_addr, field, iNumChars, buffer, bytesRead);
 	}
 
@@ -71,16 +69,7 @@ public:
 		HRESULT hr = S_OK;
 		CLRDATA_ADDRESS arrayObj;
 		RETURN_IF_FAILED(m_proc->GetFieldValuePtr(m_addr, field, &arrayObj));
-		/*if (arrayObj == NULL)
-		{
-			*ret = NULL;
-			return S_FALSE;
-		}
-		// TODO: Assert this is a real array?
-		ClrObjectData od = {};
-		m_proc->GetProcess()->GetObjectData(arrayObj, &od);
-		*/
-
+		
 		*ret = ClrObjectArray::Construct(m_proc, arrayObj);
 		return S_OK;
 	}
@@ -93,14 +82,14 @@ public:
 		{
 			ClrObjectData od = {};
 			CComPtr<IXCLRDataProcess3> dac;
-			m_proc->GetProcess(&dac);
+			m_proc->GetCorDataAccess(&dac);
 			RETURN_IF_FAILED(dac->GetObjectData(m_addr, &od));
 
 			m_mtAddr = od.MethodTable;
 		}
 
 		CComPtr<IXCLRDataProcess3> dac;
-		m_proc->GetProcess(&dac);
+		m_proc->GetCorDataAccess(&dac);
 		return dac->GetMethodTableName(m_mtAddr, cchBuffer, buffer, (ULONG32*)nameLen);
 	}
 

@@ -41,6 +41,9 @@ public:
 
 	STDMETHODIMP OnConnection(CLRDATA_ADDRESS conn, UINT32 state, ClrDateTime createTime, UINT32 pooledCount, LONG isOpen, UINT32 asyncCommandCount, CLRDATA_ADDRESS cmd, LPWSTR cmdText, UINT32 timeout)
 	{
+		UNREFERENCED_PARAMETER(isOpen);
+		UNREFERENCED_PARAMETER(pooledCount);
+
 		if (m_c == 0)
 		{
 			dwdprintf(m_dbg->Control, L"\tConnections:\r\n\t\t      ConnPtr           State  #Async  Created               Command/Reader    Timeout  Text\r\n");
@@ -66,6 +69,7 @@ private:
 DBG_FUNC(dumpsqlconnectionpools)
 {
 	DBG_PREAMBLE;
+	UNREFERENCED_PARAMETER(args);
 
 	CComPtr<DumpPoolCallbacks> cbPtr;
 	CComObject<DumpPoolCallbacks> *cb;
@@ -74,7 +78,7 @@ DBG_FUNC(dumpsqlconnectionpools)
 	cbPtr->Init(&dbg);
 	
 
-	dbg.Ext->EnumSqlConnectionPools(cbPtr, NULL);
+	hr = dbg.Ext->EnumSqlConnectionPools(cbPtr, NULL);
 
-	return S_OK;
+	return hr;
 }

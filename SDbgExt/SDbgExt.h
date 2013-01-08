@@ -32,7 +32,7 @@ public:
 	STDMETHODIMP GetObjectData(CLRDATA_ADDRESS objAddr, ClrObjectData *data)
 	{
 		CComPtr<IXCLRDataProcess3> dac;
-		m_proc->GetProcess(&dac);
+		m_proc->GetCorDataAccess(&dac);
 
 		return dac->GetObjectData(objAddr, data);
 	}

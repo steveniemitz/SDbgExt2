@@ -19,7 +19,7 @@ namespace SDbgExt2Tests2
 		#define MyDllModule		0x000007fca7454f20
 		#define HostAppDomain	0x00000096aa885230
 
-		#define ExpectedHttpRuntimeStatics { AppDomainAndValue(0x000000925ee2dcc0, 0x00000093dfc38cb0), AppDomainAndValue(0x00000096aa885230, 0x000000925fd98aa8) }
+#define ExpectedHttpRuntimeStatics { { 0x000000925ee2dcc0, 0x00000093dfc38cb0 }, { 0x00000096aa885230, 0x000000925fd98aa8 } }
 
 		ADD_TEST_INIT(L"..\\..\\dumps\\x64\\iis_small_2.dmp")
 #endif
@@ -52,31 +52,5 @@ namespace SDbgExt2Tests2
 			ASSERT_SOK(hr);
 			Assert::AreEqual((SIZE_T)3, (SIZE_T)modData.DomainNeutralIndex);
 		}
-/*
-		TEST_METHOD(GetModuleData_Server2)
-		{
-			CLRDATA_ADDRESS modAddr = MyDllModule;
-
-			auto proc = proc;
-
-			ClrModuleData modData_myDll = {};
-			ClrModuleData modData_SystemWeb = {};
-			auto hr = proc->GetModuleData(modAddr, &modData_myDll);
-			hr = proc->GetModuleData(SystemWebModule, &modData_SystemWeb);
-
-			ClrDomainLocalModuleData dlm_MyDll_FromDomain = {};
-			ClrDomainLocalModuleData dlm_MyDll_FromModule = {};
-
-			ClrDomainLocalModuleData dlm_SystemWeb_FromDomain = {};
-			ClrDomainLocalModuleData dlm_SystemWeb_FromModule = {};
-
-			auto hr_myDll_fromDomain = proc->GetDomainLocalModuleDataFromAppDomain(HostAppDomain, modData_myDll.DomainNeutralIndex, &dlm_MyDll_FromDomain);
-			auto hr_myDll_fromModule = proc->GetDomainLocalModuleDataFromModule(modAddr, &dlm_MyDll_FromModule);
-			
-			auto hr_sw_fromDomain = proc->GetDomainLocalModuleDataFromAppDomain(HostAppDomain, modData_SystemWeb.DomainNeutralIndex, &dlm_SystemWeb_FromDomain);
-			auto hr_sw_fromModule = proc->GetDomainLocalModuleDataFromModule(SystemWebModule, &dlm_SystemWeb_FromModule);
-
-			ASSERT_SOK(hr);
-		}*/
 	};
 }

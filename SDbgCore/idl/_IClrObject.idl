@@ -9,7 +9,7 @@ interface IClrObject;
 ]
 interface IClrObjectArray : IUnknown
 {
-	ULONG GetSize();
+	LONG GetSize();
 	HRESULT GetItemAddr([in] ULONG32 idx, [out, retval] CLRDATA_ADDRESS *addr) = 0;
 	HRESULT GetItemObj([in] ULONG32 idx, [out, retval] IClrObject **ret) = 0;
 };

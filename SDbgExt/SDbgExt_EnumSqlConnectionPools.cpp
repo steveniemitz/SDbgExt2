@@ -10,7 +10,7 @@ STDMETHODIMP CSDbgExt::EnumSqlConnectionPools(IEnumSqlConnectionPoolsCallback *c
 	if (!targetFactory)
 	{
 		IXCLRDataProcess3Ptr dac;
-		m_proc->GetProcess(&dac);
+		m_proc->GetCorDataAccess(&dac);
 		ClrAppDomainStoreData ad = {};
 		dac->GetAppDomainStoreData(&ad);
 		std::vector<AppDomainAndValue> fieldValues(ad.DomainCount);

@@ -17,7 +17,6 @@ HRESULT CSDbgExt::EvaluateExpression(CLRDATA_ADDRESS rootAddr, LPWSTR expression
 	
 	int bufferPos = 0;
 	CLRDATA_ADDRESS currAddr = rootAddr;
-	BOOL validDctLookup = FALSE;
 	for (size_t a = 0; a < len; a++)
 	{
 		if (str[a] == L'.')

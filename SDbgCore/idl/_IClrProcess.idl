@@ -33,8 +33,8 @@ interface IClrProcess : IUnknown
 {
 	BOOL IsValidObject(CLRDATA_ADDRESS obj);
 
-	HRESULT GetProcess([out, retval] IXCLRDataProcess3 **ppDac);
-	HRESULT GetDataAccess([out, retval] IDacMemoryAccess **ppDcma);
+	HRESULT GetCorDataAccess([out, retval] IXCLRDataProcess3 **ppDac);
+	HRESULT GetMemoryAccess([out, retval] IDacMemoryAccess **ppDcma);
 	HRESULT FindFieldByName([in] CLRDATA_ADDRESS methodTable, [in, string] LPWSTR fieldName, [out, retval] CLRDATA_ADDRESS *field);
 	HRESULT FindFieldByNameEx([in] CLRDATA_ADDRESS methodTable, [in, string] LPWSTR fieldName, [out] CLRDATA_ADDRESS *field, [out] ClrFieldDescData *fieldData);
 	HRESULT FindTypeByName([in, string] LPWSTR assemblyName, [in, string] LPWSTR typeName, [out, retval] CLRDATA_ADDRESS *ret);

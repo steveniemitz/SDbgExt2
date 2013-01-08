@@ -4,6 +4,8 @@
 DBG_FUNC(dumpaspnetrequests)
 {
 	DBG_PREAMBLE;
+	UNREFERENCED_PARAMETER(args);
+	UNREFERENCED_PARAMETER(hr);
 		
 	auto cb = [&dbg](CLRDATA_ADDRESS threadObj, ClrThreadData threadData)->BOOL { 
 		
@@ -42,6 +44,8 @@ DBG_FUNC(dumpaspnetrequests)
 DBG_FUNC(findhttpcontext)
 {
 	DBG_PREAMBLE;
+	UNREFERENCED_PARAMETER(args);
+	UNREFERENCED_PARAMETER(hr);
 
 	CComPtr<IDebugSystemObjects> sys;
 	dbg.Client.QueryInterface<IDebugSystemObjects>(&sys);

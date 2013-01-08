@@ -4,6 +4,9 @@
 #include <string>
 #include <WinBase.h>
 
+#pragma warning(push)
+#pragma warning(disable:4100)
+
 HRESULT DbgEngCLRDataTarget::GetMachineType(ULONG32 *machineType)
 {
 #if _M_IX86
@@ -45,6 +48,10 @@ HRESULT DbgEngCLRDataTarget::WriteVirtual(
     /* [in] */ ULONG32 bytesRequested,
     /* [out] */ ULONG32 *bytesWritten)
 {
+	UNREFERENCED_PARAMETER(address);
+	UNREFERENCED_PARAMETER(buffer);
+	UNREFERENCED_PARAMETER(bytesRequested);
+	UNREFERENCED_PARAMETER(bytesWritten);
 	return E_NOTIMPL;
 }
         
@@ -145,3 +152,5 @@ HRESULT DbgEngCLRDataTarget:: Request(
 {
 	return E_NOTIMPL;
 }
+
+#pragma warning(pop)

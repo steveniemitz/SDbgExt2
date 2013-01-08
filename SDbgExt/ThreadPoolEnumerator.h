@@ -5,8 +5,8 @@
 class ThreadPoolEnumerator
 {
 public:
-	ThreadPoolEnumerator(CComPtr<ISDbgExt> ext, CComPtr<IClrProcess> dac, IEnumThreadPoolCallback *tpQueueCb)
-		: m_ext(ext), m_dac(dac), m_tpQueueCb(tpQueueCb)
+	ThreadPoolEnumerator(CComPtr<ISDbgExt> ext, CComPtr<IClrProcess> proc, IEnumThreadPoolCallback *tpQueueCb)
+		: m_ext(ext), m_proc(proc), m_tpQueueCb(tpQueueCb)
 			, m_adAsyncWorkItemFinishAsyncWork(0), m_asyncWorkItemFinishAsyncWork(0)
 	{
 		m_sparseArrayArrayField.field = 0;
@@ -19,15 +19,15 @@ public:
 
 		ClrAppDomainStoreData ads = {};
 		CComPtr<IXCLRDataProcess3> dac;
-		m_dac->GetProcess(&dac);
+		m_proc->GetCorDataAccess(&dac);
 		dac->GetAppDomainStoreData(&ads);
 	
 		std::vector<AppDomainAndValue> values(ads.DomainCount + 2);
 		ULONG32 numValues;
 		CLRDATA_ADDRESS tpGlobalsMT, workQueueField;
-		if (SUCCEEDED(m_dac->FindTypeByName(L"mscorlib.dll", L"System.Threading.ThreadPoolGlobals", &tpGlobalsMT)) 
-			&& SUCCEEDED(m_dac->FindFieldByNameEx(tpGlobalsMT, L"workQueue", &workQueueField, NULL))
-			&& SUCCEEDED(m_dac->GetStaticFieldValues(workQueueField, (ULONG32)values.size(), values.data(), &numValues))
+		if (SUCCEEDED(m_proc->FindTypeByName(L"mscorlib.dll", L"System.Threading.ThreadPoolGlobals", &tpGlobalsMT)) 
+			&& SUCCEEDED(m_proc->FindFieldByNameEx(tpGlobalsMT, L"workQueue", &workQueueField, NULL))
+			&& SUCCEEDED(m_proc->GetStaticFieldValues(workQueueField, (ULONG32)values.size(), values.data(), &numValues))
 			&& numValues > 0)
 		{
 			for (UINT a = 0; a < numValues; a++)
@@ -35,8 +35,6 @@ public:
 				CLRDATA_ADDRESS addr = values[a].Value;
 				if (addr)
 				{
-					ThreadPoolWorkItem *entries = NULL;
-					UINT32 numEntries = 0;
 					hr = DumpThreadPool(values[a]);
 				}
 			}
@@ -46,9 +44,9 @@ public:
 		values = std::vector<AppDomainAndValue>(ads.DomainCount);
 		CLRDATA_ADDRESS localQueuesMT, allThreadQueuesField;
 
-		if (SUCCEEDED(m_dac->FindTypeByName(L"mscorlib.dll", L"System.Threading.ThreadPoolWorkQueue", &localQueuesMT)) 
-			&& SUCCEEDED(m_dac->FindFieldByNameEx(localQueuesMT, L"allThreadQueues", &allThreadQueuesField, NULL))
-			&& SUCCEEDED(m_dac->GetStaticFieldValues(allThreadQueuesField, (ULONG32)values.size(), values.data(), &numValues))
+		if (SUCCEEDED(m_proc->FindTypeByName(L"mscorlib.dll", L"System.Threading.ThreadPoolWorkQueue", &localQueuesMT)) 
+			&& SUCCEEDED(m_proc->FindFieldByNameEx(localQueuesMT, L"allThreadQueues", &allThreadQueuesField, NULL))
+			&& SUCCEEDED(m_proc->GetStaticFieldValues(allThreadQueuesField, (ULONG32)values.size(), values.data(), &numValues))
 			&& numValues > 0)
 		if (SUCCEEDED(hr) && numValues > 0)
 		{
@@ -77,7 +75,7 @@ private:
 	HRESULT DumpThreadPool(AppDomainAndValue tpWorkQueueAddr)
 	{
 		CComPtr<IClrObject> tpWorkQueue; 
-		m_dac->GetClrObject(tpWorkQueueAddr.Value, &tpWorkQueue);
+		m_proc->GetClrObject(tpWorkQueueAddr.Value, &tpWorkQueue);
 
 		if (!tpWorkQueue->IsValid())
 			return E_INVALIDARG;
@@ -172,13 +170,13 @@ private:
 			if (FAILED(proc->FindTypeByName(L"mscorlib.dll", L"System.Runtime.Remoting.Channels.AsyncWorkItem", &asyncWorkItemMt)) ||
 				FAILED(proc->FindMethodByName(asyncWorkItemMt, L"System.Runtime.Remoting.Channels.AsyncWorkItem.FinishAsyncWork(System.Object)", &m_asyncWorkItemFinishAsyncWork)))
 			{
-				m_asyncWorkItemFinishAsyncWork = -1;
+				m_asyncWorkItemFinishAsyncWork = 1;
 			}
 
 			if (FAILED(proc->FindTypeByName(L"mscorlib.dll", L"System.Runtime.Remoting.Channels.ADAsyncWorkItem", &asyncWorkItemMt)) || 
 				FAILED(proc->FindMethodByName(asyncWorkItemMt, L"System.Runtime.Remoting.Channels.ADAsyncWorkItem.FinishAsyncWork(System.Object)", &m_adAsyncWorkItemFinishAsyncWork)))
 			{
-				m_asyncWorkItemFinishAsyncWork = -1;
+				m_asyncWorkItemFinishAsyncWork = 1;
 			}
 		}
 
@@ -209,7 +207,7 @@ private:
 			proc->ReadFieldValueBuffer(workItem, fo.WorkItem_Callback, 0, &cb, NULL);
 
 			ClrDelegateInfo di = {};
-			if (cb && SUCCEEDED(m_dac->GetDelegateInfo(cb, &di)) && di.methodDesc)
+			if (cb && SUCCEEDED(m_proc->GetDelegateInfo(cb, &di)) && di.methodDesc)
 			{			
 				if (di.methodDesc == m_adAsyncWorkItemFinishAsyncWork || di.methodDesc == m_asyncWorkItemFinishAsyncWork)
 				{
@@ -220,7 +218,7 @@ private:
 						cbType = CB_TYPE_ASYNC_WORKITEM;
 						delegatePtr = l2Delegate;
 
-						m_dac->GetDelegateInfo(delegatePtr, &di);
+						m_proc->GetDelegateInfo(delegatePtr, &di);
 					}		
 				}
 				else	
@@ -301,7 +299,7 @@ private:
 	}
 		
 	CComPtr<ISDbgExt> m_ext;
-	CComPtr<IClrProcess> m_dac;
+	CComPtr<IClrProcess> m_proc;
 	CComPtr<IEnumThreadPoolCallback>  m_tpQueueCb;
 	
 	CLRDATA_ADDRESS m_asyncWorkItemFinishAsyncWork;

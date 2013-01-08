@@ -23,6 +23,7 @@ HRESULT InitClr()
 
 DBG_FUNC(scriptit)
 {
+	UNREFERENCED_PARAMETER(args);
 	DBG_PREAMBLE;
 
 	if (!g_ClrLoaded)
@@ -32,7 +33,7 @@ DBG_FUNC(scriptit)
 
 	DWORD returnValue = 0;
 	WCHAR buffer[20];
-	_ltow_s((ULONG64)(void*)(dbg.Ext), buffer, 10);
+	_ui64tow_s((ULONG64)(void*)(dbg.Ext), buffer, ARRAYSIZE(buffer), 10);
 
 	((ISDbgExt*)dbg.Ext)->AddRef();
 	RETURN_IF_FAILED(hr = g_ClrHost->ExecuteInDefaultAppDomain(L"Q:\\Dev\\SDbgExt2\\SDbgM\\bin\\Debug\\SDbgM.dll", L"SDbgM.ScriptHost", L"InitHost", buffer, &returnValue));

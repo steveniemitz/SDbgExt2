@@ -21,7 +21,7 @@ public:
 		m_dcma = pDcma;
 	}
 	
-	STDMETHODIMP GetProcess(IXCLRDataProcess3 **ppDac)
+	STDMETHODIMP GetCorDataAccess(IXCLRDataProcess3 **ppDac)
 	{
 		*ppDac = m_pDac;
 		(*ppDac)->AddRef();
@@ -29,7 +29,7 @@ public:
 		return S_OK;
 	}
 
-	STDMETHODIMP GetDataAccess(IDacMemoryAccess **ppDcma)
+	STDMETHODIMP GetMemoryAccess(IDacMemoryAccess **ppDcma)
 	{
 		*ppDcma = m_dcma;
 		(*ppDcma)->AddRef();

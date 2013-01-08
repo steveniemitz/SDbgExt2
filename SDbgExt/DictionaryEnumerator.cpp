@@ -4,7 +4,7 @@
 HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb)
 {
 	CComPtr<IXCLRDataProcess3> proc;
-	m_dac->GetProcess(&proc);
+	m_dac->GetCorDataAccess(&proc);
 
 	ClrObjectData od = {};
 	ClrFieldDescData fd = {};
@@ -87,7 +87,7 @@ HRESULT DctEnumerator::GetEntryOffsets(CLRDATA_ADDRESS entriesPtr, WCHAR *keyFie
 {
 	ClrObjectData entriesData = {};
 	CComPtr<IXCLRDataProcess3> dac;
-	m_dac->GetProcess(&dac);
+	m_dac->GetCorDataAccess(&dac);
 	dac->GetObjectData(entriesPtr, &entriesData);
 	CLRDATA_ADDRESS typeMt = entriesData.ArrayData.ElementMethodTable;
 	ClrMethodTableData elementMtData = {};
@@ -140,7 +140,7 @@ HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashC
 	ULONG bytesRead = 0;
 
 	CComPtr<IDacMemoryAccess> dcma;
-	m_dac->GetDataAccess(&dcma);
+	m_dac->GetMemoryAccess(&dcma);
 
 	ULONG64 baseAddr = arrayDataPtr;
 	if (elementIsClass)
@@ -178,7 +178,7 @@ HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashC
 HRESULT DctEnumerator::EnumerateConcurrentDictionaryEntries(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb)
 {
 	IXCLRDataProcess3Ptr xclr;
-	m_dac->GetProcess(&xclr);
+	m_dac->GetCorDataAccess(&xclr);
 	ClrObjectData od = {};
 
 	CLRDATA_ADDRESS tables;
@@ -196,7 +196,7 @@ HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, IEnum
 	ClrObjectData od = {};
 	HRESULT hr = S_OK;
 	CComPtr<IXCLRDataProcess3> dac;
-	m_dac->GetProcess(&dac);
+	m_dac->GetCorDataAccess(&dac);
 	RETURN_IF_FAILED(dac->GetObjectData(listObj, &od));
 
 	CLRDATA_ADDRESS currNode = NULL;
@@ -215,7 +215,7 @@ HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, IEnum
 	RETURN_IF_FAILED(m_dac->FindFieldByNameEx(od.MethodTable, L"next", NULL, &nextField));
 
 	CComPtr<IDacMemoryAccess> dcma;
-	m_dac->GetDataAccess(&dcma);
+	m_dac->GetMemoryAccess(&dcma);
 
 	ULONG bytesRead = 0;
 	while(currNode)
@@ -248,8 +248,6 @@ HRESULT DctEnumerator::EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, IEnum
 
 HRESULT DctEnumerator::FindDctEntryByKey(CLRDATA_ADDRESS dctObj, LPCWSTR key, CLRDATA_ADDRESS *targetAddr)
 {
-	HRESULT hr = S_OK;
-
 	struct DctKeySearchState
 	{
 		CComPtr<IXCLRDataProcess3> pDac;
@@ -259,11 +257,10 @@ HRESULT DctEnumerator::FindDctEntryByKey(CLRDATA_ADDRESS dctObj, LPCWSTR key, CL
 	};
 
 	CComPtr<IXCLRDataProcess3> dac;
-	m_dac->GetProcess(&dac);
+	m_dac->GetCorDataAccess(&dac);
 
 	DctKeySearchState dkss = { dac, key, wcslen(key), NULL };
 	auto cb = [&dkss](DctEntry entry)->BOOL {
-		BOOL ret = TRUE;
 		std::wstring keyStr(dkss.TargetKeyLen + 1, '\0');
 
 		if (SUCCEEDED(dkss.pDac->GetObjectStringData(entry.KeyPtr, (UINT)dkss.TargetKeyLen + 1, &keyStr[0], NULL)))
@@ -289,8 +286,6 @@ HRESULT DctEnumerator::FindDctEntryByKey(CLRDATA_ADDRESS dctObj, LPCWSTR key, CL
 
 HRESULT DctEnumerator::FindDctEntryByHash(CLRDATA_ADDRESS dctObj, UINT32 hash, CLRDATA_ADDRESS *targetAddr)
 {
-	HRESULT hr = S_OK;
-	
 	struct DctHashSearchState
 	{
 		UINT32 TargetHash;

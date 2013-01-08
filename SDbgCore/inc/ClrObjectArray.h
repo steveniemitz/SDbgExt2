@@ -35,7 +35,7 @@ public:
 
 		*objAddr = 0;
 		CComPtr<IDacMemoryAccess> dac;
-		m_proc->GetDataAccess(&dac);
+		m_proc->GetMemoryAccess(&dac);
 		return dac->ReadVirtual(m_arrayData.FirstElement + (idx * m_arrayData.ElementSize), objAddr, sizeof(void*), NULL);
 	}
 
@@ -48,7 +48,7 @@ public:
 		return m_proc->GetClrObject(objAddr, ret);
 	}
 
-	STDMETHODIMP_(ULONG) GetSize()
+	STDMETHODIMP_(LONG) GetSize()
 	{
 		if (FAILED(EnsureInit()))
 			return -1;
@@ -70,7 +70,7 @@ private:
 		{
 			ClrObjectData od = {};
 			CComPtr<IXCLRDataProcess3> dac;
-			m_proc->GetProcess(&dac);
+			m_proc->GetCorDataAccess(&dac);
 			RETURN_IF_FAILED(dac->GetObjectData(m_addr, &od));
 			m_arrayData = od.ArrayData;
 			m_arrayInit = TRUE;

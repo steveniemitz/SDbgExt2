@@ -73,7 +73,7 @@ HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 	return S_OK;
 }
 
-HRESULT SDBGEXT_API InitRemoteProcess(DWORD dwProcessId, ISDbgExt **ret)
+HRESULT SDBGEXT_API InitFromLiveProcess(DWORD dwProcessId, ISDbgExt **ret)
 {
 	CComPtr<IDebugClient> cli;
 	CComPtr<IDebugControl> ctrl;

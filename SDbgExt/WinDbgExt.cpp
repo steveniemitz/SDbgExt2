@@ -23,6 +23,9 @@ HRESULT InitIXCLRDataFromWinDBG(WINDBG_EXTENSION_APIS *apis, IXCLRDataProcess3 *
 
 DBG_API DebugExtensionInitialize(PULONG Version, PULONG Flags)
 {
+	UNREFERENCED_PARAMETER(Version);
+	UNREFERENCED_PARAMETER(Flags);
+
 	ExtensionApis.nSize = sizeof (ExtensionApis);
     HRESULT hr = S_OK;
 
@@ -65,9 +68,9 @@ HRESULT SDBGEXT_API CreateFromWinDBG(IDebugClient *cli, ISDbgExt **ret)
 	return CreateSDbgExt(proc, ret);
 }
 
-DBG_FUNC(spt_test)
-{
-	DBG_PREAMBLE;
-	
-	return S_OK;
-}
+//DBG_FUNC(spt_test)
+//{
+//	DBG_PREAMBLE;
+//	
+//	return S_OK;
+//}

@@ -20,8 +20,8 @@ HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumOb
 	CComPtr<IXCLRDataProcess3> dac;
 	CComPtr<IDacMemoryAccess> dcma;
 
-	m_proc->GetProcess(&dac);
-	m_proc->GetDataAccess(&dcma);
+	m_proc->GetCorDataAccess(&dac);
+	m_proc->GetMemoryAccess(&dcma);
 
 	ClrThreadData td = {};
 	HRESULT hr = S_OK;
@@ -38,6 +38,7 @@ HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumOb
 
 	std::vector<AddrRange> ranges;
 	auto buildHeapSnapshotCb = [&ranges](CLRDATA_ADDRESS heap, ClrGcHeapSegmentData segData)->BOOL {
+		UNREFERENCED_PARAMETER(heap);
 		AddrRange range = { segData.AllocBegin, segData.Allocated };
 		ranges.push_back(range);
 

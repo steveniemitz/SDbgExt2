@@ -54,19 +54,22 @@ public:
 	}
 private:
 	EnumState *es;
-	void *operator new(size_t s) {}
+	void *operator new(size_t s) {
+		UNREFERENCED_PARAMETER(s);
+	}
 };
 
 DBG_FUNC(dumpthreadpoolqueues)
 {
 	DBG_PREAMBLE;
+	UNREFERENCED_PARAMETER(args);
 
 	EnumState s = { 0, &dbg };
 	
 	CComObject<EnumThreadPoolAdaptor> adapt;
 	adapt.Init(EnumThreadPoolQueuesCallback(&s));
 
-	dbg.Ext->EnumThreadPoolQueues(&adapt);
+	hr = dbg.Ext->EnumThreadPoolQueues(&adapt);
 
-	return S_OK;
+	return hr;
 }

@@ -9,7 +9,7 @@ HRESULT CSDbgExt::EnumHeapObjects(IEnumObjectsCallback *cb)
 	CComPtr<IEnumObjectsCallback> cbPtr(cb);
 	CComPtr<IXCLRDataProcess3> dac;
 
-	m_proc->GetProcess(&dac);
+	m_proc->GetCorDataAccess(&dac);
 
 	struct EnumSegmentsState
 	{
@@ -26,7 +26,7 @@ HRESULT CSDbgExt::EnumHeapObjects(IEnumObjectsCallback *cb)
 	EnumSegmentsState outerState = { cbPtr, dac, ug.FreeMethodTable };
 	
 	auto heapCb = [&outerState](CLRDATA_ADDRESS segmentAddr, ClrGcHeapSegmentData segment)->BOOL {
-		
+		UNREFERENCED_PARAMETER(segmentAddr);
 		CLRDATA_ADDRESS currObj = segment.AllocBegin;
 		while(currObj < segment.Allocated)
 		{

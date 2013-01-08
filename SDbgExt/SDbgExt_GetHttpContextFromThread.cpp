@@ -13,7 +13,7 @@ STDMETHODIMP CSDbgExt::GetHttpContextFromThread(ClrThreadContext ctx, ClrHttpCon
 	
 	auto tryGetPath = [this, &ctx](LPWSTR expr)->BSTR {
 		CComPtr<IXCLRDataProcess3> dac;
-		this->m_proc->GetProcess(&dac);
+		this->m_proc->GetCorDataAccess(&dac);
 		
 		CLRDATA_ADDRESS tmp;
 		if (SUCCEEDED(this->EvaluateExpression(ctx.HostContext, expr, &tmp)) && tmp)

@@ -99,7 +99,7 @@ namespace SDbgExt2Tests2
 
 			CLRDATA_ADDRESS stackBase, stackLimit;
 			CComPtr<IDacMemoryAccess> dcma;
-			p->GetDataAccess(&dcma);
+			p->GetMemoryAccess(&dcma);
 			hr = dcma->GetThreadStack(tData.osThreadId, &stackBase, &stackLimit);
 
 			ASSERT_SOK(hr);

@@ -15,7 +15,7 @@ namespace SDbgM
         private IXCLRDataProcess3 _dac;
         private bool _disposed;
 
-        internal MSDbgExt(ISDbgExt wrapped)
+        public MSDbgExt(ISDbgExt wrapped)
         {
             _wrapped = wrapped;
             Init();
@@ -24,12 +24,18 @@ namespace SDbgM
         private void Init()
         {
             _proc = _wrapped.GetProcess();
-            _dac = _proc.GetProcess();
+            _dac = _proc.GetCorDataAccess();
         }
 
         public MSDbgExt(string dumpFile)
         {
             SafeNativeMethods.InitFromDump(dumpFile, out _wrapped);
+            Init();
+        }
+
+        public MSDbgExt(int pid)
+        {
+            SafeNativeMethods.InitFromLiveProcess(pid, out _wrapped);
             Init();
         }
 
@@ -50,8 +56,8 @@ namespace SDbgM
                 Marshal.FinalReleaseComObject(_proc);
                 Marshal.FinalReleaseComObject(_dac);
                 Marshal.FinalReleaseComObject(_wrapped);
-                _disposed = true;
                 GC.SuppressFinalize(this);
+                _disposed = true;
             }
         }
 

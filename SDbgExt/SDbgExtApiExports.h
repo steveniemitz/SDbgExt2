@@ -16,7 +16,7 @@ interface IDebugClient;
 interface IDebugDataSpaces;
 
 extern "C" {
-HRESULT SDBGEXT_API InitRemoteProcess(DWORD dwProcessId, ISDbgExt **ret);
+HRESULT SDBGEXT_API InitFromLiveProcess(DWORD dwProcessId, ISDbgExt **ret);
 HRESULT SDBGEXT_API InitFromDump(const WCHAR *dumpFile, ISDbgExt **ext);
 HRESULT SDBGEXT_API CreateSDbgExt(IClrProcess *p, ISDbgExt **ext);
 HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac);
