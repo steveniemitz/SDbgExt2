@@ -31,7 +31,16 @@ typedef struct ThreadPoolWorkItem
 ]
 interface IEnumObjectsCallback : IUnknown
 {
-	HRESULT Callback([in] CLRDATA_ADDRESS obj, [in] ClrObjectData objData);
+	HRESULT Callback([in] ClrObjectData objData);
+};
+
+[
+	object,
+	uuid(5F630AA1-29F7-449F-BD91-3C152F687910)
+]
+interface IEnumObjectsBatchCallback : IEnumObjectsCallback
+{
+	HRESULT Callback([in] ULONG numObjects, [in] ClrObjectData objects[100]);
 };
 
 [
@@ -41,6 +50,15 @@ interface IEnumObjectsCallback : IUnknown
 interface IEnumHashtableCallback : IUnknown
 {
 	HRESULT Callback([in] DctEntry ent);
+}
+
+[
+	object,
+	uuid(0DDAEF1D-A0B9-43F3-8F89-9DEAC2FC5349)
+]
+interface IEnumHashtableBatchCallback : IEnumHashtableCallback
+{
+	HRESULT Callback([in] ULONG numEntries, [in] DctEntry ent[50]);
 }
 
 [

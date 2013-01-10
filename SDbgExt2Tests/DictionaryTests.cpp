@@ -66,6 +66,48 @@ namespace SDbgExt2Tests2
 			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x00000000023c2424, 0), addr);
 		}
 
+		class BulkDctEnumAdaptor 
+			: public CComObjectRoot
+			, public IEnumHashtableBatchCallback
+		{
+			BEGIN_COM_MAP(BulkDctEnumAdaptor)
+				COM_INTERFACE_ENTRY(IEnumHashtableBatchCallback)
+			END_COM_MAP()
+
+		public:
+			BulkDctEnumAdaptor()
+				: TotalEntries(0)
+			{}
+
+			STDMETHODIMP Callback(ULONG numEntries, DctEntry entries[])
+			{
+				TotalEntries += numEntries;
+				return S_OK;
+			}
+
+			STDMETHODIMP Callback(DctEntry entry)
+			{
+				return E_NOTIMPL;
+			}
+
+			ULONG TotalEntries;
+		};
+
+		TEST_METHOD(DumpDictionary_Batch)
+		{
+			CComObject<BulkDctEnumAdaptor> *adapt;
+			CComObject<BulkDctEnumAdaptor>::CreateInstance(&adapt);
+			adapt->AddRef();
+
+			auto hr = ext->EnumHashtable((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x023c2318, 0), adapt);
+
+			ASSERT_SOK(hr);
+			Assert::AreEqual((ULONG)58, adapt->TotalEntries);
+
+			adapt->Release();
+
+		}
+
 		void DumpDictionary_TestImpl(CLRDATA_ADDRESS dctAddr, size_t numEntriesExpected, DctEntry *expected, int countExpected)
 		{
 			int c = 0;

@@ -3,10 +3,10 @@
 #include "..\SDbgCore\inc\EnumAdaptors.h"
 #include "SDBgExtApi.h"
 
-BEGIN_DEFINE_ENUM_ADAPTOR_FUNCTOR(EnumObjectsCallbackAdaptor, IEnumObjectsCallback, BOOL(CLRDATA_ADDRESS, ClrObjectData))
-	STDMETHODIMP Callback(CLRDATA_ADDRESS obj, ClrObjectData objData)
+BEGIN_DEFINE_ENUM_ADAPTOR_FUNCTOR(EnumObjectsCallbackAdaptor, IEnumObjectsCallback, BOOL(ClrObjectData))
+	STDMETHODIMP Callback(ClrObjectData objData)
 	{
-		return m_cb(obj, objData) == TRUE ? S_OK : E_ABORT;
+		return m_cb(objData) == TRUE ? S_OK : E_ABORT;
 	}
 END_DEFINE_ENUM_ADAPTOR_FUNCTOR
 

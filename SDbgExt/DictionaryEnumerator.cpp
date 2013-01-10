@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "DictionaryEnumerator.h"
+#include <vector>
 
 HRESULT DctEnumerator::EnumerateDctEntries(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb)
 {
@@ -117,19 +118,51 @@ HRESULT DctEnumerator::GetEntryOffsets(CLRDATA_ADDRESS entriesPtr, WCHAR *keyFie
 HRESULT DctEnumerator::ReadEntries(DWORD arrayEntries, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataBase, ULONG arrayElementSize,
 									ULONG keyOffset, ULONG valOffset, ULONG hashCodeOffset, BOOL elementsAreClass, IEnumHashtableCallback *cb)
 {	
+	IEnumHashtableBatchCallbackPtr batchCb;
+	std::vector<DctEntry> buffer;
+
+	BOOL useBatch = SUCCEEDED(cb->QueryInterface(__uuidof(IEnumHashtableBatchCallback), (PVOID*)&batchCb));
+
+	std::function<HRESULT(DctEntry)> cbFunc;
+	if (useBatch)
+	{
+		cbFunc = [&batchCb, &buffer](DctEntry ent) {
+			buffer.push_back(ent);
+			if (buffer.size() >= 50)
+			{
+				auto hr = batchCb->Callback(buffer.size(), buffer.data());
+				buffer.clear();
+				return hr;					
+			}
+			return S_OK;
+		};
+	}
+	else
+	{
+		cbFunc = [&cb](DctEntry ent) {
+			return cb->Callback(ent);
+		};
+	}
+
 	for (DWORD a = 0; a < arrayEntries; a++)
 	{
 		CLRDATA_ADDRESS arrayDataPtr = arrayDataBase + (arrayElementSize*a);
-		HRESULT hr = ReadEntry(keyOffset, valOffset, hashCodeOffset, bucketArrayBase, arrayDataPtr, elementsAreClass, cb);
+		HRESULT hr = ReadEntry(keyOffset, valOffset, hashCodeOffset, bucketArrayBase, arrayDataPtr, elementsAreClass, cbFunc);
 
 		if (hr == S_FALSE)
 			return S_OK;
 	}
+
+	if (buffer.size() > 0)
+	{
+		batchCb->Callback(buffer.size(), buffer.data());
+	}
+
 	return S_OK;
 }
 
 
-HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, BOOL elementIsClass, IEnumHashtableCallback *cb)
+HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, BOOL elementIsClass, std::function<HRESULT(DctEntry)> cb)
 {
 	HRESULT hr = S_OK;
 
@@ -168,7 +201,7 @@ HRESULT DctEnumerator::ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashC
 		if ((CLRDATA_ADDRESS)keyValue != bucketArrayBase) //unused bucket
 		{
 			DctEntry entry = { baseAddr, (CLRDATA_ADDRESS)keyValue, (CLRDATA_ADDRESS)valueValue, hashValue };
-			if (FAILED(cb->Callback(entry)))
+			if (FAILED(cb(entry)))
 				return S_FALSE;
 		}
 	}

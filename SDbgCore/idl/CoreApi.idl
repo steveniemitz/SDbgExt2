@@ -18,5 +18,8 @@ library SDbgCore
 	interface IXCLRDataProcess3;
 	interface IClrProcess;
 	interface ISDbgExt;
+
+	interface IEnumHashtableBatchCallback;
+	interface IEnumObjectsBatchCallback;
 	enum CorElementType;
 }

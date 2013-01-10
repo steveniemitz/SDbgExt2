@@ -106,12 +106,56 @@ namespace SDbgExt2Tests2
 			Assert::IsTrue(stackBase > stackLimit);
 		}
 
+		class BatchObjectsAdaptor
+			: public IEnumObjectsBatchCallback
+			, public CComObjectRoot
+		{
+			BEGIN_COM_MAP(BatchObjectsAdaptor)
+				COM_INTERFACE_ENTRY(IEnumObjectsBatchCallback)
+			END_COM_MAP()
+
+		public:
+
+			BatchObjectsAdaptor()
+				: TotalObjects(0)
+			{}
+
+			ULONG TotalObjects;
+
+			STDMETHODIMP Callback(ULONG numEntries, ClrObjectData obj[])
+			{
+				TotalObjects += numEntries;
+				return S_OK;
+			}
+
+			STDMETHODIMP Callback(ClrObjectData obj)
+			{
+				return E_NOTIMPL;
+			}
+		};
+
+		TEST_METHOD(EnumStackObjects_Bulk)
+		{
+			std::vector<CLRDATA_ADDRESS> seenObjects;
+
+			CComObject<BatchObjectsAdaptor> *adapt;
+			CComObject<BatchObjectsAdaptor>::CreateInstance(&adapt);
+			adapt->AddRef();
+
+			auto hr = ext->EnumStackObjects((DWORD)1, adapt);
+
+			Assert::IsTrue(adapt->TotalObjects > 0);
+			ASSERT_SOK(hr);
+
+			adapt->Release();
+		}
+
 		TEST_METHOD(EnumStackObjects_Basic)
 		{
 			std::vector<CLRDATA_ADDRESS> seenObjects;
 
-			auto cb = [&seenObjects](CLRDATA_ADDRESS object, ClrObjectData objData)->BOOL {
-				seenObjects.push_back(object);
+			auto cb = [&seenObjects](ClrObjectData objData)->BOOL {
+				seenObjects.push_back(objData.ObjectAddress);
 				return TRUE;
 			};
 		

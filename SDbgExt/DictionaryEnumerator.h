@@ -27,7 +27,7 @@ private:
 	HRESULT ReadEntries(DWORD arrayEntries, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataBase, ULONG arrayElementSize,
 						ULONG keyOffset, ULONG valOffset, ULONG hashCodeOffset, BOOL elementsAreClass, IEnumHashtableCallback *cb);
 
-	HRESULT ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, BOOL elementIsClass, IEnumHashtableCallback *cb);
+	HRESULT ReadEntry(ULONG keyOffset, ULONG valueOffset, ULONG hashCodeOffset, CLRDATA_ADDRESS bucketArrayBase, CLRDATA_ADDRESS arrayDataPtr, BOOL elementIsClass, std::function<HRESULT(DctEntry)> cb);
 
 	HRESULT EnumerateHybridListEntries(CLRDATA_ADDRESS listObj, IEnumHashtableCallback *cb);
 	HRESULT EnumerateConcurrentDictionaryEntries(CLRDATA_ADDRESS listObj, IEnumHashtableCallback *cb);

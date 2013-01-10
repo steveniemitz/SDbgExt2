@@ -40,7 +40,7 @@ namespace SDbgExt2Tests2
 		{
 			int n = 0;
 
-			auto cb = [&n](CLRDATA_ADDRESS object, ClrObjectData objData)->BOOL {
+			auto cb = [&n](ClrObjectData objData)->BOOL {
 				n++;
 				return TRUE;
 			};

@@ -32,6 +32,8 @@ typedef struct ClrObjectData
 	PAD_DWORD(1);
 	DWORD Size;
 	ClrArrayData ArrayData;
+	CLRDATA_ADDRESS Reserved;
+	CLRDATA_ADDRESS ObjectAddress;
 } ClrObjectData;
 
 typedef struct ClrMethodTableData

@@ -16,6 +16,25 @@ HRESULT CSDbgExt::EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb)
 
 HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb)
 {
+	IEnumObjectsBatchCallbackPtr batchCb;
+	
+	std::function<HRESULT(ClrObjectData)> cbWrapper;
+	std::vector<ClrObjectData> buffer;
+
+	BOOL isBatch = SUCCEEDED(cb->QueryInterface(__uuidof(IEnumObjectsBatchCallback), (PVOID*)&batchCb));
+	if (isBatch)
+	{
+		cbWrapper = [&batchCb, &buffer](ClrObjectData od) {
+			WRAP_BATCH(od)			
+		};
+	}
+	else
+	{
+		cbWrapper = [&cb](ClrObjectData od) {
+			return cb->Callback(od);
+		};
+	}
+
 	CComPtr<IEnumObjectsCallback> cbPtr(cb);
 	CComPtr<IXCLRDataProcess3> dac;
 	CComPtr<IDacMemoryAccess> dcma;
@@ -62,8 +81,8 @@ HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumOb
 				{
 					ClrObjectData od = {};
 					dac->GetObjectData(stackPtr, &od);
-
-					if (FAILED(cbPtr->Callback(stackPtr, od)))
+					od.ObjectAddress = stackPtr;
+					if (FAILED(cbWrapper(od)))
 					{
 						return S_FALSE;
 					}
@@ -71,6 +90,8 @@ HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumOb
 			}
 		}
 	}
+
+	FINAL_FLUSH_BATCH();
 	
 	return S_OK;
 }

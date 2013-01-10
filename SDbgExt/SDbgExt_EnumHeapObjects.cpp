@@ -32,13 +32,15 @@ HRESULT CSDbgExt::EnumHeapObjects(IEnumObjectsCallback *cb)
 		{
 			ClrObjectData od = {};
 			HRESULT hr = outerState.pDac->GetObjectData(currObj, &od);
+			od.ObjectAddress = currObj;
+
 			if (FAILED(hr))
 			{
 				currObj += sizeof(void*);
 			}
 			else
 			{
-				if (FAILED(outerState.wrappedCb->Callback(currObj, od)))
+				if (FAILED(outerState.wrappedCb->Callback(od)))
 				{
 					return FALSE;
 				}
