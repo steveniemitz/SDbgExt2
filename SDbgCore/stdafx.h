@@ -6,7 +6,7 @@
 #pragma once
 
 #include "inc\targetver.h"
-
+#define _ATL_DEBUG_INTERFACES
 #include <stdio.h>
 #include <tchar.h>
 #include <Windows.h>

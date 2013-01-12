@@ -9,16 +9,14 @@ namespace SDbgM
 {
     public struct HeapSegment
     {
-        private ClrAddress _segAddr;
         private ClrGcHeapSegmentData _data;
 
-        internal HeapSegment(ClrAddress segAddr, ClrGcHeapSegmentData data)
+        internal HeapSegment(ClrGcHeapSegmentData data)
         {
-            _segAddr = segAddr;
             _data = data;
         }
 
-        public ClrAddress Segment { get { return _segAddr; } }
+        public ClrAddress Segment { get { return _data.Segment; } }
         public ClrGcHeapSegmentData Data { get { return _data; } }
     }
 }

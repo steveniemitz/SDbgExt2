@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +13,9 @@ namespace SDbgM
     {
         private class HeapSegmentEnumerator : BaseCallbackAdaptor<HeapSegment>, IEnumHeapSegmentsCallback
         {          
-            public void Callback(ulong Segment, ClrGcHeapSegmentData segData)
+            public void Callback(ClrGcHeapSegmentData segData)
             {
-                Objects.Add(new HeapSegment(Segment, segData));
+                Objects.Add(new HeapSegment(segData));
             }
         }
 
@@ -23,11 +24,16 @@ namespace SDbgM
             return RunEnum<HeapSegment, IEnumHeapSegmentsCallback, HeapSegmentEnumerator>(_proc.EnumHeapSegments);
         }
 
-        private class ObjectEnumerator : BaseCallbackAdaptor<ObjectInfo>, IEnumObjectsCallback
+        private class ObjectEnumerator : BaseCallbackAdaptor<ObjectInfo>, IEnumObjectsBatchCallback
         {
-            public void Callback(ulong obj, ClrObjectData objData)
+            public void Callback(ClrObjectData objData)
             {
-                Objects.Add(new ObjectInfo(obj, objData));
+                Objects.Add(new ObjectInfo(objData));
+            }
+
+            public void Callback(uint numObjects, ClrObjectData[] objects)
+            {
+                Objects.AddRange(objects.Select(x => new ObjectInfo(x)));
             }
         }
 

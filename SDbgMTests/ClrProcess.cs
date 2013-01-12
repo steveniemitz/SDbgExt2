@@ -1,25 +1,30 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using SDbgM;
+using System.Diagnostics;
 
 namespace SDbgMTests
 {
     [TestClass]
     public class ClrProcessTests_Basic
     {
-        //private MClrProcess _proc;
+        private MSDbgExt _proc;
 
         [TestInitialize]
         public void Init()
         {
-            //_proc = new MClrProcess(@"Q:\Dev\SDbgExt2\Dumps\x86\basic.dmp");
+            _proc = new MSDbgExt(@"Q:\Dev\SDbgExt2\Dumps\x86\iis_request.dmp");
         }
 
         [TestMethod]
-        public void EnumHeapSegments()
+        public void EnumHeapSegments_Managed()
         {
-            //var segs = _proc.GetHeapSegments();
-            //Assert.AreEqual(2, segs.Count());
+            Stopwatch sw = Stopwatch.StartNew();
+            var objs = _proc.GetHeapObjects();
+            sw.Stop();
+
+            Assert.AreEqual(52952, objs.Length);
         }
     }
 }

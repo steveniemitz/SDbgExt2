@@ -1,6 +1,8 @@
 import "idl\_ClrTypes.idl";
 
 interface IClrProcess;
+struct ClrObjectData;
+
 typedef struct DctEntry
 {
 	CLRDATA_ADDRESS EntryPtr;
@@ -41,7 +43,7 @@ interface IEnumObjectsCallback : IUnknown
 ]
 interface IEnumObjectsBatchCallback : IEnumObjectsCallback
 {
-	HRESULT Callback([in] ULONG numObjects, [in] ClrObjectData objects[100]);
+	HRESULT Callback([in] ULONG numObjects, [in, size_is(100), length_is(numObjects)] ClrObjectData *objects);
 };
 
 [

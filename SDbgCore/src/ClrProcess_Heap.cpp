@@ -38,7 +38,7 @@ HRESULT ClrProcess::EnumHeapSegmentsServer(IEnumHeapSegmentsCallback *cb)
 			return S_FALSE;
 	}
 
-	return E_NOTIMPL;	
+	return S_OK;	
 }
 
 HRESULT ClrProcess::EnumHeapSegmentsWorkstation(IEnumHeapSegmentsCallback *cb)

@@ -2,6 +2,7 @@
 #include "..\SDbgCore\inc\IEnumAdaptor.h"
 #include "..\SDbgCore\inc\EnumAdaptors.h"
 #include "SDBgExtApi.h"
+#include <memory>
 
 BEGIN_DEFINE_ENUM_ADAPTOR_FUNCTOR(EnumObjectsCallbackAdaptor, IEnumObjectsCallback, BOOL(ClrObjectData))
 	STDMETHODIMP Callback(ClrObjectData objData)
@@ -28,15 +29,14 @@ template<typename TItem, typename TBaseInterface, typename TBatchInterface>
 std::function<HRESULT(TItem, BOOL)> GetEnumCallbackWrapper(TBaseInterface *cbPtr, size_t maxBufferSize)
 {
 	std::function<HRESULT(TItem, BOOL)> cbWrapper;
-	std::vector<TItem> buffer;
-	CComPtr<TBaseInterface> cb(cbPtr);
-
+	
 	CComPtr<TBatchInterface> batchCb;
-	BOOL isBatch = SUCCEEDED(cb->QueryInterface(__uuidof(TBatchInterface), (PVOID*)&batchCb));
+	BOOL isBatch = SUCCEEDED(cbPtr->QueryInterface(__uuidof(TBatchInterface), (PVOID*)&batchCb));
 		
 	if (isBatch)
 	{
-		cbWrapper = [&batchCb, &buffer, maxBufferSize](TItem od, BOOL flush) {
+		std::vector<TItem> buffer;
+		cbWrapper = [batchCb, buffer, maxBufferSize](TItem od, BOOL flush) mutable {
 			if (!flush)
 			{
 				buffer.push_back(od);
@@ -60,7 +60,8 @@ std::function<HRESULT(TItem, BOOL)> GetEnumCallbackWrapper(TBaseInterface *cbPtr
 	}
 	else
 	{
-		cbWrapper = [&cb](TItem od, BOOL flush) {
+		CComPtr<TBaseInterface> cb(cbPtr);
+		cbWrapper = [cb](TItem od, BOOL flush) {
 			if (!flush)
 			{
 				return cb->Callback(od);

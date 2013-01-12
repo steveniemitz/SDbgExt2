@@ -22,13 +22,13 @@
   .ver 0:0:0:0
 }
 .module SDbgCore.dll
-// MVID: {22E3D079-7FB6-4774-A1C0-266176080EE9}
+// MVID: {AA8C0C58-13D0-46D9-9455-49CAE9AD8512}
 .imagebase 0x00400000
 .file alignment 0x00000200
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000001    //  ILONLY
-// Image base: 0x00770000
+// Image base: 0x00E90000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -1465,7 +1465,7 @@
 
   .method public hidebysig newslot abstract virtual 
           instance void  Callback([in] uint32 numObjects,
-                                  [in] valuetype SDbgCore.ClrObjectData[]  marshal([100 + 0]) objects) runtime managed internalcall
+                                  [in] valuetype SDbgCore.ClrObjectData[]  marshal([+0]) objects) runtime managed internalcall
   {
   } // end of method IEnumObjectsBatchCallback::Callback
 
