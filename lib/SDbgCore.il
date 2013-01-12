@@ -22,13 +22,13 @@
   .ver 0:0:0:0
 }
 .module SDbgCore.dll
-// MVID: {63547F58-D363-40FA-B078-5165FE7DE291}
+// MVID: {22E3D079-7FB6-4774-A1C0-266176080EE9}
 .imagebase 0x00400000
 .file alignment 0x00000200
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000001    //  ILONLY
-// Image base: 0x00750000
+// Image base: 0x00770000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -40,7 +40,7 @@
                                                                                                   38 36 46 34 43 44 46 00 00 )                      // 86F4CDF..
   .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
-          instance uint32  GetSize() runtime managed preservesig internalcall
+          instance int32  GetSize() runtime managed preservesig internalcall
   {
   } // end of method IClrObjectArray::GetSize
 
@@ -60,10 +60,10 @@
 
 .class interface public abstract auto ansi import SDbgCore.IClrObject
 {
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 41 41 35 33 41 43 38 30 2D 44 38 36 45   // ..$AA53AC80-D86E
                                                                                                   2D 34 37 43 45 2D 41 42 45 39 2D 36 39 43 33 43   // -47CE-ABE9-69C3C
                                                                                                   38 32 42 35 38 43 37 00 00 )                      // 82B58C7..
-  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
           instance int32  IsValid() runtime managed preservesig internalcall
   {
@@ -117,10 +117,10 @@
 
 .class interface public abstract auto ansi import SDbgCore.IDacMemoryAccess
 {
-  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 44 36 41 45 36 46 41 46 2D 44 45 45 36   // ..$D6AE6FAF-DEE6
                                                                                                   2D 34 44 35 32 2D 41 42 41 34 2D 32 43 32 33 32   // -4D52-ABA4-2C232
                                                                                                   30 44 42 41 44 42 42 00 00 )                      // 0DBADBB..
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
           instance void  ReadVirtual([in] uint64 Offset,
                                      [out] native int buffer,
@@ -758,6 +758,7 @@
   .field public uint64 FiberData
   .field public uint64 LastThrownObjectHandle
   .field public uint64 NextThread
+  .field public uint64 ThreadAddress
 } // end of class SDbgCore.ClrThreadData
 
 .class public sequential ansi sealed beforefieldinit SDbgCore.ClrCodeHeaderData
@@ -785,6 +786,8 @@
   .field public  marshal( fixed array [4]) uint8[] padding3
   .field public uint32 Size
   .field public valuetype SDbgCore.ClrArrayData ArrayData
+  .field public uint64 Reserved
+  .field public uint64 ObjectAddress
 } // end of class SDbgCore.ClrObjectData
 
 .class public sequential ansi sealed beforefieldinit SDbgCore.ClrMethodTableData
@@ -989,10 +992,10 @@
 
 .class interface public abstract auto ansi import SDbgCore.IClrProcess
 {
-  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 43 32 30 41 37 30 31 44 2D 38 32 42 37   // ..$C20A701D-82B7
                                                                                                   2D 34 39 38 44 2D 42 33 35 46 2D 38 43 32 38 37   // -498D-B35F-8C287
                                                                                                   34 35 34 32 41 31 43 00 00 )                      // 4542A1C..
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
           instance int32  IsValidObject(uint64 obj) runtime managed preservesig internalcall
   {
@@ -1163,13 +1166,12 @@
 
 .class interface public abstract auto ansi import SDbgCore.IEnumThreadsCallback
 {
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 43 36 41 32 35 39 30 31 2D 37 43 35 34   // ..$C6A25901-7C54
                                                                                                   2D 34 44 37 31 2D 42 43 33 45 2D 44 43 46 45 37   // -4D71-BC3E-DCFE7
                                                                                                   44 30 43 36 43 44 38 00 00 )                      // D0C6CD8..
-  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
-          instance void  Callback([in] uint64 threadObj,
-                                  [in] valuetype SDbgCore.ClrThreadData threadData) runtime managed internalcall
+          instance void  Callback([in] valuetype SDbgCore.ClrThreadData threadData) runtime managed internalcall
   {
   } // end of method IEnumThreadsCallback::Callback
 
@@ -1193,8 +1195,7 @@
                                                                                                   2D 34 46 37 41 2D 41 31 44 41 2D 32 35 34 46 39   // -4F7A-A1DA-254F9
                                                                                                   36 46 44 38 34 39 41 00 00 )                      // 6FD849A..
   .method public hidebysig newslot abstract virtual 
-          instance void  Callback([in] uint64 Segment,
-                                  [in] valuetype SDbgCore.ClrGcHeapSegmentData segData) runtime managed internalcall
+          instance void  Callback([in] valuetype SDbgCore.ClrGcHeapSegmentData segData) runtime managed internalcall
   {
   } // end of method IEnumHeapSegmentsCallback::Callback
 
@@ -1236,10 +1237,10 @@
 
 .class interface public abstract auto ansi import SDbgCore.ISDbgExt
 {
-  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 31 46 30 35 36 35 45 42 2D 39 35 43 45   // ..$1F0565EB-95CE
                                                                                                   2D 34 38 44 45 2D 42 43 34 41 2D 35 34 41 44 39   // -48DE-BC4A-54AD9
                                                                                                   43 30 33 34 41 32 43 00 00 )                      // C034A2C..
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
           instance class SDbgCore.IClrProcess 
           marshal( interface ) 
@@ -1314,8 +1315,7 @@
                                                                                                   30 31 30 41 41 38 43 00 00 )                      // 010AA8C..
   .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
-          instance void  Callback([in] uint64 obj,
-                                  [in] valuetype SDbgCore.ClrObjectData objData) runtime managed internalcall
+          instance void  Callback([in] valuetype SDbgCore.ClrObjectData objData) runtime managed internalcall
   {
   } // end of method IEnumObjectsCallback::Callback
 
@@ -1336,13 +1336,12 @@
 
 .class interface public abstract auto ansi import SDbgCore.IEnumThreadPoolCallback
 {
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 30 44 41 45 37 41 45 46 2D 36 36 37 31   // ..$0DAE7AEF-6671
                                                                                                   2D 34 38 41 30 2D 41 42 39 36 2D 44 39 30 39 33   // -48A0-AB96-D9093
                                                                                                   31 38 36 32 38 38 32 00 00 )                      // 1862882..
-  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
-          instance void  Callback([in] valuetype SDbgCore.AppDomainAndValue queue,
-                                  [in] valuetype SDbgCore.ThreadPoolWorkItem item) runtime managed internalcall
+          instance void  Callback([in] valuetype SDbgCore.ThreadPoolWorkItem item) runtime managed internalcall
   {
   } // end of method IEnumThreadPoolCallback::Callback
 
@@ -1420,6 +1419,7 @@
   .field public uint64 DelegatePtr
   .field public uint64 DelegateMethodDesc
   .field public valuetype SDbgCore.THREADPOOL_WORKITEM_TYPE Type
+  .field public valuetype SDbgCore.AppDomainAndValue Queue
 } // end of class SDbgCore.ThreadPoolWorkItem
 
 .class public auto ansi sealed SDbgCore.THREADPOOL_WORKITEM_TYPE
@@ -1430,6 +1430,46 @@
   .field public static literal valuetype SDbgCore.THREADPOOL_WORKITEM_TYPE CB_TYPE_QUEUEUSERWORKITEM = int32(0x00000001)
   .field public static literal valuetype SDbgCore.THREADPOOL_WORKITEM_TYPE CB_TYPE_ASYNC_WORKITEM = int32(0x00000002)
 } // end of class SDbgCore.THREADPOOL_WORKITEM_TYPE
+
+.class interface public abstract auto ansi import SDbgCore.IEnumHashtableBatchCallback
+       implements SDbgCore.IEnumHashtableCallback
+{
+  .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 30 44 44 41 45 46 31 44 2D 41 30 42 39   // ..$0DDAEF1D-A0B9
+                                                                                                  2D 34 33 46 33 2D 38 46 38 39 2D 39 44 45 41 43   // -43F3-8F89-9DEAC
+                                                                                                  32 46 43 35 33 34 39 00 00 )                      // 2FC5349..
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
+  .method public hidebysig newslot abstract virtual 
+          instance void  Callback([in] valuetype SDbgCore.DctEntry ent) runtime managed internalcall
+  {
+  } // end of method IEnumHashtableBatchCallback::Callback
+
+  .method public hidebysig newslot abstract virtual 
+          instance void  Callback([in] uint32 numEntries,
+                                  [in] valuetype SDbgCore.DctEntry[]  marshal([50 + 0]) ent) runtime managed internalcall
+  {
+  } // end of method IEnumHashtableBatchCallback::Callback
+
+} // end of class SDbgCore.IEnumHashtableBatchCallback
+
+.class interface public abstract auto ansi import SDbgCore.IEnumObjectsBatchCallback
+       implements SDbgCore.IEnumObjectsCallback
+{
+  .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 35 46 36 33 30 41 41 31 2D 32 39 46 37   // ..$5F630AA1-29F7
+                                                                                                  2D 34 34 39 46 2D 42 44 39 31 2D 33 43 31 35 32   // -449F-BD91-3C152
+                                                                                                  46 36 38 37 39 31 30 00 00 )                      // F687910..
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
+  .method public hidebysig newslot abstract virtual 
+          instance void  Callback([in] valuetype SDbgCore.ClrObjectData objData) runtime managed internalcall
+  {
+  } // end of method IEnumObjectsBatchCallback::Callback
+
+  .method public hidebysig newslot abstract virtual 
+          instance void  Callback([in] uint32 numObjects,
+                                  [in] valuetype SDbgCore.ClrObjectData[]  marshal([100 + 0]) objects) runtime managed internalcall
+  {
+  } // end of method IEnumObjectsBatchCallback::Callback
+
+} // end of class SDbgCore.IEnumObjectsBatchCallback
 
 
 // =============================================================

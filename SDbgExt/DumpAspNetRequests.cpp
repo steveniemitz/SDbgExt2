@@ -7,11 +7,11 @@ DBG_FUNC(dumpaspnetrequests)
 	UNREFERENCED_PARAMETER(args);
 	UNREFERENCED_PARAMETER(hr);
 		
-	auto cb = [&dbg](CLRDATA_ADDRESS threadObj, ClrThreadData threadData)->BOOL { 
+	auto cb = [&dbg](ClrThreadData threadData)->BOOL { 
 		
 		CLRDATA_ADDRESS mThread;
 		ClrThreadContext ctx; ClrHttpContext httpCtx;
-		if (SUCCEEDED(dbg.Process->GetManagedThreadObject(threadObj, &mThread))
+		if (SUCCEEDED(dbg.Process->GetManagedThreadObject(threadData.ThreadAddress, &mThread))
 			&& SUCCEEDED(dbg.Process->GetThreadExecutionContext(mThread, &ctx))
 			&& SUCCEEDED(dbg.Ext->GetHttpContextFromThread(ctx, &httpCtx)))
 		{

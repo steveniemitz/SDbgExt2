@@ -145,6 +145,7 @@ typedef struct ClrThreadData
 	CLRDATA_ADDRESS FiberData;
 	CLRDATA_ADDRESS LastThrownObjectHandle;
 	CLRDATA_ADDRESS NextThread;
+	CLRDATA_ADDRESS ThreadAddress;
 } ClrThreadData;
 
 typedef struct ClrNestedExceptionData

@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include "SDbgExt.h"
 #include "..\SDbgCore\inc\EnumAdaptors.h"
+#include <vector>
 
 #define Align(addr) (addr + (sizeof(void*) - 1)) & ~(sizeof(void*) - 1)
 
 HRESULT CSDbgExt::EnumHeapObjects(IEnumObjectsCallback *cb)
 {
-	CComPtr<IEnumObjectsCallback> cbPtr(cb);
+	IEnumObjectsCallbackPtr cbPtr(cb);
 	CComPtr<IXCLRDataProcess3> dac;
-
 	m_proc->GetCorDataAccess(&dac);
 
 	struct EnumSegmentsState
@@ -17,6 +17,8 @@ HRESULT CSDbgExt::EnumHeapObjects(IEnumObjectsCallback *cb)
 		IXCLRDataProcess3 *pDac;
 		CLRDATA_ADDRESS FreeMT;
 	};
+
+	auto cbWrapper = GetObjectEnumCallback(cbPtr);
 	
 	HRESULT hr = S_OK;
 
@@ -25,8 +27,7 @@ HRESULT CSDbgExt::EnumHeapObjects(IEnumObjectsCallback *cb)
 
 	EnumSegmentsState outerState = { cbPtr, dac, ug.FreeMethodTable };
 	
-	auto heapCb = [&outerState](CLRDATA_ADDRESS segmentAddr, ClrGcHeapSegmentData segment)->BOOL {
-		UNREFERENCED_PARAMETER(segmentAddr);
+	auto heapCb = [&outerState, &cbWrapper](ClrGcHeapSegmentData segment)->BOOL {
 		CLRDATA_ADDRESS currObj = segment.AllocBegin;
 		while(currObj < segment.Allocated)
 		{
@@ -40,7 +41,7 @@ HRESULT CSDbgExt::EnumHeapObjects(IEnumObjectsCallback *cb)
 			}
 			else
 			{
-				if (FAILED(outerState.wrappedCb->Callback(od)))
+				if (FAILED(cbWrapper(od, FALSE)))
 				{
 					return FALSE;
 				}
@@ -55,6 +56,9 @@ HRESULT CSDbgExt::EnumHeapObjects(IEnumObjectsCallback *cb)
 	adapt.Init(heapCb);
 
 	RETURN_IF_FAILED(m_proc->EnumHeapSegments(&adapt));
+
+	ClrObjectData junk = {};
+	cbWrapper(junk, TRUE);
 
 	return S_OK;
 }

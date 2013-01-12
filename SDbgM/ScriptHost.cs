@@ -12,7 +12,9 @@ namespace SDbgM
     {
         public static int InitHost(string arg)
         {
-            var ext = MSDbgExt.CreateInProcess(arg);
+            string[] args = arg.Split('|');
+            var addrOfExtObject = ulong.Parse(args[0]);
+            var ext = MSDbgExt.CreateInProcess(addrOfExtObject);
 
             Thread t = new Thread(InitHostImpl);
             t.SetApartmentState(ApartmentState.STA);

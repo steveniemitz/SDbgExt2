@@ -16,31 +16,14 @@ HRESULT CSDbgExt::EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb)
 
 HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb)
 {
-	IEnumObjectsBatchCallbackPtr batchCb;
-	
-	std::function<HRESULT(ClrObjectData)> cbWrapper;
-	std::vector<ClrObjectData> buffer;
-
-	BOOL isBatch = SUCCEEDED(cb->QueryInterface(__uuidof(IEnumObjectsBatchCallback), (PVOID*)&batchCb));
-	if (isBatch)
-	{
-		cbWrapper = [&batchCb, &buffer](ClrObjectData od) {
-			WRAP_BATCH(od)			
-		};
-	}
-	else
-	{
-		cbWrapper = [&cb](ClrObjectData od) {
-			return cb->Callback(od);
-		};
-	}
-
 	CComPtr<IEnumObjectsCallback> cbPtr(cb);
 	CComPtr<IXCLRDataProcess3> dac;
 	CComPtr<IDacMemoryAccess> dcma;
 
 	m_proc->GetCorDataAccess(&dac);
 	m_proc->GetMemoryAccess(&dcma);
+
+	auto cbWrapper = GetObjectEnumCallback(cbPtr);
 
 	ClrThreadData td = {};
 	HRESULT hr = S_OK;
@@ -56,8 +39,7 @@ HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumOb
 	};
 
 	std::vector<AddrRange> ranges;
-	auto buildHeapSnapshotCb = [&ranges](CLRDATA_ADDRESS heap, ClrGcHeapSegmentData segData)->BOOL {
-		UNREFERENCED_PARAMETER(heap);
+	auto buildHeapSnapshotCb = [&ranges](ClrGcHeapSegmentData segData)->BOOL {
 		AddrRange range = { segData.AllocBegin, segData.Allocated };
 		ranges.push_back(range);
 
@@ -82,7 +64,7 @@ HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumOb
 					ClrObjectData od = {};
 					dac->GetObjectData(stackPtr, &od);
 					od.ObjectAddress = stackPtr;
-					if (FAILED(cbWrapper(od)))
+					if (FAILED(cbWrapper(od, FALSE)))
 					{
 						return S_FALSE;
 					}
@@ -91,7 +73,8 @@ HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumOb
 		}
 	}
 
-	FINAL_FLUSH_BATCH();
+	ClrObjectData junk = {};
+	cbWrapper(junk, TRUE);
 	
 	return S_OK;
 }

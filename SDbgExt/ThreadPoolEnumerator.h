@@ -187,7 +187,7 @@ private:
 			
 			CLRDATA_ADDRESS statePtr = NULL;
 			CLRDATA_ADDRESS delegatePtr = NULL;
-			THREADPOOL_WORKITEM_TYPE cbType;
+			THREADPOOL_WORKITEM_TYPE cbType = CB_TYPE_INVALID;
 
 			ClrObjectData od = {};
 			if (FAILED(m_ext->GetObjectData(workItem, &od)))
@@ -234,8 +234,8 @@ private:
 				}
 			}
 
-			ThreadPoolWorkItem ent = { workItem, statePtr, delegatePtr, di.methodDesc };	
-			m_tpQueueCb->Callback(queueAddr, ent);		
+			ThreadPoolWorkItem ent = { workItem, statePtr, delegatePtr, di.methodDesc, cbType, queueAddr };	
+			m_tpQueueCb->Callback(ent);		
 		}
 	}
 

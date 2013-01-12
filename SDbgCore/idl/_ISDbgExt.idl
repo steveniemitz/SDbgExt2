@@ -23,6 +23,7 @@ typedef struct ThreadPoolWorkItem
 	CLRDATA_ADDRESS DelegatePtr;
 	CLRDATA_ADDRESS DelegateMethodDesc;
 	THREADPOOL_WORKITEM_TYPE Type;
+	AppDomainAndValue Queue;
 } ThreadPoolWorkItem;
 
 [
@@ -67,7 +68,7 @@ interface IEnumHashtableBatchCallback : IEnumHashtableCallback
 ]
 interface IEnumThreadPoolCallback : IUnknown
 {
-	HRESULT Callback([in] AppDomainAndValue queue, [in] ThreadPoolWorkItem item);
+	HRESULT Callback([in] ThreadPoolWorkItem item);
 }
 
 [
@@ -101,4 +102,3 @@ interface ISDbgExt : IUnknown
 	HRESULT FindDctEntryByHash([in] CLRDATA_ADDRESS dctObj, [in] UINT32 hash, [out, retval] CLRDATA_ADDRESS *entryAddr);
 	HRESULT GetHttpContextFromThread([in] ClrThreadContext ctx, [out, retval] ClrHttpContext *httpContext);
 };
-

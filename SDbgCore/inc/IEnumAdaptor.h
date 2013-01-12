@@ -55,15 +55,3 @@ private: \
 public:
 
 #define END_DEFINE_ENUM_ADAPTOR_FUNCTOR };
-
-#define WRAP_BATCH(obj) buffer.push_back(obj); \
-						if (buffer.size() >= 100) \
-						{ \
-							auto hr = batchCb->Callback(buffer.size(), buffer.data()); \
-							buffer.clear(); \
-							return hr; \
-						} \
-						return S_OK;		
-
-#define FINAL_FLUSH_BATCH() if (buffer.size() > 0) \
-							batchCb->Callback(buffer.size(), buffer.data());

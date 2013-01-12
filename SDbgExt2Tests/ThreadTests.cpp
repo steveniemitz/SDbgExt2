@@ -67,7 +67,7 @@ namespace SDbgExt2Tests2
 
 			EnumThreadState state = {};
 
-			auto func = [&state](CLRDATA_ADDRESS threadObj, ClrThreadData threadData)->BOOL {
+			auto func = [&state](ClrThreadData threadData)->BOOL {
 				state.NumTimesCalled++;
 				return TRUE;
 			};

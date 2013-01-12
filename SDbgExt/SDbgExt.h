@@ -2,6 +2,7 @@
 #include "SDbgExtApi.h"
 #include "..\SDbgCore\inc\IEnumAdaptor.h"
 #include "EnumAdaptors.h"
+#include <vector>
 
 class CSDbgExt : 
 	public CComObjectRoot,
@@ -63,6 +64,11 @@ private:
 	void Init(IClrProcess *p)
 	{
 		m_proc = p;
+	}
+
+	std::function<HRESULT(ClrObjectData, BOOL)> GetObjectEnumCallback(IEnumObjectsCallback *cb)
+	{
+		return GetEnumCallbackWrapper<ClrObjectData, IEnumObjectsCallback, IEnumObjectsBatchCallback>(cb, 100);
 	}
 
 	CComPtr<IClrProcess> m_proc;

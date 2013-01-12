@@ -12,7 +12,7 @@ import "ClrData.idl";
 ]
 interface IEnumThreadsCallback : IUnknown
 {
-	HRESULT Callback([in] CLRDATA_ADDRESS threadObj, [in] ClrThreadData threadData);
+	HRESULT Callback([in] ClrThreadData threadData);
 }
 
 [
@@ -21,7 +21,7 @@ interface IEnumThreadsCallback : IUnknown
 ]
 interface IEnumHeapSegmentsCallback : IUnknown
 {
-	HRESULT Callback([in] CLRDATA_ADDRESS segment, [in] ClrGcHeapSegmentData segData);
+	HRESULT Callback([in] ClrGcHeapSegmentData segData);
 }
 
 [

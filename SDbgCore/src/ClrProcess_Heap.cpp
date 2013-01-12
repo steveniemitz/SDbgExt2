@@ -64,7 +64,9 @@ HRESULT ClrProcess::EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, IEnumHeap
 		{
 			segData.Allocated = gcsData.AllocAllocated;
 		}
-		if (FAILED(cb->Callback(currSegment, segData)))
+		// TODO: Does the current segment need to get set back on segData?
+		// Segment looks like it's what we want and it seems like it's set.
+		if (FAILED(cb->Callback(segData)))
 		{
 			return S_FALSE;
 		}

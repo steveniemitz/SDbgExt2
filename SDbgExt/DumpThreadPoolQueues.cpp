@@ -16,11 +16,11 @@ public:
 		: es(ptr_es)
 	{ }
 
-	BOOL operator()(AppDomainAndValue queue, ThreadPoolWorkItem workItem)
+	BOOL operator()(ThreadPoolWorkItem workItem)
 	{
-		if (es->LastQueue != queue.Value)
+		if (es->LastQueue != workItem.Queue.Value)
 		{
-			dwdprintf(es->dbg->Control, SR::DumpThreadPoolQueues_NewQueue(), queue.Value, queue.domain);
+			dwdprintf(es->dbg->Control, SR::DumpThreadPoolQueues_NewQueue(), workItem.Queue.Value, workItem.Queue.domain);
 			dwdprintf(es->dbg->Control, SR::DumpThreadPoolQueues_Header());
 		}
 
@@ -48,7 +48,7 @@ public:
 
 		dwdprintf(es->dbg->Control, SR::DumpThreadPoolQueues_Entry(), workItem.WorkItemPtr, workItem.DelegatePtr, workItem.StatePtr, delegateName.c_str());
 
-		es->LastQueue = queue.Value;
+		es->LastQueue = workItem.Queue.Value;
 
 		return TRUE;
 	}

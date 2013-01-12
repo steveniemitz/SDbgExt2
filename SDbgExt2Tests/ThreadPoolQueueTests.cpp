@@ -19,7 +19,7 @@ namespace SDbgExt2Tests2
 		TEST_METHOD(DumpThreadPool_Baisc)
 		{
 			int n = 0;
-			auto cb = [&n](AppDomainAndValue queueAddress, ThreadPoolWorkItem tpWorkItems)->BOOL {
+			auto cb = [&n](ThreadPoolWorkItem tpWorkItems)->BOOL {
 				n++;
 				return TRUE;
 			};

@@ -18,8 +18,9 @@ HRESULT ClrProcess::EnumThreads(IEnumThreadsCallback *cb)
 	{
 		ClrThreadData tData = {};
 		RETURN_IF_FAILED(m_pDac->GetThreadData(currThreadObj, &tData));
+		tData.ThreadAddress = currThreadObj;
 
-		if (FAILED(cbPtr->Callback(currThreadObj, tData)))
+		if (FAILED(cbPtr->Callback(tData)))
 			return S_OK;
 
 		currThreadObj = tData.NextThread;		
@@ -76,10 +77,10 @@ STDMETHODIMP ClrProcess::FindThread(std::function<BOOL(ClrThreadData)> match, CL
 	
 	FindThreadState fts = { match, 0 };
 
-	auto cb = [&fts](CLRDATA_ADDRESS threadObj, ClrThreadData threadData)->BOOL {
+	auto cb = [&fts](ClrThreadData threadData)->BOOL {
 		if (fts.Match(threadData))
 		{
-			fts.FoundThread = threadObj;
+			fts.FoundThread = threadData.ThreadAddress;
 			return FALSE;
 		}	
 		

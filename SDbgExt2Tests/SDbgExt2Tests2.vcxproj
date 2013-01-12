@@ -98,8 +98,12 @@
       <AdditionalDependencies>dbgeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)\lib\$(Configuration)\SDbgExt.dll $(TargetDir)</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>copy $(SolutionDir)\lib\$(Configuration)\SDbgExt.dll $(TargetDir)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -136,6 +140,9 @@
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dbgeng.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>copy $(SolutionDir)\lib\$(Configuration)\SDbgExt.dll $(TargetDir)</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

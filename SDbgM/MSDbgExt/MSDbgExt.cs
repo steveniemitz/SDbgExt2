@@ -61,11 +61,9 @@ namespace SDbgM
             }
         }
 
-        internal static MSDbgExt CreateInProcess(string arg)
+        internal static MSDbgExt CreateInProcess(ulong addrOfExtObject)
         {
-            ulong value = ulong.Parse(arg);
-
-            IntPtr targetObject = new IntPtr((long)value);
+            IntPtr targetObject = new IntPtr((long)addrOfExtObject);
             object iunk = Marshal.GetObjectForIUnknown(targetObject);
             var wrapped = (ISDbgExt)iunk;
 
