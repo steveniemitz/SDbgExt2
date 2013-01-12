@@ -39,9 +39,6 @@
     <ClInclude Include="inc\SDbgCoreApi.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\IEnumAdaptor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\EnumAdaptors.h">
       <Filter>Header Files</Filter>
     </ClInclude>

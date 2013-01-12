@@ -1,17 +1,34 @@
 #pragma once
-#include "IEnumAdaptor.h"
 #include "SDbgCoreApi.h"
+#include <functional>
 
-BEGIN_DEFINE_ENUM_ADAPTOR_FUNCTOR(EnumThreadCallbackAdaptor, IEnumThreadsCallback, BOOL(ClrThreadData))
-	STDMETHODIMP Callback(ClrThreadData threadData)
+template<typename TInterface, typename TFunc>
+class CallbackAdaptorBase : 
+	public CComObjectRoot,
+	public TInterface
+{ 
+	BEGIN_COM_MAP(CallbackAdaptorBase) 
+		COM_INTERFACE_ENTRY(TInterface) 
+	END_COM_MAP() 
+public:
+	HRESULT Init(std::function<BOOL(TFunc)> cb) 
+	{ 
+		m_cb = cb; 
+		return S_OK; 
+	} 
+
+	STDMETHODIMP Callback(TFunc o)
 	{
-		return m_cb(threadData) == TRUE ? S_OK : E_ABORT;
+		return m_cb(o) == TRUE ? S_OK : E_ABORT;
 	}
-END_DEFINE_ENUM_ADAPTOR_FUNCTOR
-	
-BEGIN_DEFINE_ENUM_ADAPTOR_FUNCTOR(EnumHeapSegmentsCallbackAdaptor, IEnumHeapSegmentsCallback, BOOL(ClrGcHeapSegmentData))
-	STDMETHODIMP Callback(ClrGcHeapSegmentData segData)
-	{
-		return m_cb(segData) == TRUE ? S_OK : E_ABORT;
-	}
-END_DEFINE_ENUM_ADAPTOR_FUNCTOR
+
+	ULONG InternalAddRef() { return 1; } 
+	ULONG InternalRelease() { return 1; } 
+private: 
+	void* operator new(size_t s); 
+	std::function<BOOL(TFunc)> m_cb; 
+
+};
+
+typedef CallbackAdaptorBase<IEnumThreadsCallback, ClrThreadData> EnumThreadCallbackAdaptor;
+typedef CallbackAdaptorBase<IEnumHeapSegmentsCallback, ClrGcHeapSegmentData> EnumHeapSegmentsCallbackAdaptor;
