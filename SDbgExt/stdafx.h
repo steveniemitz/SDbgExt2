@@ -13,6 +13,8 @@
 #include <clrdata.h>
 #include <atlbase.h>
 #include <atlcom.h>
+#include <atlstr.h>
+#include <vector>
 #include <string>
 #include "..\SDbgCore\inc\SDbgCoreApi.h"
 #include "SDbgExt.h"

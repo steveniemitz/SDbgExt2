@@ -7,6 +7,8 @@
 #include "SR.h"
 #include "..\SDbgCore\inc\EnumAdaptors.h"
 #include "EnumAdaptors.h"
+#include <atlstr.h>
+#include <vector>
 
 #define DBG_API extern "C" __declspec(dllexport) HRESULT
 #define DBG_FUNC(name) DBG_API name(PDEBUG_CLIENT clientPtr, PCSTR args)
@@ -40,4 +42,12 @@ struct WinDbgInterfaces
 
 	CComPtr<IDebugClient> Client;
 	CComPtr<IDebugControl4> Control;
+};
+
+namespace SPT
+{
+	namespace Util
+	{
+		std::vector<CStringA> Tokenize(CStringA str);
+	};
 };

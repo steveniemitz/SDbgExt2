@@ -119,5 +119,11 @@
     <ClCompile Include="ScriptIt.cpp">
       <Filter>Source Files\WinDbg</Filter>
     </ClCompile>
+    <ClCompile Include="DumpDictionary.cpp">
+      <Filter>Source Files\WinDbg</Filter>
+    </ClCompile>
+    <ClCompile Include="_Util.cpp">
+      <Filter>Source Files\WinDbg</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
