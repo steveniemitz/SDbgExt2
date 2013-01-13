@@ -12,7 +12,7 @@ namespace SDbgMTests
         [TestInitialize]
         public void Init()
         {
-            _ext = new SptWrapper(@"Q:\Dev\SDbgExt2\Dumps\x86\sql.dmp");
+            _ext = new SptWrapper(@"Q:\spt\Dumps\x86\sql.dmp");
         }
 
         [TestMethod]

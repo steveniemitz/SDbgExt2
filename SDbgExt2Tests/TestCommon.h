@@ -11,7 +11,7 @@ extern class CSDbgTestModule _AtlModule;
 void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext, IXCLRDataProcess3 **proc);
 
 #ifndef _WIN64
-#define ADD_BASIC_TEST_INIT  ADD_TEST_INIT(L"..\\Dumps\\x86\\basic.dmp") 
+#define ADD_BASIC_TEST_INIT  ADD_TEST_INIT(L"Q:\\spt\\Dumps\\x86\\basic.dmp") 
 #else
 #define ADD_BASIC_TEST_INIT	 ADD_TEST_INIT(L"..\\..\\Dumps\\x64\\basic.dmp")
 #endif

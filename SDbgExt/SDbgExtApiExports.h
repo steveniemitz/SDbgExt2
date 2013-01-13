@@ -17,9 +17,9 @@ interface IDebugDataSpaces;
 
 extern "C" {
 HRESULT SDBGEXT_API InitFromLiveProcess(DWORD dwProcessId, ISDbgExt **ret);
-HRESULT SDBGEXT_API InitFromDump(const WCHAR *dumpFile, ISDbgExt **ext);
+HRESULT SDBGEXT_API InitFromDump(LPCWSTR dumpFile, LPCWSTR corDacPathOverride, ISDbgExt **ext);
 HRESULT SDBGEXT_API CreateSDbgExt(IClrProcess *p, ISDbgExt **ext);
-HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac);
+HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, LPCWSTR corDacPathOverride, IXCLRDataProcess3 **ppDac);
 HRESULT SDBGEXT_API CreateDbgEngMemoryAccess(IDebugDataSpaces *data, IDacMemoryAccess **ret);
 
 HRESULT SDBGEXT_API CreateFromWinDBG(IDebugClient *cli, ISDbgExt **ret);

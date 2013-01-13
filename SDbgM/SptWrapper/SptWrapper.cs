@@ -38,7 +38,7 @@ namespace SPT.Managed
 
         public SptWrapper(string dumpFile)
         {
-            SafeNativeMethods.InitFromDump(dumpFile, out _wrapped);
+            SafeNativeMethods.InitFromDump(dumpFile, null, out _wrapped);
             Init();
         }
 

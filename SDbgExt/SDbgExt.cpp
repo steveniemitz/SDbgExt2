@@ -38,7 +38,25 @@ HRESULT SDBGEXT_API CreateSDbgExt(IClrProcess *p, ISDbgExt **ext)
 
 typedef HRESULT (__stdcall *CLRDataCreateInstancePtr)(REFIID iid, ICLRDataTarget* target, void** iface);
 
-HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
+#pragma warning(push)
+#pragma warning(disable: 4189)
+HRESULT FindCorDac(CComPtr<IDebugSymbols3> dSym)
+{
+	ULONG corDacIndex = 0;
+	HRESULT hr = dSym->GetModuleByModuleNameWide(L"clr", 0, &corDacIndex, NULL);
+	VS_FIXEDFILEINFO fi = {};
+	dSym->GetModuleVersionInformationWide(corDacIndex, 0, L"\\", &fi, sizeof(fi), NULL);
+
+	ULONG major = fi.dwProductVersionMS >> 16;
+	ULONG minor = fi.dwProductVersionMS & 0xFFFF;
+	ULONG build = fi.dwProductVersionLS >> 16;
+	ULONG rev = fi.dwFileVersionLS & 0xFFFF;
+
+	return hr;
+}
+#pragma warning(pop)
+
+HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, LPCWSTR corDacPathOverride, IXCLRDataProcess3 **ppDac)
 {
 	CComPtr<IDebugSymbols3> dSym;
 	CComPtr<IDebugDataSpaces> dds;
@@ -54,8 +72,17 @@ HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, IXCLRDataProcess3 **ppDac)
 	WCHAR winDirBuffer[MAX_PATH] = { 0 };
 	WCHAR corDacBuffer[MAX_PATH] = { 0 };
 
-	GetWindowsDirectory(winDirBuffer, ARRAYSIZE(winDirBuffer));
-	swprintf_s(corDacBuffer, CORDAC_FORMAT, winDirBuffer, CORDAC_BITNESS, CORDAC_CLRVER);
+	FindCorDac(dSym);
+
+	if (corDacPathOverride == NULL)
+	{
+		GetWindowsDirectory(winDirBuffer, ARRAYSIZE(winDirBuffer));
+		swprintf_s(corDacBuffer, CORDAC_FORMAT, winDirBuffer, CORDAC_BITNESS, CORDAC_CLRVER);
+	}
+	else
+	{
+		wcscpy_s(corDacBuffer, corDacPathOverride);
+	}
 
 	HMODULE hCorDac = LoadLibrary(corDacBuffer);
 	if (hCorDac == NULL)
@@ -87,7 +114,7 @@ HRESULT SDBGEXT_API InitFromLiveProcess(DWORD dwProcessId, ISDbgExt **ret)
 	RETURN_IF_FAILED(ctrl->WaitForEvent(DEBUG_WAIT_DEFAULT, INFINITE));	
 
 	IXCLRDataProcess3Ptr pcdp;
-	RETURN_IF_FAILED(InitIXCLRData(cli, &pcdp));
+	RETURN_IF_FAILED(InitIXCLRData(cli, NULL, &pcdp));
 
 	CComPtr<IDebugDataSpaces> dds;
 	cli.QueryInterface<IDebugDataSpaces>(&dds);
@@ -100,7 +127,7 @@ HRESULT SDBGEXT_API InitFromLiveProcess(DWORD dwProcessId, ISDbgExt **ret)
 	return CreateSDbgExt(proc, ret);
 }
 
-HRESULT SDBGEXT_API InitFromDump(const WCHAR *dumpFile, ISDbgExt **ext)
+HRESULT SDBGEXT_API InitFromDump(LPCWSTR dumpFile, LPCWSTR corDacPathOverride, ISDbgExt **ext)
 {
 	CComPtr<IDebugClient> cli;
 	CComPtr<IDebugClient4> cli4;
@@ -116,7 +143,7 @@ HRESULT SDBGEXT_API InitFromDump(const WCHAR *dumpFile, ISDbgExt **ext)
 	RETURN_IF_FAILED(cli4->OpenDumpFileWide(dumpFile, NULL));
 	RETURN_IF_FAILED(ctrl->WaitForEvent(DEBUG_WAIT_DEFAULT, INFINITE));
 
-	RETURN_IF_FAILED(InitIXCLRData(cli, &dac));
+	RETURN_IF_FAILED(InitIXCLRData(cli, corDacPathOverride, &dac));
 
 	CComPtr<IDebugDataSpaces> dds;
 	cli.QueryInterface<IDebugDataSpaces>(&dds);

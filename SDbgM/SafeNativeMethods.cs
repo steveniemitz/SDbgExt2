@@ -10,15 +10,15 @@ namespace SPT.Managed
 {
     internal static class SafeNativeMethods
     {
-        public static void InitFromDump(string dumpFile, out ISDbgExt ext)
+        public static void InitFromDump(string dumpFile, string corDacPathOverride, out ISDbgExt ext)
         {
             if (Environment.Is64BitProcess)
             {
-                InitFromDump_x64(dumpFile, out ext);
+                InitFromDump_x64(dumpFile, corDacPathOverride, out ext);
             }
             else
             {
-                InitFromDump_x86(dumpFile, out ext);
+                InitFromDump_x86(dumpFile, corDacPathOverride, out ext);
             }
         }
 
@@ -34,16 +34,16 @@ namespace SPT.Managed
             }
         }
 
-        [DllImport("sdbgext.dll", EntryPoint="InitFromDump", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void InitFromDump_x86([MarshalAs(UnmanagedType.LPWStr)] string dumpFile, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
+        [DllImport("spt.dll", EntryPoint="InitFromDump", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void InitFromDump_x86([MarshalAs(UnmanagedType.LPWStr)] string dumpFile, string corDacPathOverride, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
 
-        [DllImport("sdbgext.dll", EntryPoint = "InitFromLiveProcess", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("spt.dll", EntryPoint = "InitFromLiveProcess", CallingConvention = CallingConvention.Cdecl)]
         private static extern void InitFromLiveProcess_x86(int pid, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
 
-        [DllImport("sdbgext_64.dll", EntryPoint = "InitFromDump", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void InitFromDump_x64([MarshalAs(UnmanagedType.LPWStr)] string dumpFile, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
+        [DllImport("spt_64.dll", EntryPoint = "InitFromDump", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void InitFromDump_x64([MarshalAs(UnmanagedType.LPWStr)] string dumpFile, string corDacPathOverride, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
 
-        [DllImport("sdbgext_64.dll", EntryPoint = "InitFromLiveProcess", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("spt_64.dll", EntryPoint = "InitFromLiveProcess", CallingConvention = CallingConvention.Cdecl)]
         private static extern void InitFromLiveProcess_x64(int pid, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
     }
 }
