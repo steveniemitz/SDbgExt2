@@ -13,12 +13,21 @@ namespace SDbgM
         private ISDbgExt _wrapped;
         private IClrProcess _proc;
         private IXCLRDataProcess3 _dac;
+        private IDbgHelper _helper;
         private bool _disposed;
 
         public MSDbgExt(ISDbgExt wrapped)
         {
             _wrapped = wrapped;
             Init();
+        }
+
+        private MSDbgExt(WinDbgBuffer buffer)
+        {
+            _wrapped = buffer.Ext;
+            _proc = buffer.Process;
+            _dac = buffer.XCLR;
+            _helper = buffer.Helper;
         }
 
         private void Init()
@@ -61,15 +70,33 @@ namespace SDbgM
             }
         }
 
+        private struct WinDbgBuffer
+        {
+            // Shut the C# compiler up about never assigning fields
+            private WinDbgBuffer(int _)
+            {
+                XCLR = null;
+                Process = null;
+                Ext = null;
+                Helper = null;
+            }
+
+            [MarshalAs(UnmanagedType.Interface)]
+            public IXCLRDataProcess3 XCLR;
+            [MarshalAs(UnmanagedType.Interface)]
+            public IClrProcess Process;
+            [MarshalAs(UnmanagedType.Interface)]
+            public ISDbgExt Ext;
+            [MarshalAs(UnmanagedType.Interface)]
+            public IDbgHelper Helper;
+        }
+
         internal static MSDbgExt CreateInProcess(ulong addrOfExtObject)
         {
             IntPtr targetObject = new IntPtr((long)addrOfExtObject);
-            object iunk = Marshal.GetObjectForIUnknown(targetObject);
-            var wrapped = (ISDbgExt)iunk;
-
-            Marshal.Release(targetObject);
+            var buffer = (WinDbgBuffer)Marshal.PtrToStructure(targetObject, typeof(WinDbgBuffer));
             
-            return new MSDbgExt(wrapped);
+            return new MSDbgExt(buffer);
         }
 
         public ISDbgExt Ext { get { return _wrapped; } }
@@ -93,6 +120,11 @@ namespace SDbgM
             cb(adapt);
 
             return adapt.Objects.ToArray();
+        }
+
+        public void Output(string text)
+        {
+            _helper.Output(1, text);
         }
     }
 }

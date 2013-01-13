@@ -8,6 +8,7 @@ import "ClrData.idl";
 
 [
 	object,
+	local,
 	uuid(C6A25901-7C54-4D71-BC3E-DCFE7D0C6CD8)
 ]
 interface IEnumThreadsCallback : IUnknown
@@ -17,6 +18,7 @@ interface IEnumThreadsCallback : IUnknown
 
 [
 	object,
+	local,
 	uuid(F78E3019-5F70-4F7A-A1DA-254F96FD849A)
 ]
 interface IEnumHeapSegmentsCallback : IUnknown

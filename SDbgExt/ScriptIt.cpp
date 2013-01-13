@@ -18,8 +18,39 @@ HRESULT InitClr()
 	RETURN_IF_FAILED(runtime->GetInterface(CLSID_CLRRuntimeHost, IID_ICLRRuntimeHost, (LPVOID*)&g_ClrHost));
 
 	g_ClrLoaded = TRUE;
+
 	return g_ClrHost->Start();
 }
+
+class DbgHelper :
+	public IDbgHelper,
+	public CComObjectRoot
+{
+	BEGIN_COM_MAP(DbgHelper)
+		COM_INTERFACE_ENTRY(IDbgHelper)
+	END_COM_MAP()
+
+public:
+	static HRESULT CreateInstance(CComPtr<IDebugControl4> ctrl, IDbgHelper **ret)
+	{
+		CComObject<DbgHelper> *co;
+		CComObject<DbgHelper>::CreateInstance(&co);
+		co->AddRef();
+		co->m_ctrl = ctrl;
+
+		*ret = co;
+		return S_OK;
+	}
+
+	STDMETHODIMP Output(ULONG mask, LPWSTR text)
+	{
+		return m_ctrl->OutputWide(mask, L"%s", text);
+	}
+
+private:
+	CComPtr<IDebugControl4> m_ctrl;
+
+};
 
 DBG_FUNC(scriptit)
 {
@@ -35,12 +66,41 @@ DBG_FUNC(scriptit)
 	}
 	
 	DWORD returnValue = 0;
-	
 	WCHAR extAddrBuffer[20];
-	((ISDbgExt*)dbg.Ext)->AddRef();
+
+	struct InterfaceBuffer
+	{
+		CComPtr<IXCLRDataProcess3> XCLR;
+		CComPtr<IClrProcess> Process;
+		CComPtr<ISDbgExt> Ext;
+		CComPtr<IDbgHelper> Helper;
+
+		/*
+		void AddRef()
+		{
+			((IXCLRDataProcess3*)XCLR)->AddRef();
+			((IClrProcess*)Process)->AddRef();
+			((ISDbgExt*)Ext)->AddRef();
+			((IDbgHelper*)Helper)->AddRef();
+		}
+
+		void Release()
+		{
+			((IXCLRDataProcess3*)XCLR)->Release();
+			((IClrProcess*)Process)->Release();
+			((ISDbgExt*)Ext)->Release();
+			((IDbgHelper*)Helper)->Release();
+		}*/
+	};
+
+	CComPtr<IDbgHelper> helper;
+	DbgHelper::CreateInstance(dbg.Control, &helper);
+
+	InterfaceBuffer ib = { dbg.XCLR, dbg.Process, dbg.Ext, helper };
 	// Copy the address of the extension object into a string.  
+	// Ref counting isn't a big deal here, we can guarantee that InitHost will AddRef the objects before it returns. 
 	// This will be then marshalled into .NET memory inside of InitHost
-	_ui64tow_s((ULONG64)(void*)(dbg.Ext), /* right in the const-cast */ extAddrBuffer, ARRAYSIZE(extAddrBuffer), 10);
+	_ui64tow_s((ULONG64)(void*)(&ib), extAddrBuffer, ARRAYSIZE(extAddrBuffer), 10);
 	
 	std::wstring hostParams(extAddrBuffer);
 	if (strlen(args) > 0)
@@ -67,7 +127,6 @@ DBG_FUNC(scriptit)
 		dwdprintf(dbg.Control, L"Unable to load SDbgM.dll, please make sure it's in the same directory as SDbgExt.dll");
 	}
 
-	((ISDbgExt*)dbg.Ext)->Release();
 	if (returnValue != 1)
 	{
 		return E_FAIL;

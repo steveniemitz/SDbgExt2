@@ -30,6 +30,7 @@ typedef struct ThreadPoolWorkItem
 
 [
 	object,
+	local,
 	uuid(10D69AE4-80AA-4D87-AF18-86DD0010AA8C)
 ]
 interface IEnumObjectsCallback : IUnknown
@@ -39,6 +40,7 @@ interface IEnumObjectsCallback : IUnknown
 
 [
 	object,
+	local,
 	uuid(5F630AA1-29F7-449F-BD91-3C152F687910)
 ]
 interface IEnumObjectsBatchCallback : IEnumObjectsCallback
@@ -48,6 +50,7 @@ interface IEnumObjectsBatchCallback : IEnumObjectsCallback
 
 [
 	object,
+	local,
 	uuid(FF9B39EB-CCAC-4AA2-B3C4-63BDDFA0AC9F)
 ]
 interface IEnumHashtableCallback : IUnknown
@@ -57,6 +60,7 @@ interface IEnumHashtableCallback : IUnknown
 
 [
 	object,
+	local,
 	uuid(0DDAEF1D-A0B9-43F3-8F89-9DEAC2FC5349)
 ]
 interface IEnumHashtableBatchCallback : IEnumHashtableCallback
@@ -66,6 +70,7 @@ interface IEnumHashtableBatchCallback : IEnumHashtableCallback
 
 [
 	object,
+	local,
 	uuid(0DAE7AEF-6671-48A0-AB96-D90931862882)
 ]
 interface IEnumThreadPoolCallback : IUnknown
@@ -75,6 +80,7 @@ interface IEnumThreadPoolCallback : IUnknown
 
 [
 	object,
+	local,
 	uuid(6A175A7A-F99B-4EBC-AC6D-7D13D98539A2)
 ]
 interface IEnumSqlConnectionPoolsCallback : IUnknown
@@ -88,6 +94,17 @@ interface IEnumSqlConnectionPoolsCallback : IUnknown
 
 [
 	object,
+	local,
+	uuid(FDB51C67-1CE3-45FC-B0ED-ABEB6ABD620F)
+]
+interface IDbgHelper : IUnknown
+{
+	HRESULT Output([in] ULONG Mask, [in, string] LPCWSTR str);
+}
+
+[
+	object,
+	local,
 	uuid(1F0565EB-95CE-48DE-BC4A-54AD9C034A2C)
 ]
 interface ISDbgExt : IUnknown

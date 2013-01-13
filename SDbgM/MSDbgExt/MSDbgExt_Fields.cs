@@ -43,7 +43,7 @@ namespace SDbgM
             return buffer;
         }
 
-        public string GetFieldValueString(ClrAddress obj, string fieldName)
+        public string GetFieldValueString(ulong obj, string fieldName)
         {
             uint bytesRead = 0;
             _proc.GetFieldValueString(obj, fieldName, 0, null, out bytesRead);
