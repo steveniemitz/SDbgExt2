@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SDbgM
+namespace SPT.Managed
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct ClrAddress : IEquatable<ClrAddress>, IComparable<ClrAddress>

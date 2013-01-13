@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SDbgCore;
 
-namespace SDbgM
+namespace SPT.Managed
 {
     public struct HeapSegment
     {

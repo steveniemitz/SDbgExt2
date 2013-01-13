@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SDbgCore;
 
-namespace SDbgM
+namespace SPT.Managed
 {
     internal static class SafeNativeMethods
     {

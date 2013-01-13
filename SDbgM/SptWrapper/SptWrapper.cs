@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using SDbgCore;
 
-namespace SDbgM
+namespace SPT.Managed
 {
-    public partial class MSDbgExt : IDisposable
+    public partial class SptWrapper : IDisposable
     {
         private ISDbgExt _wrapped;
         private IClrProcess _proc;
@@ -16,13 +16,13 @@ namespace SDbgM
         private IDbgHelper _helper;
         private bool _disposed;
 
-        public MSDbgExt(ISDbgExt wrapped)
+        public SptWrapper(ISDbgExt wrapped)
         {
             _wrapped = wrapped;
             Init();
         }
 
-        private MSDbgExt(WinDbgBuffer buffer)
+        private SptWrapper(WinDbgBuffer buffer)
         {
             _wrapped = buffer.Ext;
             _proc = buffer.Process;
@@ -36,19 +36,19 @@ namespace SDbgM
             _dac = _proc.GetCorDataAccess();
         }
 
-        public MSDbgExt(string dumpFile)
+        public SptWrapper(string dumpFile)
         {
             SafeNativeMethods.InitFromDump(dumpFile, out _wrapped);
             Init();
         }
 
-        public MSDbgExt(int pid)
+        public SptWrapper(int pid)
         {
             SafeNativeMethods.InitFromLiveProcess(pid, out _wrapped);
             Init();
         }
 
-        ~MSDbgExt()
+        ~SptWrapper()
         {
             Dispose(false);
         }
@@ -91,12 +91,12 @@ namespace SDbgM
             public IDbgHelper Helper;
         }
 
-        internal static MSDbgExt CreateInProcess(ulong addrOfExtObject)
+        internal static SptWrapper CreateInProcess(ulong addrOfExtObject)
         {
             IntPtr targetObject = new IntPtr((long)addrOfExtObject);
             var buffer = (WinDbgBuffer)Marshal.PtrToStructure(targetObject, typeof(WinDbgBuffer));
             
-            return new MSDbgExt(buffer);
+            return new SptWrapper(buffer);
         }
 
         public ISDbgExt Ext { get { return _wrapped; } }

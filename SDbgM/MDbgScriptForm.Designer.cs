@@ -1,4 +1,4 @@
-﻿namespace SDbgM
+﻿namespace SPT.Managed
 {
     partial class MDbgScriptForm
     {

@@ -9,7 +9,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDbgExt", "SDbgExt\SDbgExt.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDbgMTests", "SDbgMTests\SDbgMTests.csproj", "{C4B3F342-3734-4DE2-BC4F-2EF80CED3683}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SDbgM", "SDbgM\SDbgM.csproj", "{74DAB335-8C02-4D48-BEF0-BA0A133ACEF7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPTM", "SDbgM\SPTM.csproj", "{74DAB335-8C02-4D48-BEF0-BA0A133ACEF7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

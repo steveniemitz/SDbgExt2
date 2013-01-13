@@ -79,9 +79,9 @@
     <Compile Include="SqlTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SDbgM\SDbgM.csproj">
+    <ProjectReference Include="..\SDbgM\SPTM.csproj">
       <Project>{74dab335-8c02-4d48-bef0-ba0a133acef7}</Project>
-      <Name>SDbgM</Name>
+      <Name>SPTM</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

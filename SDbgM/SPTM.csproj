@@ -7,8 +7,8 @@
     <ProjectGuid>{74DAB335-8C02-4D48-BEF0-BA0A133ACEF7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SDbgM</RootNamespace>
-    <AssemblyName>SDbgM</AssemblyName>
+    <RootNamespace>SPT.Managed</RootNamespace>
+    <AssemblyName>SPTM</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -72,9 +72,9 @@
     <Compile Include="ClrObjects\SqlFactory.cs" />
     <Compile Include="ClrObjects\SqlPool.cs" />
     <Compile Include="ClrObjects\SqlPoolGroup.cs" />
-    <Compile Include="MSDbgExt\MSDbgExt.cs" />
-    <Compile Include="MSDbgExt\MSDbgExt_Fields.cs" />
-    <Compile Include="MSDbgExt\MSDbgExt_Objects.cs" />
+    <Compile Include="SptWrapper\SptWrapper.cs" />
+    <Compile Include="SptWrapper\SptWrapper_Fields.cs" />
+    <Compile Include="SptWrapper\SptWrapper_Objects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SafeNativeMethods.cs" />
     <Compile Include="ScriptHost.cs" />

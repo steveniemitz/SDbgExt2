@@ -1,20 +1,20 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using SDbgM;
 using System.Diagnostics;
+using SPT.Managed;
 
 namespace SDbgMTests
 {
     [TestClass]
     public class ClrProcessTests_Basic
     {
-        private MSDbgExt _proc;
+        private SptWrapper _proc;
 
         [TestInitialize]
         public void Init()
         {
-            _proc = new MSDbgExt(@"Q:\Dev\SDbgExt2\Dumps\x86\iis_request.dmp");
+            _proc = new SptWrapper(@"Q:\Dev\SDbgExt2\Dumps\x86\iis_request.dmp");
         }
 
         [TestMethod]

@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using SDbgCore;
 
-namespace SDbgM
+namespace SPT.Managed
 {
-    public partial class MSDbgExt
+    public partial class SptWrapper
     {
         public AppDomainAndValue[] GetStaticFieldValues(ClrAddress field)
         {

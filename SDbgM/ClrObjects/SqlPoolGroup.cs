@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SDbgM.ClrObjects
+namespace SPT.Managed.ClrObjects
 {
     public class SqlPoolGroup
     {

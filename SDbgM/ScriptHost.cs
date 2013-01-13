@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SDbgM
+namespace SPT.Managed
 {
     internal class ScriptHost
     {
@@ -31,7 +31,7 @@ namespace SDbgM
         {
             string[] args = arg.Split('|');
             var addrOfExtObject = ulong.Parse(args[0]);
-            var ext = MSDbgExt.CreateInProcess(addrOfExtObject);
+            var ext = SptWrapper.CreateInProcess(addrOfExtObject);
 
             initComplete.Set();
 

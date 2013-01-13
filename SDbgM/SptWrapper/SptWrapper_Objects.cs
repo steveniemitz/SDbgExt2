@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SDbgCore;
-using SDbgM.ClrObjects;
+using SPT.Managed.ClrObjects;
 
-namespace SDbgM
+namespace SPT.Managed
 {
-    public partial class MSDbgExt
+    public partial class SptWrapper
     {
         private class HeapSegmentEnumerator : BaseCallbackAdaptor<HeapSegment>, IEnumHeapSegmentsCallback
         {          

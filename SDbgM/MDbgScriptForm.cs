@@ -12,11 +12,11 @@ using System.Windows.Forms;
 using IronRuby;
 using Microsoft.Scripting.Hosting;
 
-namespace SDbgM
+namespace SPT.Managed
 {
     internal partial class MDbgScriptForm : Form
     {
-        private MSDbgExt _ext;
+        private SptWrapper _ext;
         private ScriptEngine _host;
         private ScriptScope _scope;
 
@@ -39,7 +39,7 @@ namespace SDbgM
             }
         }
 
-        public MDbgScriptForm(MSDbgExt ext)
+        public MDbgScriptForm(SptWrapper ext)
         {
             _host = Ruby.CreateEngine();
            

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SDbgCore;
 
-namespace SDbgM.ClrObjects
+namespace SPT.Managed.ClrObjects
 {
     public struct ObjectInfo
     {

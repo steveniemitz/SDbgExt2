@@ -1,18 +1,18 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SDbgM;
+using SPT.Managed;
 
 namespace SDbgMTests
 {
     [TestClass]
     public class SqlTests
     {
-        private MSDbgExt _ext;
+        private SptWrapper _ext;
 
         [TestInitialize]
         public void Init()
         {
-            _ext = new MSDbgExt(@"Q:\Dev\SDbgExt2\Dumps\x86\sql.dmp");
+            _ext = new SptWrapper(@"Q:\Dev\SDbgExt2\Dumps\x86\sql.dmp");
         }
 
         [TestMethod]
