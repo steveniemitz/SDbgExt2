@@ -1,5 +1,6 @@
 #pragma once
 #import "..\..\lib\SDbgCore.tlb" no_namespace, raw_interfaces_only
+#import "..\..\lib\XCLRData.tlb" rename_namespace("XCLRData"), raw_interfaces_only, exclude("GUID", "_EXCEPTION_RECORD64", "IUnknown")
 
 typedef ULONG64 CLRDATA_ADDRESS;
 
