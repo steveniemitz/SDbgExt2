@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace SPT.Managed
 {
-    internal class ScriptHost
+    internal class UMThunk
     {
         public static int InitHost(string arg)
         {

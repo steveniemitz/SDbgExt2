@@ -74,23 +74,6 @@ DBG_FUNC(scriptit)
 		CComPtr<IClrProcess> Process;
 		CComPtr<ISDbgExt> Ext;
 		CComPtr<IDbgHelper> Helper;
-
-		/*
-		void AddRef()
-		{
-			((IXCLRDataProcess3*)XCLR)->AddRef();
-			((IClrProcess*)Process)->AddRef();
-			((ISDbgExt*)Ext)->AddRef();
-			((IDbgHelper*)Helper)->AddRef();
-		}
-
-		void Release()
-		{
-			((IXCLRDataProcess3*)XCLR)->Release();
-			((IClrProcess*)Process)->Release();
-			((ISDbgExt*)Ext)->Release();
-			((IDbgHelper*)Helper)->Release();
-		}*/
 	};
 
 	CComPtr<IDbgHelper> helper;
@@ -119,12 +102,12 @@ DBG_FUNC(scriptit)
 	std::wstring dllPath(dllPathBuffer);
 	size_t lastSlash = dllPath.rfind('\\');
 	dllPath = dllPath.substr(0, lastSlash);
-	dllPath += L"\\SDbgM.dll";
+	dllPath += L"\\SPTM.dll";
 	
-	hr = g_ClrHost->ExecuteInDefaultAppDomain(dllPath.c_str(), L"SDbgM.ScriptHost", L"InitHost", hostParams.c_str(), &returnValue);
+	hr = g_ClrHost->ExecuteInDefaultAppDomain(dllPath.c_str(), L"SPT.Managed.UMThunk", L"InitHost", hostParams.c_str(), &returnValue);
 	if (FAILED(hr))
 	{
-		dwdprintf(dbg.Control, L"Unable to load SDbgM.dll, please make sure it's in the same directory as SDbgExt.dll");
+		dwdprintf(dbg.Control, L"Unable to load SPTM.dll, please make sure it's in the same directory as SPT.dll");
 	}
 
 	if (returnValue != 1)
