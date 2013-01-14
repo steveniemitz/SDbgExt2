@@ -14,7 +14,7 @@ namespace SDbgMTests
         [TestInitialize]
         public void Init()
         {
-            _proc = new SptWrapper(@"Q:\spt\Dumps\x86\iis_request.dmp");
+            _proc = Util.CreateFromDump(@"Q:\spt\Dumps\x86\iis_request.dmp");
         }
 
         [TestMethod]

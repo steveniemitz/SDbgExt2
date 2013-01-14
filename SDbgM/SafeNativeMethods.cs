@@ -10,16 +10,18 @@ namespace SPT.Managed
 {
     internal static class SafeNativeMethods
     {
-        public static void InitFromDump(string dumpFile, string corDacPathOverride, out ISDbgExt ext)
+        public static ISDbgBootstrapper GetBoostrapper()
         {
+            ISDbgBootstrapper bootstrapper = null;
             if (Environment.Is64BitProcess)
             {
-                InitFromDump_x64(dumpFile, corDacPathOverride, out ext);
+                CreateBootstrapper_x64(out bootstrapper);
             }
             else
             {
-                InitFromDump_x86(dumpFile, corDacPathOverride, out ext);
+                CreateBootstrapper_x86(out bootstrapper);
             }
+            return bootstrapper;
         }
 
         public static void InitFromLiveProcess(int pid, out ISDbgExt ext)
@@ -34,14 +36,14 @@ namespace SPT.Managed
             }
         }
 
-        [DllImport("spt.dll", EntryPoint="InitFromDump", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void InitFromDump_x86([MarshalAs(UnmanagedType.LPWStr)] string dumpFile, string corDacPathOverride, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
+        [DllImport("spt.dll", EntryPoint = "CreateBootstrapper", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void CreateBootstrapper_x86([MarshalAs(UnmanagedType.Interface)] out ISDbgBootstrapper bootstrapper);
 
         [DllImport("spt.dll", EntryPoint = "InitFromLiveProcess", CallingConvention = CallingConvention.Cdecl)]
         private static extern void InitFromLiveProcess_x86(int pid, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
 
-        [DllImport("spt_64.dll", EntryPoint = "InitFromDump", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void InitFromDump_x64([MarshalAs(UnmanagedType.LPWStr)] string dumpFile, string corDacPathOverride, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
+        [DllImport("spt_64.dll", EntryPoint = "CreateBootstrapper", CallingConvention = CallingConvention.Cdecl)]
+        private static extern void CreateBootstrapper_x64([MarshalAs(UnmanagedType.Interface)] out ISDbgBootstrapper bootstrapper);
 
         [DllImport("spt_64.dll", EntryPoint = "InitFromLiveProcess", CallingConvention = CallingConvention.Cdecl)]
         private static extern void InitFromLiveProcess_x64(int pid, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);

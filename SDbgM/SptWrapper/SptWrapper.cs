@@ -16,6 +16,11 @@ namespace SPT.Managed
         private IDbgHelper _helper;
         private bool _disposed;
 
+        public static ISDbgBootstrapper GetBootstrapper()
+        {
+            return SafeNativeMethods.GetBoostrapper();
+        }
+
         public SptWrapper(ISDbgExt wrapped)
         {
             _wrapped = wrapped;
@@ -34,18 +39,6 @@ namespace SPT.Managed
         {
             _proc = _wrapped.GetProcess();
             _dac = _proc.GetCorDataAccess();
-        }
-
-        public SptWrapper(string dumpFile)
-        {
-            SafeNativeMethods.InitFromDump(dumpFile, null, out _wrapped);
-            Init();
-        }
-
-        public SptWrapper(int pid)
-        {
-            SafeNativeMethods.InitFromLiveProcess(pid, out _wrapped);
-            Init();
         }
 
         ~SptWrapper()
