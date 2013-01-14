@@ -66,8 +66,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClrObjects\ClrAddress.cs" />
+    <Compile Include="ClrObjects\CorType.cs" />
     <Compile Include="ClrObjects\HeapSegment.cs" />
     <Compile Include="ClrObjects\ObjectInfo.cs" />
+    <Compile Include="ClrObjects\ObjectProxy.cs" />
     <Compile Include="ClrObjects\SqlConnection.cs" />
     <Compile Include="ClrObjects\SqlFactory.cs" />
     <Compile Include="ClrObjects\SqlPool.cs" />

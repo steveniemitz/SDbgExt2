@@ -46,7 +46,10 @@ interface IClrProcess : IUnknown
 	HRESULT GetFieldValuePtr([in] CLRDATA_ADDRESS obj, [in, string] LPWSTR fieldName, [out, retval] CLRDATA_ADDRESS *addr);
 	HRESULT GetFieldValueBuffer([in] CLRDATA_ADDRESS obj, [in, string] LPWSTR fieldName, [in] ULONG32 bufferSize, [out, size_is(bufferSize)] PVOID buffer, [out] ULONG *bytesRead);
 	HRESULT GetFieldValueString([in] CLRDATA_ADDRESS obj, [in, string] LPWSTR fieldName, [in] ULONG32 bufferSize, [out, size_is(bufferSize)] LPWSTR buffer, [out] ULONG *bytesRead);
+	
 	HRESULT ReadFieldValueBuffer([in] CLRDATA_ADDRESS obj, [in] ClrFieldDescData fd, [in] ULONG32 numBytes, [out, size_is(numBytes)] PVOID buffer, [out] ULONG *bytesRead); 
+	HRESULT ReadFieldValueString([in] CLRDATA_ADDRESS obj, [in] ClrFieldDescData fd, [in] ULONG32 bufferSize, [out, size_is(bufferSize)] LPWSTR buffer, [out] ULONG *bytesRead);
+	
 	HRESULT EnumThreads([in] IEnumThreadsCallback *cb);
 	HRESULT FindThreadByCorThreadId([in] DWORD corThreadId, [out, retval] CLRDATA_ADDRESS *unmanagedThreadObj);
 	HRESULT FindThreadByOsThreadId([in] DWORD osThreadId, [out, retval] CLRDATA_ADDRESS *unmanagedThreadObj);

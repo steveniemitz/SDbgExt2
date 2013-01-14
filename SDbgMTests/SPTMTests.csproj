@@ -54,6 +54,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="SDbgCore">
       <HintPath>..\lib\SDbgCore.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -77,6 +78,7 @@
     <Compile Include="ClrProcessTests_ServerIIS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlTests.cs" />
+    <Compile Include="ObjectProxyTests.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>

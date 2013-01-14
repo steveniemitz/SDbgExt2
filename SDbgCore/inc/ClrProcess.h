@@ -47,6 +47,7 @@ public:
 	STDMETHODIMP GetFieldValueBuffer(CLRDATA_ADDRESS obj, LPWSTR fieldName, ULONG32 bufferSize, PVOID buffer, PULONG bytesRead);
 	STDMETHODIMP GetFieldValueString(CLRDATA_ADDRESS obj, LPWSTR fieldName, ULONG32 bufferSize, WCHAR *buffer, PULONG bytesRead);
 	STDMETHODIMP ReadFieldValueBuffer(CLRDATA_ADDRESS obj, ClrFieldDescData fd, ULONG32 numBytes, PVOID buffer, PULONG bytesRead);
+	STDMETHODIMP ReadFieldValueString(CLRDATA_ADDRESS obj, ClrFieldDescData fd, ULONG32 bufferSize, LPWSTR buffer, PULONG bytesRead);
 	STDMETHODIMP EnumThreads(IEnumThreadsCallback *cb);
 	STDMETHODIMP FindThreadByCorThreadId(DWORD corThreadId, CLRDATA_ADDRESS *unmanagedThreadObj);
 	STDMETHODIMP FindThreadByOsThreadId(DWORD osThreadId, CLRDATA_ADDRESS *unmanagedThreadObj);
@@ -86,6 +87,8 @@ private:
 
 	CLRDATA_ADDRESS SearchAssembly(const CLRDATA_ADDRESS appDomain, const CLRDATA_ADDRESS assembly, LPCWSTR typeName);
 	CLRDATA_ADDRESS SearchModule(CLRDATA_ADDRESS module, LPCWSTR typeName);
+
+	HRESULT ReadFieldValueStringImpl(const CLRDATA_ADDRESS strField, ULONG32 iNumChars, WCHAR *buffer, PULONG iBytesRead);
 
 	BOOL FindFieldByNameExImpl(CLRDATA_ADDRESS methodTable, LPWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen);
 	ULONG GetSizeForType(CorElementType cet)

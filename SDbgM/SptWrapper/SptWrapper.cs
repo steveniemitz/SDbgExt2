@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using SDbgCore;
+using SPT.Managed.ClrObjects;
 
 namespace SPT.Managed
 {
@@ -118,6 +119,11 @@ namespace SPT.Managed
         public void Output(string text)
         {
             _helper.Output(1, text);
+        }
+
+        public ObjectProxy GetObject(ClrAddress obj)
+        {
+            return new ObjectProxy(obj, this);
         }
     }
 }

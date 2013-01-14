@@ -24,28 +24,10 @@ namespace SPT.Managed
             return bootstrapper;
         }
 
-        public static void InitFromLiveProcess(int pid, out ISDbgExt ext)
-        {
-            if (Environment.Is64BitProcess)
-            {
-                InitFromLiveProcess_x64(pid, out ext);
-            }
-            else
-            {
-                InitFromLiveProcess_x86(pid, out ext);
-            }
-        }
-
         [DllImport("spt.dll", EntryPoint = "CreateBootstrapper", CallingConvention = CallingConvention.Cdecl)]
         private static extern void CreateBootstrapper_x86([MarshalAs(UnmanagedType.Interface)] out ISDbgBootstrapper bootstrapper);
 
-        [DllImport("spt.dll", EntryPoint = "InitFromLiveProcess", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void InitFromLiveProcess_x86(int pid, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
-
         [DllImport("spt_64.dll", EntryPoint = "CreateBootstrapper", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void CreateBootstrapper_x64([MarshalAs(UnmanagedType.Interface)] out ISDbgBootstrapper bootstrapper);
-
-        [DllImport("spt_64.dll", EntryPoint = "InitFromLiveProcess", CallingConvention = CallingConvention.Cdecl)]
-        private static extern void InitFromLiveProcess_x64(int pid, [MarshalAs(UnmanagedType.Interface)] out ISDbgExt ext);
+        private static extern void CreateBootstrapper_x64([MarshalAs(UnmanagedType.Interface)] out ISDbgBootstrapper bootstrapper);        
     }
 }

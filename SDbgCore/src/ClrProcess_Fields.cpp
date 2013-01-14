@@ -135,12 +135,26 @@ HRESULT ClrProcess::GetFieldValuePtr(const CLRDATA_ADDRESS obj, LPWSTR fieldName
 	return	GetFieldValueBuffer(obj, fieldName, 0, (PVOID)addr, NULL);		
 }
 
+STDMETHODIMP ClrProcess::ReadFieldValueString(CLRDATA_ADDRESS obj, ClrFieldDescData fd, ULONG32 bufferSize, LPWSTR buffer, PULONG bytesRead)
+{
+	CLRDATA_ADDRESS addr = 0;
+	this->ReadFieldValueBuffer(obj, fd, 0, &addr, NULL);
+
+	return ReadFieldValueStringImpl(addr, bufferSize, buffer, bytesRead);
+}
+
 HRESULT ClrProcess::GetFieldValueString(const CLRDATA_ADDRESS obj, LPWSTR fieldName, ULONG32 iNumChars, WCHAR *buffer, PULONG iBytesRead)
 {
 	HRESULT hr = S_OK;
 	CLRDATA_ADDRESS stringAddr;
 	RETURN_IF_FAILED(GetFieldValuePtr(obj, fieldName, &stringAddr));
 
+	return ReadFieldValueStringImpl(stringAddr, iNumChars, buffer, iBytesRead);
+}
+
+HRESULT ClrProcess::ReadFieldValueStringImpl(const CLRDATA_ADDRESS stringAddr, ULONG32 iNumChars, WCHAR *buffer, PULONG iBytesRead)
+{
+	HRESULT hr = S_OK;
 	if (!buffer)
 	{
 		ULONG numChars = 0;
