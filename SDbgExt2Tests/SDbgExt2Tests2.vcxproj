@@ -198,6 +198,11 @@
   <ItemGroup>
     <ProjectReference Include="..\SDbgExt\SDbgExt.vcxproj">
       <Project>{5f22cf78-8740-4419-b863-4628dccff1d2}</Project>
+      <Private>true</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

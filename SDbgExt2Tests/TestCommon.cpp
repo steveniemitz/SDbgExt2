@@ -18,7 +18,13 @@ void SetupTests(WCHAR *dumpFile, IClrProcess **p, ISDbgExt **ext, IXCLRDataProce
 {
 	CoInitialize(NULL);
 
-	InitFromDump(dumpFile, L"Q:\\symcache\\mscordacwks_x86_x86_4.0.30319.17929.dll\\4FFA5753692000\\mscordacwks_x86_x86_4.0.30319.17929.dll", ext);
+	CComPtr<ISDbgBootstrapper> bootstrapper;
+	CreateBootstrapper(&bootstrapper);
+
+	bootstrapper->ConfigureImagePath(L"Q:\\symcache");
+	bootstrapper->ConfigureSymbolPath(L"SRV*q:\\symcache*http://msdl.microsoft.com/download/symbols");
+	bootstrapper->InitFromDump(dumpFile, ext);
+
 	(*ext)->GetProcess(p);
 	(*p)->GetCorDataAccess(proc);
 }

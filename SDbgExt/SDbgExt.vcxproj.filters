@@ -63,6 +63,9 @@
     <ClInclude Include="SDbgExtApiExports.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CSDbgBootstrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -124,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="_Util.cpp">
       <Filter>Source Files\WinDbg</Filter>
+    </ClCompile>
+    <ClCompile Include="CSDbgBootstrapper.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

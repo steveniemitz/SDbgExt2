@@ -172,6 +172,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CSDbgBootstrapper.h" />
     <ClInclude Include="DbgEngCLRDataTarget.h" />
     <ClInclude Include="DbgEngMemoryAccess.h" />
     <ClInclude Include="DictionaryEnumerator.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="WinDbgExt.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CSDbgBootstrapper.cpp" />
     <ClCompile Include="DbgEngCLRDataTarget.cpp" />
     <ClCompile Include="DictionaryEnumerator.cpp" />
     <ClCompile Include="dllmain.cpp">

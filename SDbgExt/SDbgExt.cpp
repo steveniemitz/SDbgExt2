@@ -4,6 +4,7 @@
 #include "DbgEngCLRDataTarget.h"
 #include "DbgEngMemoryAccess.h"
 #include <DbgHelp.h>
+#include <wdbgexts.h>
 
 #define CORDAC_FORMAT L"%s\\Microsoft.NET\\Framework%s\\v%s\\mscordacwks.dll"
 
@@ -98,60 +99,4 @@ HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, LPCWSTR corDacPathOverride,
 	RETURN_IF_FAILED(clrData(__uuidof(IXCLRDataProcess3), dataTarget, (PVOID*)ppDac));
 		
 	return S_OK;
-}
-
-HRESULT SDBGEXT_API InitFromLiveProcess(DWORD dwProcessId, ISDbgExt **ret)
-{
-	CComPtr<IDebugClient> cli;
-	CComPtr<IDebugControl> ctrl;
-		
-	HRESULT hr = S_OK;
-
-	RETURN_IF_FAILED(DebugCreate(__uuidof(IDebugClient), (PVOID*)&cli));
-	RETURN_IF_FAILED(cli->AttachProcess(NULL, dwProcessId, DEBUG_ATTACH_NONINVASIVE | DEBUG_ATTACH_NONINVASIVE_NO_SUSPEND));
-	RETURN_IF_FAILED(cli->QueryInterface(__uuidof(IDebugControl), (PVOID*)&ctrl));
-
-	RETURN_IF_FAILED(ctrl->WaitForEvent(DEBUG_WAIT_DEFAULT, INFINITE));	
-
-	IXCLRDataProcess3Ptr pcdp;
-	RETURN_IF_FAILED(InitIXCLRData(cli, NULL, &pcdp));
-
-	CComPtr<IDebugDataSpaces> dds;
-	cli.QueryInterface<IDebugDataSpaces>(&dds);
-
-	IDacMemoryAccessPtr dcma;
-	RETURN_IF_FAILED(CreateDbgEngMemoryAccess(dds, &dcma));
-
-	IClrProcessPtr proc;
-	RETURN_IF_FAILED(CreateClrProcess(pcdp, dcma, &proc));
-	return CreateSDbgExt(proc, ret);
-}
-
-HRESULT SDBGEXT_API InitFromDump(LPCWSTR dumpFile, LPCWSTR corDacPathOverride, ISDbgExt **ext)
-{
-	CComPtr<IDebugClient> cli;
-	CComPtr<IDebugClient4> cli4;
-	CComPtr<IDebugControl> ctrl;
-	CComPtr<IXCLRDataProcess3> dac; 
-	CComPtr<IDacMemoryAccess> dcma;
-	CComPtr<IClrProcess> p;
-		
-	HRESULT hr = S_OK;
-	RETURN_IF_FAILED(DebugCreate(__uuidof(IDebugClient), (PVOID*)&cli));
-	RETURN_IF_FAILED(cli.QueryInterface<IDebugClient4>(&cli4));
-	RETURN_IF_FAILED(cli.QueryInterface<IDebugControl>(&ctrl));
-	RETURN_IF_FAILED(cli4->OpenDumpFileWide(dumpFile, NULL));
-	RETURN_IF_FAILED(ctrl->WaitForEvent(DEBUG_WAIT_DEFAULT, INFINITE));
-
-	RETURN_IF_FAILED(InitIXCLRData(cli, corDacPathOverride, &dac));
-
-	CComPtr<IDebugDataSpaces> dds;
-	cli.QueryInterface<IDebugDataSpaces>(&dds);
-
-	CreateDbgEngMemoryAccess(dds, &dcma);
-
-	CreateClrProcess(dac, dcma, &p);
-	CreateSDbgExt(p, ext);
-
-	return hr;
 }

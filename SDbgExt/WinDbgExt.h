@@ -15,8 +15,6 @@
 #define dwdprintf(ctrl, x,...) ctrl->ControlledOutputWide(DEBUG_OUTCTL_AMBIENT_DML, DEBUG_OUTPUT_NORMAL, ##x, __VA_ARGS__)
 //#define dwdprintf_res(ctrl, resName, ...) dwdprintf(ctrl, SR::resName(), __VA_ARGS__);
 
-HRESULT CreateClrProcessFromWinDbg(WINDBG_EXTENSION_APIS *apis, CComPtr<IDebugClient> client, IClrProcess **proc);
-
 #define DBG_PREAMBLE	HRESULT hr = S_OK; \
 						CComPtr<IDebugClient> client(clientPtr); \
 						WinDbgInterfaces dbg(client); \
@@ -27,12 +25,14 @@ struct WinDbgInterfaces
 {
 	WinDbgInterfaces(CComPtr<IDebugClient> client)
 	{
-		CreateClrProcessFromWinDbg(&ExtensionApis, client, &Process);
-		CreateSDbgExt(Process, &Ext);
+		CComPtr<ISDbgBootstrapper> bootstrapper;
+		CreateBootsrapperFromWinDBG(client, &bootstrapper);
+		bootstrapper->Init(&Ext);
 
 		Client = client;
 		client.QueryInterface<IDebugControl4>(&Control);
 		
+		Ext->GetProcess(&Process);
 		Process->GetCorDataAccess(&XCLR);
 	}
 

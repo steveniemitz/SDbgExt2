@@ -121,3 +121,20 @@ interface ISDbgExt : IUnknown
 	HRESULT FindDctEntryByHash([in] CLRDATA_ADDRESS dctObj, [in] UINT32 hash, [out, retval] CLRDATA_ADDRESS *entryAddr);
 	HRESULT GetHttpContextFromThread([in] ClrThreadContext ctx, [out, retval] ClrHttpContext *httpContext);
 };
+
+[
+	object,
+	local,
+	uuid(A5E455BB-416B-4A16-BD40-E101414C3A9B)
+]
+interface ISDbgBootstrapper : IUnknown
+{
+	HRESULT ConfigureSymbolPath([in, string] LPCWSTR symbolPath);
+	HRESULT ConfigureImagePath([in, string] LPCWSTR imgPath);
+	HRESULT ConfigureSymbolOptions([in] ULONG options);
+
+	HRESULT InitFromLiveProcess([in] DWORD dwProcessId, [out, retval] ISDbgExt **ret);
+	HRESULT InitFromDump([in, string] LPCWSTR dumpFile, [out, retval] ISDbgExt **ext);
+
+	HRESULT Init([out, retval] ISDbgExt **ret);
+}
