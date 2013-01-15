@@ -9,8 +9,8 @@ namespace SPT.Managed.Util
 {
     internal static class UsefulGlobals
     {
-        private static Dictionary<ClrAddress, Type> s_usefulMethodTables = null;
-        private static Dictionary<Type, ClrAddress> s_usefulMethodTablesInverse = null;
+        private static Dictionary<ulong, Type> s_usefulMethodTables = null;
+        private static Dictionary<Type, ulong> s_usefulMethodTablesInverse = null;
         private static readonly HashSet<Type> s_primitives = new HashSet<Type>()
         {
             typeof(Boolean), typeof(Char),
@@ -53,8 +53,8 @@ namespace SPT.Managed.Util
 
         private static void InitMethodTables(SptWrapper wrapper)
         {
-            s_usefulMethodTables = new Dictionary<ClrAddress, Type>();
-            s_usefulMethodTablesInverse = new Dictionary<Type, ClrAddress>();
+            s_usefulMethodTables = new Dictionary<ulong, Type>();
+            s_usefulMethodTablesInverse = new Dictionary<Type, ulong>();
 
             foreach (var type in s_primitives)
             {
@@ -65,8 +65,8 @@ namespace SPT.Managed.Util
         }
 
 
-        public static Dictionary<ClrAddress, Type> MethodTableToType { get { return s_usefulMethodTables; } }
-        public static Dictionary<Type, ClrAddress> TypeToMethodTable { get { return s_usefulMethodTablesInverse; } }
+        public static Dictionary<ulong, Type> MethodTableToType { get { return s_usefulMethodTables; } }
+        public static Dictionary<Type, ulong> TypeToMethodTable { get { return s_usefulMethodTablesInverse; } }
         public static Dictionary<uint, Type> CorFieldTypeToType { get { return s_corFieldType; } }
         public static HashSet<Type> Primitives { get { return s_primitives; } }
     }

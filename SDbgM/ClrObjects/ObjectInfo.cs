@@ -16,7 +16,7 @@ namespace SPT.Managed.ClrObjects
             _data = data;
         }
 
-        public ClrAddress Address { get { return _data.ObjectAddress; } }
+        public ulong Address { get { return _data.ObjectAddress; } }
         public ClrObjectData Data { get { return _data; } }
     }
 }

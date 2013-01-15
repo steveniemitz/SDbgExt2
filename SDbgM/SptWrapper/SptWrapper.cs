@@ -121,9 +121,14 @@ namespace SPT.Managed
             _helper.Output(1, text);
         }
 
-        public ObjectProxy GetObject(ClrAddress obj)
+        public ObjectProxy GetObject(ulong obj)
         {
             return new ObjectProxy(obj, this);
         }
+
+        //public ObjectProxy GetObject(ulong obj)
+        //{
+        //    return new ObjectProxy(obj, this);
+        //}
     }
 }

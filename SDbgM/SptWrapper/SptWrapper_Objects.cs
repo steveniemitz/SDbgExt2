@@ -52,7 +52,7 @@ namespace SPT.Managed
             return RunObjectEnum(x => _wrapped.EnumStackObjects(corThreadId, x));
         }
 
-        public ObjectInfo[] GetStackObjects(ClrAddress threadObj)
+        public ObjectInfo[] GetStackObjects(ulong threadObj)
         {
             return RunObjectEnum(x => _wrapped.EnumStackObjectsByThreadObj(threadObj, x));
         }
@@ -65,7 +65,7 @@ namespace SPT.Managed
             }
         }
 
-        public DctEntry[] GetDictionaryEntries(ClrAddress dct)
+        public DctEntry[] GetDictionaryEntries(ulong dct)
         {
             return RunEnum<DctEntry, IEnumHashtableCallback, DctEnumerator>(x => _wrapped.EnumHashtable(dct, x));
         }
@@ -104,7 +104,7 @@ namespace SPT.Managed
 
         public SqlFactory[] GetSqlPools()
         {
-            return RunEnum<SqlFactory, IEnumSqlConnectionPoolsCallback, SqlPoolEnumerator>(x => _wrapped.EnumSqlConnectionPools(x, ClrAddress.Null));
+            return RunEnum<SqlFactory, IEnumSqlConnectionPoolsCallback, SqlPoolEnumerator>(x => _wrapped.EnumSqlConnectionPools(x, 0));
         }
 
     }

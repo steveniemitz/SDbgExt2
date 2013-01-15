@@ -8,7 +8,7 @@ namespace SPT.Managed.ClrObjects
 {
     public class SqlPoolGroup
     {
-        public SqlPoolGroup(string connStr, ClrAddress poolGroupAddr)
+        public SqlPoolGroup(string connStr, ulong poolGroupAddr)
         {
             Pools = new List<SqlPool>();
             ConnectionString = connStr;
@@ -17,6 +17,6 @@ namespace SPT.Managed.ClrObjects
 
         public List<SqlPool> Pools { get; private set; }
         public string ConnectionString { get; private set; }
-        public ClrAddress PoolGroupAddress { get; private set; }
+        public ulong PoolGroupAddress { get; private set; }
     }
 }

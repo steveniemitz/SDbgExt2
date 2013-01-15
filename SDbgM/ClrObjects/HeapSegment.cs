@@ -16,7 +16,7 @@ namespace SPT.Managed
             _data = data;
         }
 
-        public ClrAddress Segment { get { return _data.Segment; } }
+        public ulong Segment { get { return _data.Segment; } }
         public ClrGcHeapSegmentData Data { get { return _data; } }
     }
 }

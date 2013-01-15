@@ -9,7 +9,7 @@ namespace SPT.Managed.ClrObjects
 {
     public class SqlConnection
     {
-        public SqlConnection(ClrAddress conn, uint state, ClrDateTime createTime, uint pooledCount, int isOpen, uint asyncCommandCount, ClrAddress cmdAddr, string cmdText, uint timeout)
+        public SqlConnection(ulong conn, uint state, ClrDateTime createTime, uint pooledCount, int isOpen, uint asyncCommandCount, ulong cmdAddr, string cmdText, uint timeout)
         {
             ConnectionAddress = conn;
             State = (int)state;
@@ -24,14 +24,14 @@ namespace SPT.Managed.ClrObjects
             CommandTimeout = (int)timeout;
         }
 
-        public ClrAddress ConnectionAddress { get; private set; }
+        public ulong ConnectionAddress { get; private set; }
         public int State { get; private set; }
         public DateTime CreateTime { get; private set; }
         public int PooledCount { get; private set; }
         public bool IsOpen { get; private set; }
         public int AsyncCommandCount { get; private set; }
         
-        public ClrAddress CommandAddress { get; private set; }
+        public ulong CommandAddress { get; private set; }
         public string CommandText { get; private set; }
         public int CommandTimeout { get; private set; }
     }

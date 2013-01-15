@@ -8,7 +8,7 @@ namespace SPT.Managed.Util
 {
     public static class SuperBitConverter
     {
-        public static ClrAddress ToPointer(byte[] data)
+        public static ulong ToPointer(byte[] data)
         {
             if (data.Length != 4 && data.Length != 8)
             {

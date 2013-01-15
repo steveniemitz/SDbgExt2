@@ -13,13 +13,18 @@ namespace SPT.Managed
 {
     public sealed class ObjectProxy : DynamicObject
     {
-        private readonly ClrAddress _obj;
+        private readonly ulong _obj;
         private readonly SptWrapper _parent;
-        private readonly ClrAddress _mt;
+        private readonly ulong _mt;
         private readonly bool _isArray;
-        private readonly ClrArrayData _arrayData;        
+        private readonly ClrArrayData _arrayData;
 
-        internal ObjectProxy(ClrAddress obj, SptWrapper parent)
+        public override string ToString()
+        {
+            return "[OBJ @ " + _obj.ToString("X") + "]";
+        }
+
+        internal ObjectProxy(ulong obj, SptWrapper parent)
         {
             _obj = obj;
             _parent = parent;
@@ -40,9 +45,9 @@ namespace SPT.Managed
                 _parent.Proc.FindFieldByNameEx(_mt, binder.Name, out field, out fieldDesc);
                 result = _parent.ReadTypedField(_obj, fieldDesc);
 
-                if (result is ClrAddress)
+                if (result is ulong)
                 {
-                    result = new ObjectProxy((ClrAddress)result, _parent);
+                    result = new ObjectProxy((ulong)result, _parent);
                 }
 
                 return true;
@@ -106,7 +111,7 @@ namespace SPT.Managed
 
         public override bool TryConvert(ConvertBinder binder, out object result)
         {
-            if (binder.Type == typeof(ClrAddress))
+            if (binder.Type == typeof(ulong))
             {
                 result = _obj;
                 return true;

@@ -59,9 +59,9 @@ namespace SDbgMTests
         public void ObjectProxy_ConvertToAddress()
         {
             dynamic obj = _ext.GetObject(0x02511424);
-            ClrAddress addr = (ClrAddress)obj;
+            ulong addr = (ulong)obj;
 
-            Assert.AreEqual(new ClrAddress(0x02511424), addr);
+            Assert.AreEqual(0x02511424, addr);
         }
     }
 }

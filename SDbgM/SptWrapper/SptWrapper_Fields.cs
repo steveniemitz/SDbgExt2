@@ -12,7 +12,7 @@ namespace SPT.Managed
 {
     public partial class SptWrapper
     {
-        public string ReadString(ClrAddress strAddr)
+        public string ReadString(ulong strAddr)
         {           
             uint strLen = 0;
             _proc.ReadString(strAddr, 0, null, out strLen);
@@ -23,7 +23,7 @@ namespace SPT.Managed
             return sb.ToString();
         }
 
-        public AppDomainAndValue[] GetStaticFieldValues(ClrAddress field)
+        public AppDomainAndValue[] GetStaticFieldValues(ulong field)
         {
             var adData = _dac.GetAppDomainStoreData();
             AppDomainAndValue[] values = new AppDomainAndValue[adData.DomainCount];
@@ -34,7 +34,7 @@ namespace SPT.Managed
             return values;
         }
 
-        public byte[] GetFieldValueBuffer(ClrAddress obj, string fieldName, int bufferSize)
+        public byte[] GetFieldValueBuffer(ulong obj, string fieldName, int bufferSize)
         {
             byte[] buffer = new byte[bufferSize];
             uint bytesRead = 0;
@@ -78,7 +78,7 @@ namespace SPT.Managed
             return sb.ToString();
         }
 
-        private byte[] ReadFieldBuffer(ClrAddress obj, ClrFieldDescData fd, uint bufferSize)
+        private byte[] ReadFieldBuffer(ulong obj, ClrFieldDescData fd, uint bufferSize)
         {
             byte[] buffer = new byte[bufferSize];
             uint bytesRead = 0;
@@ -100,7 +100,7 @@ namespace SPT.Managed
             return buffer;
         }
 
-        public object ReadTypedField(ClrAddress obj, ClrFieldDescData fd)
+        public object ReadTypedField(ulong obj, ClrFieldDescData fd)
         {
             Type typeToRead = null;
             UsefulGlobals.CorFieldTypeToType.TryGetValue(fd.FieldType, out typeToRead);

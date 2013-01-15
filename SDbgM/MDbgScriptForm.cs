@@ -65,6 +65,7 @@ namespace SPT.Managed
             
             try
             {
+                AddText("> " + code);
                 var ret = source.Execute(_scope);
                 if (ret != null)
                 {
