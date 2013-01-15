@@ -140,7 +140,7 @@ STDMETHODIMP ClrProcess::ReadFieldValueString(CLRDATA_ADDRESS obj, ClrFieldDescD
 	CLRDATA_ADDRESS addr = 0;
 	this->ReadFieldValueBuffer(obj, fd, 0, &addr, NULL);
 
-	return ReadFieldValueStringImpl(addr, bufferSize, buffer, bytesRead);
+	return ReadString(addr, bufferSize, buffer, bytesRead);
 }
 
 HRESULT ClrProcess::GetFieldValueString(const CLRDATA_ADDRESS obj, LPWSTR fieldName, ULONG32 iNumChars, WCHAR *buffer, PULONG iBytesRead)
@@ -149,10 +149,10 @@ HRESULT ClrProcess::GetFieldValueString(const CLRDATA_ADDRESS obj, LPWSTR fieldN
 	CLRDATA_ADDRESS stringAddr;
 	RETURN_IF_FAILED(GetFieldValuePtr(obj, fieldName, &stringAddr));
 
-	return ReadFieldValueStringImpl(stringAddr, iNumChars, buffer, iBytesRead);
+	return ReadString(stringAddr, iNumChars, buffer, iBytesRead);
 }
 
-HRESULT ClrProcess::ReadFieldValueStringImpl(const CLRDATA_ADDRESS stringAddr, ULONG32 iNumChars, WCHAR *buffer, PULONG iBytesRead)
+HRESULT ClrProcess::ReadString(const CLRDATA_ADDRESS stringAddr, ULONG32 iNumChars, WCHAR *buffer, PULONG iBytesRead)
 {
 	HRESULT hr = S_OK;
 	if (!buffer)
@@ -160,7 +160,7 @@ HRESULT ClrProcess::ReadFieldValueStringImpl(const CLRDATA_ADDRESS stringAddr, U
 		ULONG numChars = 0;
 		RETURN_IF_FAILED(m_dcma->ReadVirtual(stringAddr + sizeof(void*), &numChars, sizeof(DWORD), NULL));
 		*iBytesRead = (numChars+1) * sizeof(WCHAR);
-		return S_FALSE;
+		return S_OK;
 	}
 	else
 	{

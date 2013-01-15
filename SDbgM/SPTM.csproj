@@ -74,6 +74,8 @@
     <Compile Include="ClrObjects\SqlFactory.cs" />
     <Compile Include="ClrObjects\SqlPool.cs" />
     <Compile Include="ClrObjects\SqlPoolGroup.cs" />
+    <Compile Include="Util\SuperBitConverter.cs" />
+    <Compile Include="Util\UsefulGlobals.cs" />
     <Compile Include="SptWrapper\SptWrapper.cs" />
     <Compile Include="SptWrapper\SptWrapper_Fields.cs" />
     <Compile Include="SptWrapper\SptWrapper_Objects.cs" />

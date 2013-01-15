@@ -22,13 +22,13 @@
   .ver 0:0:0:0
 }
 .module SDbgCore.dll
-// MVID: {C70AB644-C4FD-47D0-9670-B4E40C5C2001}
+// MVID: {89D80579-A8FE-4591-B18B-5AF0FAC65455}
 .imagebase 0x00400000
 .file alignment 0x00000200
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000001    //  ILONLY
-// Image base: 0x00DC0000
+// Image base: 0x01330000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -1097,6 +1097,14 @@
                                               [out] uint32& bytesRead) runtime managed internalcall
   {
   } // end of method IClrProcess::ReadFieldValueString
+
+  .method public hidebysig newslot abstract virtual 
+          instance void  ReadString([in] uint64 obj,
+                                    [in] uint32 BufferSize,
+                                    [out] class [mscorlib]System.Text.StringBuilder  marshal( lpwstr) buffer,
+                                    [out] uint32& bytesRead) runtime managed internalcall
+  {
+  } // end of method IClrProcess::ReadString
 
   .method public hidebysig newslot abstract virtual 
           instance void  EnumThreads([in] class SDbgCore.IEnumThreadsCallback  marshal( interface ) cb) runtime managed internalcall

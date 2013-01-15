@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SDbgCore;
 using SPT.Managed.ClrObjects;
+using SPT.Managed.Util;
 
 namespace SPT.Managed
 {
@@ -72,18 +73,46 @@ namespace SPT.Managed
                 try
                 {
                     dcma.ReadVirtual(memAddr, gch.AddrOfPinnedObject(), _arrayData.ElementSize, out bytesRead);
-                    result = data;
-                    return true;
                 }
                 finally
                 {
                     gch.Free();
                 }
-                
-                //dcma.ReadVirtual(memAddr, 
+
+                Type targetType = null;
+                UsefulGlobals.EnsureInit(_parent);
+
+                if (UsefulGlobals.MethodTableToType.TryGetValue(_arrayData.ElementMethodTable, out targetType))
+                {
+                    if (targetType == typeof(String))
+                    {
+                        var addr = SuperBitConverter.ToPointer(data);
+                        result = _parent.ReadString(addr);
+                    }
+                    else
+                    {
+                        result = SuperBitConverter.Convert(data, targetType);
+                    }
+                }
+                else
+                {
+                    result = data;
+                }
+                return true;                
             }
 
             return base.TryGetIndex(binder, indexes, out result);
+        }
+
+        public override bool TryConvert(ConvertBinder binder, out object result)
+        {
+            if (binder.Type == typeof(ClrAddress))
+            {
+                result = _obj;
+                return true;
+            }
+
+            return base.TryConvert(binder, out result);
         }
     }
 }

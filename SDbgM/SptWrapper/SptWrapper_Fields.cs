@@ -6,11 +6,23 @@ using System.Text;
 using System.Threading.Tasks;
 using SDbgCore;
 using SPT.Managed.ClrObjects;
+using SPT.Managed.Util;
 
 namespace SPT.Managed
 {
     public partial class SptWrapper
     {
+        public string ReadString(ClrAddress strAddr)
+        {           
+            uint strLen = 0;
+            _proc.ReadString(strAddr, 0, null, out strLen);
+
+            StringBuilder sb = new StringBuilder((int)strLen / sizeof(char));
+            _proc.ReadString(strAddr, strLen, sb, out strLen);
+
+            return sb.ToString();
+        }
+
         public AppDomainAndValue[] GetStaticFieldValues(ClrAddress field)
         {
             var adData = _dac.GetAppDomainStoreData();
@@ -66,8 +78,6 @@ namespace SPT.Managed
             return sb.ToString();
         }
 
-        private static ClrAddress? s_stringMt;
-
         private byte[] ReadFieldBuffer(ClrAddress obj, ClrFieldDescData fd, uint bufferSize)
         {
             byte[] buffer = new byte[bufferSize];
@@ -92,33 +102,31 @@ namespace SPT.Managed
 
         public object ReadTypedField(ClrAddress obj, ClrFieldDescData fd)
         {
-            var typeToRead = CorType.GetClrTypeFromCorType(fd.FieldType);
+            Type typeToRead = null;
+            UsefulGlobals.CorFieldTypeToType.TryGetValue(fd.FieldType, out typeToRead);
             if (typeToRead == typeof(object))
             {
-                if (s_stringMt == null)
-                {
-                    s_stringMt = Proc.FindTypeByName("mscorlib.dll", "System.String");
-                }
-                if (fd.FieldMethodTable == s_stringMt)
+                UsefulGlobals.EnsureInit(this);
+
+                if (fd.FieldMethodTable == UsefulGlobals.TypeToMethodTable[typeof(String)])
                 {
                     return ReadFieldValueString(obj, fd);
                 }
                 else
                 {
                     byte[] data = ReadFieldBuffer(obj, fd, (uint)IntPtr.Size);
-                    if (data.Length == 4)
-                        Array.Resize(ref data, 8);
-
-                    return (ClrAddress)BitConverter.ToUInt64(data, 0);
+                    return SuperBitConverter.ToPointer(data);
                 }
+            }
+            else if (typeToRead != null)
+            {
+                byte[] data = ReadFieldBuffer(obj, fd, (uint)Marshal.SizeOf(typeToRead));
+                return SuperBitConverter.Convert(data, typeToRead);
             }
             else
             {
                 byte[] data = ReadFieldBuffer(obj, fd, (uint)Marshal.SizeOf(typeToRead));
-                if (typeToRead == typeof(Int32))
-                    return BitConverter.ToInt32(data, 0);
-                else
-                    return data;
+                return data;
             }
         }
     }

@@ -50,6 +50,18 @@ namespace SDbgMTests
             dynamic obj = _ext.GetObject(0x02511424);
             dynamic obj2 = obj._Entries;
             dynamic obj3 = obj2[1];
+
+            Assert.IsInstanceOfType(obj3, typeof(string));
+            Assert.AreEqual(@"Q:\Dev\SOSRevHelper\SOSRevHelper\bin\Debug\SOSRevHelper.exe.config", obj3);
+        }
+
+        [TestMethod]
+        public void ObjectProxy_ConvertToAddress()
+        {
+            dynamic obj = _ext.GetObject(0x02511424);
+            ClrAddress addr = (ClrAddress)obj;
+
+            Assert.AreEqual(new ClrAddress(0x02511424), addr);
         }
     }
 }

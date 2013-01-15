@@ -6,29 +6,29 @@ using System.Threading.Tasks;
 
 namespace SPT.Managed.ClrObjects
 {
-    public static class CorType
+    internal static class CorType
     {
-        private const uint ELEMENT_TYPE_END = 0x00;
-        private const uint ELEMENT_TYPE_VOID = 0x01;
-        private const uint ELEMENT_TYPE_BOOLEAN = 0x02;
-        private const uint ELEMENT_TYPE_CHAR = 0x03;
-        private const uint ELEMENT_TYPE_I1 = 0x04;
-        private const uint ELEMENT_TYPE_U1 = 0x05;
-        private const uint ELEMENT_TYPE_I2 = 0x06;
-        private const uint ELEMENT_TYPE_U2 = 0x07;
-        private const uint ELEMENT_TYPE_I4 = 0x08;
-        private const uint ELEMENT_TYPE_U4 = 0x09;
-        private const uint ELEMENT_TYPE_I8 = 0x0a;
-        private const uint ELEMENT_TYPE_U8 = 0x0b;
-        private const uint ELEMENT_TYPE_R4 = 0x0c;
-        private const uint ELEMENT_TYPE_R8 = 0x0d;
-        private const uint ELEMENT_TYPE_STRING = 0x0e;
+        public const uint ELEMENT_TYPE_END = 0x00;
+        public const uint ELEMENT_TYPE_VOID = 0x01;
+        public const uint ELEMENT_TYPE_BOOLEAN = 0x02;
+        public const uint ELEMENT_TYPE_CHAR = 0x03;
+        public const uint ELEMENT_TYPE_I1 = 0x04;
+        public const uint ELEMENT_TYPE_U1 = 0x05;
+        public const uint ELEMENT_TYPE_I2 = 0x06;
+        public const uint ELEMENT_TYPE_U2 = 0x07;
+        public const uint ELEMENT_TYPE_I4 = 0x08;
+        public const uint ELEMENT_TYPE_U4 = 0x09;
+        public const uint ELEMENT_TYPE_I8 = 0x0a;
+        public const uint ELEMENT_TYPE_U8 = 0x0b;
+        public const uint ELEMENT_TYPE_R4 = 0x0c;
+        public const uint ELEMENT_TYPE_R8 = 0x0d;
+        public const uint ELEMENT_TYPE_STRING = 0x0e;
 
-        private const uint ELEMENT_TYPE_PTR = 0x0f;     // PTR <type>
-        private const uint ELEMENT_TYPE_BYREF = 0x10;     // BYREF <type>
+        public const uint ELEMENT_TYPE_PTR = 0x0f;     // PTR <type>
+        public const uint ELEMENT_TYPE_BYREF = 0x10;     // BYREF <type>
 
-        private const uint ELEMENT_TYPE_VALUETYPE = 0x11;     // VALUETYPE <class Token>
-        private const uint ELEMENT_TYPE_CLASS = 0x12;     // CLASS <class Token>
+        public const uint ELEMENT_TYPE_VALUETYPE = 0x11;     // VALUETYPE <class Token>
+        public const uint ELEMENT_TYPE_CLASS = 0x12;     // CLASS <class Token>
 
         public static Type GetClrTypeFromCorType(uint type)
         {
