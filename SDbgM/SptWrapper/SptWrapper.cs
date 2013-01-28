@@ -116,7 +116,7 @@ namespace SPT.Managed
             return adapt.Objects.ToArray();
         }
 
-        public void Output(string text)
+        public void DbgOutput(string text)
         {
             _helper.Output(1, text);
         }

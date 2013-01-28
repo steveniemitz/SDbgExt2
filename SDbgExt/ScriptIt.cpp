@@ -86,6 +86,7 @@ DBG_FUNC(scriptit)
 	_ui64tow_s((ULONG64)(void*)(&ib), extAddrBuffer, ARRAYSIZE(extAddrBuffer), 10);
 	
 	std::wstring hostParams(extAddrBuffer);
+	hostParams = L"0|" + hostParams;
 	if (strlen(args) > 0)
 	{
 		hostParams += L"|";

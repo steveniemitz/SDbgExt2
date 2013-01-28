@@ -80,7 +80,7 @@
     <Compile Include="SptWrapper\SptWrapper_Objects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SafeNativeMethods.cs" />
-    <Compile Include="ScriptHost.cs" />
+    <Compile Include="UMThunk.cs" />
     <Compile Include="MDbgScriptForm.cs">
       <SubType>Form</SubType>
     </Compile>

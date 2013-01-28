@@ -35,7 +35,7 @@ namespace SPT.Managed
 
             public void Output(object text)
             {
-                //_form._ext.
+                _form._ext.DbgOutput(text.ToString() + "\r\n");
             }
         }
 
