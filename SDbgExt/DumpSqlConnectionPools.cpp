@@ -99,3 +99,8 @@ DBG_FUNC(dumpsqlconnectionpools)
 
 	return hr;
 }
+
+DBG_FUNC(sqlblame)
+{
+	return dumpsqlconnectionpools(clientPtr, args);
+}
