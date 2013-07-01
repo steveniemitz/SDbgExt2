@@ -147,7 +147,7 @@ HRESULT DctEnumerator::ReadEntries(DWORD arrayEntries, CLRDATA_ADDRESS bucketArr
 			buffer.push_back(ent);
 			if (buffer.size() >= 50)
 			{
-				auto hr = batchCb->Callback(buffer.size(), buffer.data());
+				auto hr = batchCb->Callback((DWORD)buffer.size(), buffer.data());
 				buffer.clear();
 				return hr;					
 			}
@@ -172,7 +172,7 @@ HRESULT DctEnumerator::ReadEntries(DWORD arrayEntries, CLRDATA_ADDRESS bucketArr
 
 	if (buffer.size() > 0)
 	{
-		batchCb->Callback(buffer.size(), buffer.data());
+		batchCb->Callback((DWORD)buffer.size(), buffer.data());
 	}
 
 	return S_OK;

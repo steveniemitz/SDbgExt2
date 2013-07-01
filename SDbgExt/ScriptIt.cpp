@@ -109,7 +109,7 @@ DBG_FUNC(scriptit)
 		hostParams += L"|";
 		
 		std::vector<WCHAR> buffer(strlen(args) + 1);
-		MultiByteToWideChar(CP_ACP, 0, args, strlen(args), buffer.data(), buffer.size());
+		MultiByteToWideChar(CP_ACP, 0, args, (int)strlen(args), buffer.data(), (int)buffer.size());
 		
 		hostParams.append(buffer.data());
 	}

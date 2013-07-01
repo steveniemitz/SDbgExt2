@@ -41,7 +41,7 @@ std::function<HRESULT(TItem, BOOL)> GetEnumCallbackWrapper(TBaseInterface *cbPtr
 				buffer.push_back(od);
 				if (buffer.size() >= maxBufferSize)
 				{
-					auto hr = batchCb->Callback(buffer.size(), buffer.data());
+					auto hr = batchCb->Callback((DWORD)buffer.size(), buffer.data());
 					buffer.clear();
 					return hr;
 				}
@@ -49,7 +49,7 @@ std::function<HRESULT(TItem, BOOL)> GetEnumCallbackWrapper(TBaseInterface *cbPtr
 			}
 			else if (buffer.size() > 0)
 			{
-				return batchCb->Callback(buffer.size(), buffer.data());
+				return batchCb->Callback((DWORD)buffer.size(), buffer.data());
 			}
 			else
 			{
