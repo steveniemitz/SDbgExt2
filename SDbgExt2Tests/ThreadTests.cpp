@@ -14,8 +14,7 @@ namespace SDbgExt2Tests2
 		ADD_BASIC_TEST_INIT
 
 		TEST_METHOD(RandomTest)
-		{
-			CA2CT(L"\u02BC", CP_UTF8);
+		{	
 		}
 
 		TEST_METHOD(ClrThreadStoreData_Basic)

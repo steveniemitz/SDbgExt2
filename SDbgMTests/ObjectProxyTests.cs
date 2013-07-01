@@ -61,7 +61,7 @@ namespace SDbgMTests
             dynamic obj = _ext.GetObject(0x02511424);
             ulong addr = (ulong)obj;
 
-            Assert.AreEqual(0x02511424, addr);
+            Assert.AreEqual((ulong)0x02511424, addr);
         }
     }
 }

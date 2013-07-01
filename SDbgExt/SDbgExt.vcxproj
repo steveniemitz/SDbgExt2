@@ -169,9 +169,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="CSDbgBootstrapper.h" />
     <ClInclude Include="DbgEngCLRDataTarget.h" />
     <ClInclude Include="DbgEngMemoryAccess.h" />
