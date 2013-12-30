@@ -46,6 +46,7 @@ interface IClrObject : IUnknown
 	HRESULT GetFieldValueWSTR([in] LPWSTR field, [in] ULONG32 iNumChars, [in, out] LPWSTR buffer, [out] ULONG *bytesRead);
 	HRESULT GetFieldValueArray([in] LPWSTR field, [out, retval] IClrObjectArray **ret); 
 	HRESULT GetTypeName([in] ULONG32 cchBuffer, [in, out] LPWSTR buffer, [out] ULONG *nameLen);
+	HRESULT GetMethodTable([out] CLRDATA_ADDRESS *mt);
 };
 
 [

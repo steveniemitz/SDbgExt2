@@ -81,7 +81,6 @@ void EnumDctCallback(DctEntry ent, WinDbgInterfaces *dbg)
 DBG_FUNC(dumpdictionary)
 {
 	DBG_PREAMBLE;
-	UNREFERENCED_PARAMETER(args);
 	UNREFERENCED_PARAMETER(hr);
 
 	auto tokens = SPT::Util::Tokenize(args);

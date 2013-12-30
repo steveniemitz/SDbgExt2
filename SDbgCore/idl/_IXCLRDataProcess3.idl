@@ -84,6 +84,7 @@ typedef struct ClrFieldDescData
 	BOOL IsContextLocal;
 	BOOL IsStatic;
 	CLRDATA_ADDRESS NextField;
+	CLRDATA_ADDRESS ThisField;
 } ClrFieldDescData;
 
 typedef struct ClrMethodTableFieldData

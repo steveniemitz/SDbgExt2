@@ -128,5 +128,8 @@
     <ClCompile Include="CSDbgBootstrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DumpObj.cpp">
+      <Filter>Source Files\WinDbg</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

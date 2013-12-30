@@ -25,6 +25,7 @@ HRESULT ClrProcess::GetStaticFieldValue(CLRDATA_ADDRESS field, CLRDATA_ADDRESS a
 {
 	ClrFieldDescData fdData;
 	ClrModuleData modData = {};
+	ret->domain = appDomain;
 
 	HRESULT hr = S_OK;
 	RETURN_IF_FAILED(m_pDac->GetFieldDescData(field, &fdData));
@@ -54,7 +55,6 @@ HRESULT ClrProcess::GetStaticFieldValue(CLRDATA_ADDRESS field, CLRDATA_ADDRESS a
 	
 	if (fdData.FieldType == ELEMENT_TYPE_VALUETYPE)
 	{
-		ret->domain = appDomain;
 		ret->Value = dataPtr;
 		return S_OK;
 	}
@@ -62,15 +62,14 @@ HRESULT ClrProcess::GetStaticFieldValue(CLRDATA_ADDRESS field, CLRDATA_ADDRESS a
 	{
 		ULONG readSize = GetSizeForType((CorElementType)fdData.FieldType);
 		CLRDATA_ADDRESS tmpVal = 0;
-		if (SUCCEEDED(m_dcma->ReadVirtual(dataPtr, &tmpVal, readSize, &readSize)) && tmpVal)
+		if (SUCCEEDED(m_dcma->ReadVirtual(dataPtr, &tmpVal, readSize, &readSize)))
 		{
-			ret->domain = appDomain;
 			ret->Value = tmpVal;
 			return S_OK;
 		}
 		else
 		{
-			return S_FALSE;
+			return E_FAIL;
 		}
 	}
 }
@@ -92,8 +91,14 @@ HRESULT ClrProcess::GetStaticFieldValues(CLRDATA_ADDRESS field, ULONG32 cValues,
 		AppDomainAndValue adv;
 		if (SUCCEEDED(GetStaticFieldValue(field, domain, &adv)))
 		{
-			foundValues.push_back(adv);
+			adv.IsInitialized = TRUE;
 		}
+		else
+		{
+			adv.Value = NULL;
+			adv.IsInitialized = FALSE;
+		}
+		foundValues.push_back(adv);
 	}
 
 	if (foundValues.size() > 0)

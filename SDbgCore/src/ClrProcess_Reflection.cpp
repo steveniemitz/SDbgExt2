@@ -28,7 +28,7 @@ HRESULT ClrProcess::FindFieldByName(CLRDATA_ADDRESS methodTable, BSTR pwszField,
 HRESULT ClrProcess::FindFieldByNameEx(CLRDATA_ADDRESS methodTable, BSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData)
 {
 	UINT32 instanceFields = 0;
-	BOOL found = FindFieldByNameExImpl(methodTable, pwszField, field, fieldData, &instanceFields);
+	BOOL found = FindFieldByNameExImpl(methodTable, pwszField, nullptr, field, fieldData, &instanceFields);
 
 	if (!found)
 		return E_INVALIDARG;
@@ -36,15 +36,21 @@ HRESULT ClrProcess::FindFieldByNameEx(CLRDATA_ADDRESS methodTable, BSTR pwszFiel
 		return S_OK;
 }
 
-BOOL ClrProcess::FindFieldByNameExImpl(CLRDATA_ADDRESS methodTable, BSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen)
+BOOL ClrProcess::FindFieldByNameExImpl(CLRDATA_ADDRESS methodTable, BSTR pwszField, IEnumFieldsCallback *fieldCb, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen)
 {
+	CComPtr<IEnumFieldsCallback> fcb;
+	if (fieldCb)
+	{
+		fcb = CComPtr<IEnumFieldsCallback>(fieldCb);
+	}		
+
 	ClrMethodTableData mtData = {};
 	if (FAILED(m_pDac->GetMethodTableData(methodTable, &mtData)))
 		return FALSE;
 
 	if (mtData.ParentMT != NULL)
 	{
-		if (FindFieldByNameExImpl(mtData.ParentMT, pwszField, field, fieldData, numInstanceFieldsSeen))
+		if (FindFieldByNameExImpl(mtData.ParentMT, pwszField, fieldCb, field, fieldData, numInstanceFieldsSeen))
 			return TRUE;
 	}
 
@@ -70,8 +76,9 @@ BOOL ClrProcess::FindFieldByNameExImpl(CLRDATA_ADDRESS methodTable, BSTR pwszFie
 		|| numStaticFields < mtfData.NumStaticFields)
 	{
 		ClrFieldDescData fdData = {};
+		fdData.ThisField = currFieldAddr;
 		if (FAILED(m_pDac->GetFieldDescData(currFieldAddr, &fdData)))
-			return FALSE;
+			return FALSE;		
 
 		if (fdData.IsStatic || fdData.IsContextLocal || fdData.IsThreadLocal)
 			numStaticFields++;
@@ -85,8 +92,13 @@ BOOL ClrProcess::FindFieldByNameExImpl(CLRDATA_ADDRESS methodTable, BSTR pwszFie
 			currFieldAddr = fdData.NextField;
 			continue;
 		}
+
+		if (fieldCb)
+		{
+			fcb->Callback(fdData);
+		}
 		
-		if (wcscmp(fieldName, pwszField) == 0)
+		if (pwszField && wcscmp(fieldName, pwszField) == 0)
 		{
 			if (fieldData)
 				*fieldData = fdData;
@@ -229,4 +241,18 @@ STDMETHODIMP ClrProcess::FindMethodByName(CLRDATA_ADDRESS methodTable, LPWSTR me
 	}
 
 	return E_INVALIDARG;	
+}
+
+HRESULT ClrProcess::EnumFields(CLRDATA_ADDRESS obj, IEnumFieldsCallback *cb)
+{
+	HRESULT hr = S_OK;
+
+	ClrObjectData od = {};
+	RETURN_IF_FAILED(m_pDac->GetObjectData(obj, &od));
+	CLRDATA_ADDRESS field;
+	ClrFieldDescData fd;
+	UINT numFieldsSeen = 0;
+	FindFieldByNameExImpl(od.MethodTable, nullptr, cb, &field, &fd, &numFieldsSeen);
+
+	return S_OK;
 }

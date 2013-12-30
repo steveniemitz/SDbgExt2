@@ -38,6 +38,7 @@ library SDbgCore
 
 	interface IEnumHashtableBatchCallback;
 	interface IEnumObjectsBatchCallback;
+	interface IEnumFieldsCallback;
 	interface IDbgHelper;
 	interface ISDbgBootstrapper;
 	enum CorElementType;

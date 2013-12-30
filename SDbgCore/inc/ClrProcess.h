@@ -83,6 +83,32 @@ public:
 	STDMETHODIMP GetDateTimeFromTicks(ULONG64 ticks, ClrDateTime *dt);
 	STDMETHODIMP FormatDateTime(ULONG64 ticks, ULONG32 cchBuffer, WCHAR *buffer);
 	STDMETHODIMP GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, ClrDelegateInfo *ret);
+	STDMETHODIMP EnumFields(CLRDATA_ADDRESS obj, IEnumFieldsCallback *cb);
+
+	ULONG STDMETHODCALLTYPE GetSizeForType(ULONG cet)
+	{
+		switch (cet)
+		{
+		case ELEMENT_TYPE_BOOLEAN:
+		case ELEMENT_TYPE_I1:
+		case ELEMENT_TYPE_U1:
+			return 1;
+		case ELEMENT_TYPE_CHAR:
+		case ELEMENT_TYPE_I2:
+		case ELEMENT_TYPE_U2:
+			return 2;
+		case ELEMENT_TYPE_I4:
+		case ELEMENT_TYPE_U4:
+		case ELEMENT_TYPE_R4:
+			return 4;
+		case ELEMENT_TYPE_I8:
+		case ELEMENT_TYPE_U8:
+		case ELEMENT_TYPE_R8:
+			return 8;
+		default:
+			return sizeof(PVOID);
+		}
+	}
 
 private:
 
@@ -106,31 +132,8 @@ private:
 	CLRDATA_ADDRESS SearchAssembly(const CLRDATA_ADDRESS appDomain, const CLRDATA_ADDRESS assembly, LPCWSTR typeName);
 	CLRDATA_ADDRESS SearchModule(CLRDATA_ADDRESS module, LPCWSTR typeName);
 
-	BOOL FindFieldByNameExImpl(CLRDATA_ADDRESS methodTable, LPWSTR pwszField, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen);
-	ULONG GetSizeForType(CorElementType cet)
-	{
-		switch (cet)
-		{
-			case ELEMENT_TYPE_I1:   
-			case ELEMENT_TYPE_U1:   
-				return 1;
-			case ELEMENT_TYPE_CHAR:
-			case ELEMENT_TYPE_I2:   
-			case ELEMENT_TYPE_U2:   
-				return 2;
-			case ELEMENT_TYPE_I4:   
-			case ELEMENT_TYPE_U4:   	
-			case ELEMENT_TYPE_R4:   
-				return 4;
-			case ELEMENT_TYPE_I8:   
-			case ELEMENT_TYPE_U8:   
-			case ELEMENT_TYPE_R8:   
-				return 8;
-			default:
-				return sizeof(PVOID);
-		}
-	}
-	
+	BOOL FindFieldByNameExImpl(CLRDATA_ADDRESS methodTable, LPWSTR pwszField, IEnumFieldsCallback *fieldCb, CLRDATA_ADDRESS *field, ClrFieldDescData *fieldData, UINT32 *numInstanceFieldsSeen);
+		
 	HRESULT EnumHeapSegmentsWorkstation(IEnumHeapSegmentsCallback *cb);
 	HRESULT EnumHeapSegmentsServer(IEnumHeapSegmentsCallback *cb);
 	HRESULT EnumHeapSegmentsImpl(ClrGcHeapStaticData &gcsData, IEnumHeapSegmentsCallback *cb);

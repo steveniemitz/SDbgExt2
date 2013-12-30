@@ -49,3 +49,4 @@ private:
 
 typedef CallbackAdaptorBase<IEnumThreadsCallback, ClrThreadData> EnumThreadCallbackAdaptor;
 typedef CallbackAdaptorBase<IEnumHeapSegmentsCallback, ClrGcHeapSegmentData> EnumHeapSegmentsCallbackAdaptor;
+typedef CallbackAdaptorBase<IEnumFieldsCallback, ClrFieldDescData> EnumFieldsCallbackAdaptor;

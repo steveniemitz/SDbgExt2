@@ -94,20 +94,20 @@ public:
 	STDMETHODIMP GetTypeName(ULONG32 cchBuffer, LPWSTR buffer, PULONG nameLen)
 	{
 		HRESULT hr = S_OK;
-
-		if (!m_mtAddr)
-		{
-			ClrObjectData od = {};
-			CComPtr<IXCLRDataProcess3> dac;
-			m_proc->GetCorDataAccess(&dac);
-			RETURN_IF_FAILED(dac->GetObjectData(m_addr, &od));
-
-			m_mtAddr = od.MethodTable;
-		}
+		RETURN_IF_FAILED(EnsureMethodTable());
 
 		CComPtr<IXCLRDataProcess3> dac;
 		m_proc->GetCorDataAccess(&dac);
 		return dac->GetMethodTableName(m_mtAddr, cchBuffer, buffer, (ULONG32*)nameLen);
+	}
+
+	STDMETHODIMP GetMethodTable(CLRDATA_ADDRESS *mt)
+	{
+		HRESULT hr;
+		RETURN_IF_FAILED(EnsureMethodTable());
+
+		*mt = m_mtAddr;
+		return S_OK;
 	}
 
 protected:
@@ -121,6 +121,21 @@ private:
 	{
 		m_addr = obj;
 		m_proc = proc;
+	}
+
+	HRESULT EnsureMethodTable()
+	{
+		HRESULT hr = S_OK;
+		if (!m_mtAddr)
+		{
+			ClrObjectData od = {};
+			CComPtr<IXCLRDataProcess3> dac;
+			m_proc->GetCorDataAccess(&dac);
+			RETURN_IF_FAILED(dac->GetObjectData(m_addr, &od));
+
+			m_mtAddr = od.MethodTable;
+		}
+		return hr;
 	}
 
 	CComPtr<IClrProcess> m_proc;

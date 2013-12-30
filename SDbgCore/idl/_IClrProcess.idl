@@ -46,6 +46,16 @@ interface IEnumHeapSegmentsCallback : IUnknown
 [
 	object,
 	local,
+	uuid(134F3A92-D766-480A-87AA-29B1730BF9B4)
+]
+interface IEnumFieldsCallback : IUnknown
+{
+	HRESULT Callback([in] ClrFieldDescData field);
+}
+
+[
+	object,
+	local,
 	uuid(C20A701D-82B7-498D-B35F-8C2874542A1C)
 ]
 interface IClrProcess : IUnknown
@@ -79,4 +89,7 @@ interface IClrProcess : IUnknown
 	HRESULT GetDateTimeFromTicks([in] ULONG64 ticks, [out, retval] ClrDateTime *dt);
 	HRESULT FormatDateTime([in] ULONG64 ticks, [in] ULONG32 cchBuffer, [out, string, size_is(cchBuffer)] LPWSTR buffer);
 	HRESULT GetDelegateInfo([in] CLRDATA_ADDRESS delegateAddr, [out, retval] ClrDelegateInfo *ret);
+	HRESULT EnumFields([in] CLRDATA_ADDRESS obj, [in] IEnumFieldsCallback *cb);
+
+	ULONG GetSizeForType([in] ULONG corType);
 }
