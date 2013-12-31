@@ -114,7 +114,7 @@ void DumpField(CLRDATA_ADDRESS obj, ClrFieldDescData f, IMetaDataImport *mdi, Wi
 		dbg->XCLR->GetAppDomainStoreData(&ads);
 		std::vector<AppDomainAndValue> staticValues(ads.DomainCount);
 		UINT numDomains = 0;
-		dbg->Process->GetStaticFieldValues(f.ThisField, staticValues.size() , staticValues.data(), &numDomains);
+		dbg->Process->GetStaticFieldValues(f.ThisField, (UINT)staticValues.size() , staticValues.data(), &numDomains);
 		
 		dwdprintf(dbg->Control, L"%s", L" >>>  ");
 

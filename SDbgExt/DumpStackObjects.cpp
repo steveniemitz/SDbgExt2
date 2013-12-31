@@ -41,6 +41,20 @@ HRESULT GetArchRegisters(WinDbgInterfaces *dbg, std::vector<Register> *registers
 
 #ifdef _M_X64
 	*framePointer = ctx.Rsp;
+	registers->emplace_back(Register(L"rax", ctx.Rax));
+	registers->emplace_back(Register(L"rbx", ctx.Rbx));
+	registers->emplace_back(Register(L"rcx", ctx.Rcx));
+	registers->emplace_back(Register(L"rdx", ctx.Rdx));
+	registers->emplace_back(Register(L"rsi", ctx.Rsi));
+	registers->emplace_back(Register(L"rdi", ctx.Rdi));
+	registers->emplace_back(Register(L"r8" , ctx.R8));
+	registers->emplace_back(Register(L"r9" , ctx.R9));
+	registers->emplace_back(Register(L"r10", ctx.R10));
+	registers->emplace_back(Register(L"r11", ctx.R11));
+	registers->emplace_back(Register(L"r12", ctx.R12));
+	registers->emplace_back(Register(L"r13", ctx.R13));
+	registers->emplace_back(Register(L"r14", ctx.R14));
+	registers->emplace_back(Register(L"r15", ctx.R15));
 #else
 	*framePointer = ctx.Esp;
 	registers->emplace_back(Register(L"eax", ctx.Eax));
