@@ -18,6 +18,7 @@
 #pragma once
 #include "SDbgExtApi.h"
 #include "EnumAdaptors.h"
+#include <DbgEng.h>
 #include <vector>
 
 class CSDbgExt : 
@@ -56,6 +57,7 @@ public:
 
 	STDMETHODIMP EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb);
 	STDMETHODIMP EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb);
+	STDMETHODIMP EnumStackObjectsByStackParams(CLRDATA_ADDRESS stackBase, CLRDATA_ADDRESS stackLimit, IEnumObjectsCallback *cb);
 	STDMETHODIMP EnumHeapObjects(IEnumObjectsCallback *cb);
 	STDMETHODIMP EnumSqlConnectionPools(IEnumSqlConnectionPoolsCallback *cb, CLRDATA_ADDRESS targetFactory);
 	STDMETHODIMP EnumHashtable(CLRDATA_ADDRESS dctObj, IEnumHashtableCallback *cb);
@@ -64,6 +66,8 @@ public:
 
 	STDMETHODIMP FindDctEntryByHash(CLRDATA_ADDRESS dctObj, UINT32 hash, CLRDATA_ADDRESS *entryAddr);
 	STDMETHODIMP GetHttpContextFromThread(ClrThreadContext ctx, ClrHttpContext *httpContext);
+
+	static HRESULT GetThreadLimitsFromTEB(IDebugDataSpaces *data, CLRDATA_ADDRESS teb, CLRDATA_ADDRESS *stackBase, CLRDATA_ADDRESS *stackLimit);
 
 protected:
 	CSDbgExt()

@@ -131,6 +131,7 @@ interface ISDbgExt : IUnknown
 	HRESULT EvaluateExpression([in] CLRDATA_ADDRESS rootObj, [in, string] LPWSTR expression, [out, retval] CLRDATA_ADDRESS *result);
 	HRESULT EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb);
 	HRESULT EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb);
+	HRESULT EnumStackObjectsByStackParams([in] CLRDATA_ADDRESS stackBase, [in] CLRDATA_ADDRESS stackLimit, [in] IEnumObjectsCallback *cb);
 	HRESULT EnumHeapObjects(IEnumObjectsCallback *cb);
 	HRESULT EnumHashtable([in] CLRDATA_ADDRESS dctObj, [in] IEnumHashtableCallback *cb);
 	HRESULT EnumThreadPoolQueues([in] IEnumThreadPoolCallback *tpQueueCb);

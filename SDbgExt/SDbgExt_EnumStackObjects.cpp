@@ -33,6 +33,26 @@ HRESULT CSDbgExt::EnumStackObjects(DWORD corThreadId, IEnumObjectsCallback *cb)
 
 HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumObjectsCallback *cb)
 {
+	CComPtr<IXCLRDataProcess3> dac;
+	CComPtr<IDacMemoryAccess> dcma;
+
+	m_proc->GetCorDataAccess(&dac);
+	m_proc->GetMemoryAccess(&dcma);
+
+	ClrThreadData td = {};
+	HRESULT hr = S_OK;
+	RETURN_IF_FAILED(dac->GetThreadData(threadObj, &td));
+
+	CLRDATA_ADDRESS stackBase = 0, stackLimit = 0;
+	RETURN_IF_FAILED(dcma->GetThreadStack(td.osThreadId, &stackBase, &stackLimit));
+
+	return EnumStackObjectsByStackParams(stackBase, stackLimit, cb);
+
+}
+HRESULT CSDbgExt::EnumStackObjectsByStackParams(CLRDATA_ADDRESS stackBase, CLRDATA_ADDRESS stackLimit, IEnumObjectsCallback *cb)
+{
+	HRESULT hr = S_OK;
+
 	CComPtr<IEnumObjectsCallback> cbPtr(cb);
 	CComPtr<IXCLRDataProcess3> dac;
 	CComPtr<IDacMemoryAccess> dcma;
@@ -41,13 +61,6 @@ HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumOb
 	m_proc->GetMemoryAccess(&dcma);
 
 	auto cbWrapper = GetObjectEnumCallback(cbPtr);
-
-	ClrThreadData td = {};
-	HRESULT hr = S_OK;
-	RETURN_IF_FAILED(dac->GetThreadData(threadObj, &td));
-
-	CLRDATA_ADDRESS stackBase = 0, stackLimit = 0;
-	RETURN_IF_FAILED(dcma->GetThreadStack(td.osThreadId, &stackBase, &stackLimit));
 
 	struct AddrRange
 	{
@@ -81,6 +94,7 @@ HRESULT CSDbgExt::EnumStackObjectsByThreadObj(CLRDATA_ADDRESS threadObj, IEnumOb
 					ClrObjectData od = {};
 					dac->GetObjectData(stackPtr, &od);
 					od.ObjectAddress = stackPtr;
+					od.Reserved = addr;
 					if (FAILED(cbWrapper(od, FALSE)))
 					{
 						return S_FALSE;

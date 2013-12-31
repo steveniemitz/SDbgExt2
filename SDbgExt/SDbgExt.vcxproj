@@ -207,6 +207,7 @@
     <ClCompile Include="DumpDictionary.cpp" />
     <ClCompile Include="DumpObj.cpp" />
     <ClCompile Include="DumpSqlConnectionPools.cpp" />
+    <ClCompile Include="DumpStackObjects.cpp" />
     <ClCompile Include="DumpThreadPoolQueues.cpp" />
     <ClCompile Include="GetDelegateMethod.cpp" />
     <ClCompile Include="ScriptIt.cpp" />

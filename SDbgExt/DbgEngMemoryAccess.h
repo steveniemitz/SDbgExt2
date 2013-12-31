@@ -74,21 +74,9 @@ public:
 		RETURN_IF_FAILED(dso->GetThreadIdBySystemId(osThreadId, &newThreadId));
 		RETURN_IF_FAILED(dso->SetCurrentThreadId(newThreadId));
 		
-		struct TEB_IMP
-		{
-			void *junk;
-			void *stackBase;
-			void *stackLimit;
-		};
-
 		ULONG64 threadTebAddr = 0;
 		dso->GetCurrentThreadTeb(&threadTebAddr);
-		
-		TEB_IMP threadTeb = {};
-		RETURN_IF_FAILED(m_pData->ReadVirtual(threadTebAddr, (PVOID)&threadTeb, sizeof(TEB_IMP), NULL));
-
-		*stackBase = (CLRDATA_ADDRESS)(threadTeb.stackBase);
-		*stackLimit = (CLRDATA_ADDRESS)(threadTeb.stackLimit);
+		RETURN_IF_FAILED(CSDbgExt::GetThreadLimitsFromTEB(m_pData, threadTebAddr, stackBase, stackLimit));
 		
 		return S_OK;
 	}

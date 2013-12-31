@@ -117,3 +117,24 @@ HRESULT SDBGEXT_API InitIXCLRData(IDebugClient *cli, LPCWSTR corDacPathOverride,
 		
 	return S_OK;
 }
+
+HRESULT CSDbgExt::GetThreadLimitsFromTEB(IDebugDataSpaces *data, CLRDATA_ADDRESS teb, CLRDATA_ADDRESS *stackBase, CLRDATA_ADDRESS *stackLimit)
+{
+	CComPtr<IDebugDataSpaces> dds(data);
+
+	HRESULT hr = S_OK;
+	struct TEB_IMP
+	{
+		void *junk;
+		void *stackBase;
+		void *stackLimit;
+	};
+
+	TEB_IMP threadTeb = {};
+	RETURN_IF_FAILED(dds->ReadVirtual(teb, (PVOID)&threadTeb, sizeof(TEB_IMP), NULL));
+
+	*stackBase = (CLRDATA_ADDRESS)(threadTeb.stackBase);
+	*stackLimit = (CLRDATA_ADDRESS)(threadTeb.stackLimit);
+
+	return S_OK;
+}

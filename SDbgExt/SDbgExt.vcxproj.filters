@@ -131,5 +131,8 @@
     <ClCompile Include="DumpObj.cpp">
       <Filter>Source Files\WinDbg</Filter>
     </ClCompile>
+    <ClCompile Include="DumpStackObjects.cpp">
+      <Filter>Source Files\WinDbg</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
