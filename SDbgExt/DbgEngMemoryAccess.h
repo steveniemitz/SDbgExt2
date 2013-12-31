@@ -73,11 +73,26 @@ public:
 		ULONG newThreadId = 0;
 		RETURN_IF_FAILED(dso->GetThreadIdBySystemId(osThreadId, &newThreadId));
 		RETURN_IF_FAILED(dso->SetCurrentThreadId(newThreadId));
-		
+
 		ULONG64 threadTebAddr = 0;
 		dso->GetCurrentThreadTeb(&threadTebAddr);
 		RETURN_IF_FAILED(CSDbgExt::GetThreadLimitsFromTEB(m_pData, threadTebAddr, stackBase, stackLimit));
 		
+		/*
+
+		CComPtr<IDebugAdvanced> adv;
+		dso.QueryInterface<IDebugAdvanced>(&adv);
+
+		CONTEXT ctx = {};
+		adv->GetThreadContext(&ctx, sizeof(CONTEXT));
+
+#ifdef _M_X64
+		*stackLimit = ctx.Rsp;
+#else
+		*stackLimit = ctx.Esp;
+#endif
+		*/
+
 		return S_OK;
 	}
 private:

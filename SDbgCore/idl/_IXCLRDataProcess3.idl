@@ -324,6 +324,34 @@ typedef struct ClrUsefulGlobalsData
 	CLRDATA_ADDRESS FreeMethodTable;
 } ClrUsefulGlobalsData;
 
+typedef struct ClrMethodDescData
+{
+	CLRDATA_ADDRESS Addr1;
+	CLRDATA_ADDRESS Addr2;
+	CLRDATA_ADDRESS Addr3;
+	CLRDATA_ADDRESS Addr4;
+	CLRDATA_ADDRESS Addr5;
+	CLRDATA_ADDRESS Addr6;
+	CLRDATA_ADDRESS Addr7;
+	CLRDATA_ADDRESS Addr8;
+	CLRDATA_ADDRESS Addr9;
+	CLRDATA_ADDRESS Addr10;
+	CLRDATA_ADDRESS Addr11;
+	CLRDATA_ADDRESS Addr12;
+	CLRDATA_ADDRESS Addr13;
+	CLRDATA_ADDRESS Addr14;
+	CLRDATA_ADDRESS Addr15;
+	CLRDATA_ADDRESS Addr16;
+	CLRDATA_ADDRESS Addr17;
+	CLRDATA_ADDRESS Addr18;
+	CLRDATA_ADDRESS Addr19;
+} ClrMethodDescData;
+
+typedef struct ClrRejitData
+{
+	CLRDATA_ADDRESS Addr1;
+} ClrRejitData;
+
 [
 	object,
 	local,
@@ -348,7 +376,7 @@ interface IXCLRDataProcess3 : IUnknown
 	HRESULT GetThreadData([in] CLRDATA_ADDRESS threadAddr, [out, retval] ClrThreadData *ret) = 0;
 	HRESULT GetThreadFromThinlockID() = 0;
 	HRESULT GetStackLimits() = 0;
-	HRESULT GetMethodDescData() = 0;
+	HRESULT GetMethodDescData([in] CLRDATA_ADDRESS entryAddr, [in] CLRDATA_ADDRESS addr2, [out] ClrMethodDescData *ret, ULONG *out1, [out] ClrRejitData *rejit, ULONG *out2) = 0;
 	HRESULT GetMethodDescPtrFromIP([in] CLRDATA_ADDRESS ip, [out, retval] CLRDATA_ADDRESS *methodDescPtr) = 0;
 	HRESULT GetMethodDescName([in] CLRDATA_ADDRESS addr, [in] ULONG32 iNameChars, [out, size_is(iNameChars)] LPWSTR pwszName, [out] ULONG32 *strLen) = 0;
 	HRESULT GetMethodDescPtrFromFrame([in] CLRDATA_ADDRESS frameAddr, [out, retval] CLRDATA_ADDRESS *methodDescPtr) = 0;

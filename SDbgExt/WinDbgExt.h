@@ -68,3 +68,5 @@ namespace SPT
 		std::vector<CStringA> Tokenize(CStringA str);
 	};
 };
+
+HRESULT GetModuleName(IXCLRDataProcess3 *proc, CLRDATA_ADDRESS modAddr, WCHAR buffer[512]);
