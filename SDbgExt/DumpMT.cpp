@@ -20,6 +20,7 @@ along with SDbgExt2.  If not, see <http://www.gnu.org/licenses/>.
 #include "..\SDbgCore\inc\ClrObject.h"
 #include <cor.h>
 #include <algorithm>
+#include "WinDbgTableFormatter.h"
 
 DBG_FUNC(dumpmt)
 {
@@ -43,20 +44,28 @@ DBG_FUNC(dumpmt)
 		return E_INVALIDARG;
 	}
 
-	dwdprintf(dbg.Control, L"EEClass:         0x%p\r\n", mtd.EEClass);
-	dwdprintf(dbg.Control, L"Module:          0x%p\r\n", mtd.Module);
 
 	WCHAR buffer[512];
 	UINT len;
 	dbg.XCLR->GetMethodTableName(mtAddr, ARRAYSIZE(buffer), buffer, &len);
-	dwdprintf(dbg.Control, L"Name:            %s\r\n", buffer);
-	dwdprintf(dbg.Control, L"mdToken:         0x%08x\r\n", mtd.mdToken);
+	
+	WinDbgTableFormatter tf(dbg.Control);
+	tf.AddColumn(L"Name", 16);
+	tf.AddColumn(L"Value", -1);
+	
+	tf
+		.Column(L"EEClass:")->Column(L"0x%p", mtd.EEClass)->NewRow()
+		->Column(L"Module:")->Column(L"0x%p")->NewRow()
+		->Column(L"Name:")->Column(L"%s", buffer)->NewRow()
+		->Column(L"mdToken:")->Column(L"0x%08x", mtd.mdToken)->NewRow();
 
 	GetModuleName(dbg.XCLR, mtd.Module, buffer);
-	dwdprintf(dbg.Control, L"File:            %s\r\n", buffer);
-	dwdprintf(dbg.Control, L"BaseSize:        0x%x\r\n", mtd.BaseSize);
-	dwdprintf(dbg.Control, L"ComponentSize:   0x%x\r\n", mtd.ComponentSize);
-	dwdprintf(dbg.Control, L"Slots in VTable: %d\r\n", mtd.NumSlotsInVTable);
+
+	tf.Column(L"File:")->Column(L"%s", buffer)->NewRow()
+		->Column(L"BaseSize:")->Column(L"0x%x", mtd.BaseSize)->NewRow()
+		->Column(L"ComponentSize:")->Column(L"0x%x", mtd.ComponentSize)->NewRow()
+		->Column(L"Slots in VTable:")->Column(L"%d", mtd.NumSlotsInVTable)->NewRow();
+
 	dwdprintf(dbg.Control, L"Number of IFaces in IFaceMap: %d\r\n", mtd.NumInterfaces);
 
 	if (!dumpMDs)
@@ -64,7 +73,14 @@ DBG_FUNC(dumpmt)
 
 	dwdprintf(dbg.Control, L"--------------------------------------\r\n");
 	dwdprintf(dbg.Control, L"MethodDesc Table\r\n");
-	dwdprintf(dbg.Control, L"   Entry MethodDe    JIT Name\r\n");
+	
+	tf.Reset();
+	tf.AddPointerColumn(L"Entry");
+	tf.AddPointerColumn(L"MethodDesc");
+	tf.AddColumn(L"JIT", 6);
+	tf.AddColumn(L"Name", -1);
+
+	tf.Column(L"Entry")->Column(L"MethodDe")->Column(L"JIT")->Column(L"Name")->NewRow();
 
 	for (UINT i = 0; i < mtd.NumSlotsInVTable; i++)
 	{
@@ -89,10 +105,8 @@ DBG_FUNC(dumpmt)
 					break;
 			}
 
-			dwdprintf(dbg.Control, L"%p %p %6s %s\r\n", entryAddr, chd.methodDescPtr, jitType, buffer);
+			tf.Column(L"%p", entryAddr)->Column(L"%p", chd.methodDescPtr)->Column(L"%6s", jitType)->Column(L"%s", buffer)->NewRow();
 		}
 	}
-
-	UNREFERENCED_PARAMETER(dumpMDs);
 	return S_OK;
 }
