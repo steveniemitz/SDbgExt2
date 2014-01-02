@@ -20,6 +20,7 @@ along with SDbgExt2.  If not, see <http://www.gnu.org/licenses/>.
 #include "..\SDbgCore\inc\ClrObject.h"
 #include <cor.h>
 #include <algorithm>
+#include "WinDbgTableFormatter.h"
 
 struct Register
 {
@@ -68,9 +69,10 @@ HRESULT GetArchRegisters(WinDbgInterfaces *dbg, std::vector<Register> *registers
 	return S_OK;
 }
 
-void HandleObject(WinDbgInterfaces *dbg, ClrObjectData o)
+void HandleObject(WinDbgInterfaces *dbg, ClrObjectData o, WinDbgTableFormatter *tf)
 {
-	dwdprintf(dbg->Control, L" %p", o.ObjectAddress);
+	tf->Column(L"%p", o.ObjectAddress);
+
 	WCHAR buffer[512];
 	UINT len;
 	if (SUCCEEDED(dbg->XCLR->GetMethodTableName(o.MethodTable, ARRAYSIZE(buffer), buffer, &len)))
@@ -83,7 +85,7 @@ void HandleObject(WinDbgInterfaces *dbg, ClrObjectData o)
 		dwdprintf(dbg->Control, L"\t%s", buffer);
 	}
 
-	dwdprintf(dbg->Control, L"\r\n");
+	tf->NewRow();
 }
 
 DBG_FUNC(dumpstackobjects)
@@ -122,23 +124,31 @@ DBG_FUNC(dumpstackobjects)
 	std::vector<Register> registerValues;
 	GetArchRegisters(&dbg, &registerValues, &stackLimit);
 
-	dwdprintf(dbg.Control, L"ESP/REG  Object   Name\r\n");
+	WinDbgTableFormatter tf(dbg.Control);
 
-	std::for_each(registerValues.begin(), registerValues.end(), [&dbg](Register r) -> void {
+	tf.AddPointerColumn(L"ESP/REG");
+	tf.AddPointerColumn(L"Object");
+	tf.AddColumn(L"Name", -1);
+
+	tf.Column(L"ESP/REG")->Column(L"Object")->Column(L"Name")->NewRow();
+	
+	std::for_each(registerValues.begin(), registerValues.end(), [&dbg, &tf](Register r) -> void {
 		if (dbg.Process->IsValidObject(r.Value))
 		{
-			dwdprintf(dbg.Control, L"%-8s", r.Name);
+			tf.Column(L"%-8s", r.Name);
+
 			ClrObjectData od = {};
 			dbg.XCLR->GetObjectData(r.Value, &od);
 			od.ObjectAddress = r.Value;
-			HandleObject(&dbg, od);
+			HandleObject(&dbg, od, &tf);
 		}
 	});
 
 	CComObject<EnumObjectsCallbackAdaptor> adapt;
-	adapt.Init([&dbg](ClrObjectData o) -> bool {
-		dwdprintf(dbg.Control, L"%p", o.Reserved);
-		HandleObject(&dbg, o);
+	adapt.Init([&dbg, &tf](ClrObjectData o) -> bool {
+		tf.Column(L"%p", o.Reserved);
+		HandleObject(&dbg, o, &tf);
+
 		return TRUE;
 	});
 

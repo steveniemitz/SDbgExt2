@@ -20,6 +20,7 @@ along with SDbgExt2.  If not, see <http://www.gnu.org/licenses/>.
 #include "..\SDbgCore\inc\ClrObject.h"
 #include <cor.h>
 #include <algorithm>
+#include "WinDbgTableFormatter.h"
 
 HRESULT GetModuleName(IXCLRDataProcess3 *proc, CLRDATA_ADDRESS modAddr, WCHAR buffer[512])
 {
@@ -33,8 +34,10 @@ HRESULT GetModuleName(IXCLRDataProcess3 *proc, CLRDATA_ADDRESS modAddr, WCHAR bu
 	return hr;
 }
 
-void DumpField(CLRDATA_ADDRESS obj, ClrFieldDescData f, IMetaDataImport *mdi, WinDbgInterfaces *dbg)
+void DumpField(CLRDATA_ADDRESS obj, ClrFieldDescData f, IMetaDataImport *mdi, WinDbgInterfaces *dbg, WinDbgTableFormatter *tf)
 {
+	UNREFERENCED_PARAMETER(tf);
+
 	CComPtr<IMetaDataImport> md(mdi);
 
 	mdTypeDef mdClass;
@@ -43,43 +46,38 @@ void DumpField(CLRDATA_ADDRESS obj, ClrFieldDescData f, IMetaDataImport *mdi, Wi
 	WCHAR fieldName[512] = { 0 };
 	WCHAR fieldMtName[512] = { 0 };
 
-	mdi->GetMemberProps(f.field, &mdClass, fieldName, ARRAYSIZE(fieldName), &size, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+	HRESULT hr = mdi->GetFieldProps(f.field, &mdClass, fieldName, ARRAYSIZE(fieldName), &size, NULL, NULL, NULL, NULL, NULL, NULL);
+	UNREFERENCED_PARAMETER(hr);
 
 	if (f.FieldMethodTable)
 	{
 		dbg->XCLR->GetMethodTableName(f.FieldMethodTable, ARRAYSIZE(fieldMtName), fieldMtName, &nameLen);
 	}
+
+	tf->Column(L"%p", f.FieldMethodTable)
+		->Column(L"%x", f.field)
+		->Column(L"%x", f.Offset + ((f.IsContextLocal || f.IsStatic || f.IsThreadLocal) ? 0 : sizeof(void*)))
+		->Column(L"%s", fieldMtName);
 	
-	dwdprintf(dbg->Control, L"%p  %8x  %6x ", f.FieldMethodTable, f.field, f.Offset + ((f.IsContextLocal || f.IsStatic || f.IsThreadLocal) ? 0 : sizeof(void*)));
-	size_t fieldMtNameLen = wcslen(fieldMtName);
-	if (fieldMtNameLen > 17)
-	{
-		WCHAR shortFieldMtName[18];
-		wcscpy_s(shortFieldMtName, fieldMtName + fieldMtNameLen - 17);
-
-		dwdprintf(dbg->Control, L"...%s  ", shortFieldMtName);
-	}
-	else
-	{
-		dwdprintf(dbg->Control, L"%20s  ", fieldMtName);
-	}
-
 	ClrMethodTableData mtd;
 	dbg->XCLR->GetMethodTableData(f.FieldMethodTable, &mtd);
 
 	// valuetype?
-	dwdprintf(dbg->Control, L"%d ", (f.FieldType == ELEMENT_TYPE_VALUETYPE || f.FieldType <= ELEMENT_TYPE_R8) ? 1 : 0);
+	tf->Column(L"%2d", (f.FieldType == ELEMENT_TYPE_VALUETYPE || f.FieldType <= ELEMENT_TYPE_R8) ? 1 : 0);
 
+	WCHAR *attr;
 	if (f.IsStatic)
-		dwdprintf(dbg->Control, L"%8s", L"shared");
+		attr = L"shared";
 	else if (f.IsContextLocal || f.IsThreadLocal)
-		dwdprintf(dbg->Control, L"%8s", f.IsContextLocal ? L"cl" : L"ts");
+		attr = f.IsContextLocal ? L"cl" : L"ts";
 	else
-		dwdprintf(dbg->Control, L"%8s", L"instance");
+		attr = L"instance";
+
+	tf->Column(L"%s", attr);
 
 	if (f.IsStatic)
 	{
-		dwdprintf(dbg->Control, L" %8s ", L"static");
+		tf->Column(L"%s", L"static");
 	}
 	else
 	{
@@ -88,25 +86,40 @@ void DumpField(CLRDATA_ADDRESS obj, ClrFieldDescData f, IMetaDataImport *mdi, Wi
 		{
 			CLRDATA_ADDRESS buffer = 0;
 			size = dbg->Process->GetSizeForType(f.FieldType);
+			assert(sizeof(buffer) >= size);
 			dbg->Process->ReadFieldValueBuffer(obj, f, size, &buffer, &size);
-			if (sizeof(void*) == 8)
-				dwdprintf(dbg->Control, L" %16x ", buffer);
+			
+			if (f.FieldType == ELEMENT_TYPE_R4)
+			{
+				tf->Column(L"%f", (float)buffer);
+			}
+			else if (f.FieldType == ELEMENT_TYPE_R8)
+			{
+				tf->Column(L"%Lf", (double)buffer);
+			}
+			else if (size > 4)
+			{
+				tf->Column(L"%lld", buffer);
+			}
 			else
-				dwdprintf(dbg->Control, L" %8x ", buffer);
-
+			{
+				tf->Column(L"%d", (DWORD)buffer);
+			}
 		}
 		else if (f.FieldType == ELEMENT_TYPE_VALUETYPE && !f.IsStatic)
 		{
-			dwdprintf(dbg->Control, L" %p ", obj + f.Offset + sizeof(void*));
+			tf->Column(L"%p", obj + f.Offset + sizeof(void*));
 		}
 		else
 		{
-			CLRDATA_ADDRESS buffer;
+			DWORD_PTR buffer;
 			dbg->Process->ReadFieldValueBuffer(obj, f, sizeof(void*), &buffer, &size);
-			dwdprintf(dbg->Control, L" %p ", buffer);
+			tf->Column(L"%p", buffer);
 		}
 	}
-	dwdprintf(dbg->Control, L"%s\r\n", fieldName);
+	
+	tf->Column(L"%s", fieldName);
+	tf->NewRow();
 
 	if (f.IsStatic)
 	{
@@ -119,7 +132,6 @@ void DumpField(CLRDATA_ADDRESS obj, ClrFieldDescData f, IMetaDataImport *mdi, Wi
 		dwdprintf(dbg->Control, L"%s", L" >>>  ");
 
 		std::for_each(staticValues.begin(), staticValues.end(), [dbg](AppDomainAndValue adv) -> void {
-
 			if (adv.IsInitialized) {
 				dwdprintf(dbg->Control, L"[ %p:%p ] ", adv.domain, adv.Value);
 			}
@@ -127,7 +139,6 @@ void DumpField(CLRDATA_ADDRESS obj, ClrFieldDescData f, IMetaDataImport *mdi, Wi
 				dwdprintf(dbg->Control, L"[ %p:NotInit  ] ", adv.domain);
 			}
 		});
-
 
 		dbg->Control->ControlledOutputWide(DEBUG_OUTPUT_NORMAL, DEBUG_OUTPUT_NORMAL, L"%s\r\n", L"<<< ");
 	}
@@ -144,12 +155,23 @@ void DumpFields(WinDbgInterfaces *dbg, CLRDATA_ADDRESS obj, CLRDATA_ADDRESS modu
 			return;
 	}
 
-	adapt.Init([mdi, dbg, obj](ClrFieldDescData f) -> BOOL {
-		DumpField(obj, f, mdi, dbg);
+	WinDbgTableFormatter tf(dbg->Control);
+
+	tf.AddPointerColumn(L"MT");
+	tf.AddColumn(L"Field", 8);
+	tf.AddColumn(L"Offset", 6);
+	tf.AddColumn(L"Type", 20);
+	tf.AddColumn(L"VT", 2);
+	tf.AddColumn(L"Attr", 8);
+	tf.AddPointerColumn(L"Value");
+	tf.AddColumn(L"Name", -1);
+
+	tf.PrintHeader();
+
+	adapt.Init([mdi, dbg, obj, &tf](ClrFieldDescData f) -> BOOL {
+		DumpField(obj, f, mdi, dbg, &tf);
 		return TRUE;
 	});
-
-	dwdprintf(dbg->Control, L"      MT    Field   Offset                 Type VT     Attr    Value Name\r\n");
 
 	dbg->Process->EnumFields(obj, &adapt);
 }

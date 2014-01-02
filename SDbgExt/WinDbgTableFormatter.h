@@ -19,6 +19,8 @@ along with SDbgExt2.  If not, see <http://www.gnu.org/licenses/>.
 #include "stdafx.h"
 #include "WinDbgExt.h"
 #include <stdarg.h>
+#include <string>
+#include <sstream>
 
 class WinDbgTableFormatter
 {
@@ -43,15 +45,13 @@ public:
 	void AddColumn(WCHAR *title, int width, WCHAR seperator = L' ')
 	{
 		UNREFERENCED_PARAMETER(title);
-		m_columns.push_back(_Column(width, seperator));
+		m_columns.push_back(_Column(width, seperator, title));
 	}
 
 	WinDbgTableFormatter *Column(WCHAR *format, ...)
 	{
-		UNREFERENCED_PARAMETER(format);
 		int width = m_columns[m_currColumn++].Width;
-		UNREFERENCED_PARAMETER(width);
-
+		
 		va_list argPtr;
 		va_start(argPtr, format);
 
@@ -68,14 +68,17 @@ public:
 			vswprintf_s(bufferPtr, buffer.size(), format, argPtr);
 
 			std::wstring newStr(buffer.data());
-			if (chars > width)
+			if (wcscmp(L"%lld", format) == 0 && width < chars)
+			{
+			}
+			else if (chars > width )
 			{	
 				newStr = newStr.substr(newStr.length() - (width - 3));
 				newStr = L"..." + newStr;
 			}
 			else if (chars < width)
 			{
-				newStr = newStr.append(std::wstring(width - chars, L' '));
+				newStr = std::wstring(width - chars, L' ').append(newStr);
 			}
 
 			dwdprintf(m_ctrl, L"%s ", newStr.c_str());
@@ -92,16 +95,29 @@ public:
 		return this;
 	}
 
+	void PrintHeader()
+	{
+		std::for_each(m_columns.begin(), m_columns.end(), [this](_Column c) -> void {
+			std::wstringstream ss;
+			ss << L"%" << c.Width << L"s ";
+
+			dwdprintf(m_ctrl, ss.str().c_str(), c.Title);
+		});
+
+		dwdprintf(m_ctrl, L"\r\n");
+	}
+
 private:
 	
 	struct _Column
 	{
-		_Column(int w, WCHAR s)
-		: Width(w), Seperator(s)
+		_Column(int w, WCHAR s, WCHAR *title)
+		: Width(w), Seperator(s), Title(title)
 		{ }
 
 		int Width;
 		WCHAR Seperator;
+		WCHAR *Title;
 	};
 
 	int m_currColumn = 0;
