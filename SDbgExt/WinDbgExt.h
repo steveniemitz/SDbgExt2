@@ -69,4 +69,6 @@ namespace SPT
 	};
 };
 
+// Common debug methods
 HRESULT GetModuleName(IXCLRDataProcess3 *proc, CLRDATA_ADDRESS modAddr, WCHAR buffer[512]);
+void DumpMD_Impl(CLRDATA_ADDRESS mdAddr);

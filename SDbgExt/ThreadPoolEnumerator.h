@@ -223,9 +223,9 @@ private:
 			proc->ReadFieldValueBuffer(workItem, fo.WorkItem_Callback, 0, &cb, NULL);
 
 			ClrDelegateInfo di = {};
-			if (cb && SUCCEEDED(m_proc->GetDelegateInfo(cb, &di)) && di.methodDesc)
+			if (cb && SUCCEEDED(m_proc->GetDelegateInfo(cb, &di)) && di.MethodDesc)
 			{			
-				if (di.methodDesc == m_adAsyncWorkItemFinishAsyncWork || di.methodDesc == m_asyncWorkItemFinishAsyncWork)
+				if (di.MethodDesc == m_adAsyncWorkItemFinishAsyncWork || di.MethodDesc == m_asyncWorkItemFinishAsyncWork)
 				{
 					//// Get the target of the method via _reqMsg
 					CLRDATA_ADDRESS l2Delegate = 0;
@@ -240,7 +240,7 @@ private:
 				else	
 				{
 					cbType = CB_TYPE_QUEUEUSERWORKITEM;
-					delegatePtr = di.methodDesc;
+					delegatePtr = di.MethodDesc;
 				}
 
 				CLRDATA_ADDRESS state = 0;
@@ -251,7 +251,7 @@ private:
 				}
 			}
 
-			ThreadPoolWorkItem ent = { workItem, statePtr, delegatePtr, di.methodDesc, cbType, queueAddr };	
+			ThreadPoolWorkItem ent = { workItem, statePtr, delegatePtr, di.MethodDesc, cbType, queueAddr };
 			m_tpQueueCb->Callback(ent);		
 		}
 	}

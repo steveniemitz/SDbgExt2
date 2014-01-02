@@ -140,5 +140,11 @@
     <ClCompile Include="DumpMT.cpp">
       <Filter>Source Files\WinDbg</Filter>
     </ClCompile>
+    <ClCompile Include="IP2MD.cpp">
+      <Filter>Source Files\WinDbg</Filter>
+    </ClCompile>
+    <ClCompile Include="DumpMD.cpp">
+      <Filter>Source Files\WinDbg</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

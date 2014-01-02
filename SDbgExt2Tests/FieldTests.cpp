@@ -61,7 +61,7 @@ namespace SDbgExt2Tests2
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x02ec7eec, "break"), di.Target);
-			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x73396aac, "break"), di.methodDesc);
+			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x73396aac, "break"), di.MethodDesc);
 		}
 
 		TEST_METHOD(GetDelegateInfo_CodeHeader)
@@ -72,7 +72,7 @@ namespace SDbgExt2Tests2
 
 			ASSERT_SOK(hr);
 			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x02ec2394, "break"), di.Target);
-			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x01153858, "break"), di.methodDesc);
+			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x01153858, "break"), di.MethodDesc);
 		}
 #endif
 	};

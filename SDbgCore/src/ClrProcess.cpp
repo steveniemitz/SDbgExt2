@@ -169,12 +169,12 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, ClrDelegateInf
 		ClrCodeHeaderData chData = {};
 		RETURN_IF_FAILED(m_pDac->GetCodeHeaderData(methodPtrAux, &chData));
 
-		ret->methodDesc = chData.methodDescPtr;
+		ret->MethodDesc = chData.methodDescPtr;
 		return S_OK;
 	}
 	else if (methodPtr != NULL)
 	{
-		hr = m_pDac->GetMethodDescPtrFromIP(methodPtr, &(ret->methodDesc));
+		hr = m_pDac->GetMethodDescPtrFromIP(methodPtr, &(ret->MethodDesc));
 		if (SUCCEEDED(hr))
 		{
 			return S_OK;
@@ -183,7 +183,7 @@ HRESULT ClrProcess::GetDelegateInfo(CLRDATA_ADDRESS delegateAddr, ClrDelegateInf
 		{
 			ClrCodeHeaderData chData = {};
 			RETURN_IF_FAILED(m_pDac->GetCodeHeaderData(methodPtr, &chData));
-			ret->methodDesc = chData.methodDescPtr;
+			ret->MethodDesc = chData.methodDescPtr;
 			return S_OK;
 		}
 		

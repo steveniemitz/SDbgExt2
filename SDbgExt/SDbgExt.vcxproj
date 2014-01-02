@@ -206,12 +206,14 @@
     </ClCompile>
     <ClCompile Include="DumpAspNetRequests.cpp" />
     <ClCompile Include="DumpDictionary.cpp" />
+    <ClCompile Include="DumpMD.cpp" />
     <ClCompile Include="DumpMT.cpp" />
     <ClCompile Include="DumpObj.cpp" />
     <ClCompile Include="DumpSqlConnectionPools.cpp" />
     <ClCompile Include="DumpStackObjects.cpp" />
     <ClCompile Include="DumpThreadPoolQueues.cpp" />
     <ClCompile Include="GetDelegateMethod.cpp" />
+    <ClCompile Include="IP2MD.cpp" />
     <ClCompile Include="ScriptIt.cpp" />
     <ClCompile Include="SDbgExt.cpp" />
     <ClCompile Include="SDbgExt_DumpThreadPool.cpp" />

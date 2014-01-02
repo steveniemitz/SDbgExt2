@@ -28,13 +28,13 @@ DBG_FUNC(getdelegatemethod)
 	RETURN_IF_FAILED(dbg.Process->GetDelegateInfo(addr, &di));
 
 	WCHAR buffer[512];
-	if (FAILED(dbg.XCLR->GetMethodDescName(di.methodDesc, ARRAYSIZE(buffer), buffer, NULL)))
+	if (FAILED(dbg.XCLR->GetMethodDescName(di.MethodDesc, ARRAYSIZE(buffer), buffer, NULL)))
 	{
 		dwdprintf(dbg.Control, SR::GetDelegateMethod_Error());
 	}
 	else
 	{
-		dwdprintf(dbg.Control, SR::GetDelegateMethod_Format(), di.methodDesc, buffer);
+		dwdprintf(dbg.Control, SR::GetDelegateMethod_Format(), di.MethodDesc, buffer);
 	}
 
 	return S_OK;
