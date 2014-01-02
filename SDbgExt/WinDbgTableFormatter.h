@@ -42,15 +42,16 @@ public:
 		AddColumn(title, sizeof(void*) * 2);
 	}
 
-	void AddColumn(WCHAR *title, int width, WCHAR seperator = L' ')
+	void AddColumn(WCHAR *title, int width, BOOL alignLeft = FALSE, WCHAR seperator = L' ')
 	{
 		UNREFERENCED_PARAMETER(title);
-		m_columns.push_back(_Column(width, seperator, title));
+		m_columns.push_back(_Column(width, seperator, title, alignLeft));
 	}
 
 	WinDbgTableFormatter *Column(WCHAR *format, ...)
 	{
-		int width = m_columns[m_currColumn++].Width;
+		_Column col = m_columns[m_currColumn++];
+		int width = col.Width;
 		
 		va_list argPtr;
 		va_start(argPtr, format);
@@ -78,7 +79,14 @@ public:
 			}
 			else if (chars < width)
 			{
-				newStr = std::wstring(width - chars, L' ').append(newStr);
+				if (col.AlignLeft)
+				{
+					newStr = newStr + std::wstring(width - chars, L' ');
+				}
+				else
+				{
+					newStr = std::wstring(width - chars, L' ') + newStr;
+				}
 			}
 
 			dwdprintf(m_ctrl, L"%s ", newStr.c_str());
@@ -111,13 +119,14 @@ private:
 	
 	struct _Column
 	{
-		_Column(int w, WCHAR s, WCHAR *title)
-		: Width(w), Seperator(s), Title(title)
+		_Column(int w, WCHAR s, WCHAR *title, BOOL alignLeft)
+		: Width(w), Seperator(s), Title(title), AlignLeft(alignLeft)
 		{ }
 
 		int Width;
 		WCHAR Seperator;
 		WCHAR *Title;
+		BOOL AlignLeft;
 	};
 
 	int m_currColumn = 0;

@@ -50,7 +50,7 @@ DBG_FUNC(dumpmt)
 	dbg.XCLR->GetMethodTableName(mtAddr, ARRAYSIZE(buffer), buffer, &len);
 	
 	WinDbgTableFormatter tf(dbg.Control);
-	tf.AddColumn(L"Name", 16);
+	tf.AddColumn(L"Name", 16, TRUE);
 	tf.AddColumn(L"Value", -1);
 	
 	tf

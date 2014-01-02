@@ -326,7 +326,7 @@ typedef struct ClrUsefulGlobalsData
 
 typedef struct ClrMethodDescData
 {
-	CLRDATA_ADDRESS Addr1;
+	BOOL IsJitted;
 	CLRDATA_ADDRESS Addr2;
 	CLRDATA_ADDRESS CodeAddr;
 	CLRDATA_ADDRESS Addr4;
@@ -351,6 +351,19 @@ typedef struct ClrRejitData
 {
 	CLRDATA_ADDRESS Addr1;
 } ClrRejitData;
+
+typedef struct ClrMethodTableTransparencyData
+{
+	CLRDATA_ADDRESS Addr1;
+} ClrMethodTableTransparencyData;
+
+typedef struct ClrMethodDescTransparencyData
+{
+	DWORD IsCalculated;
+	DWORD IsOpaque;
+	DWORD IsSafe;
+} ClrMethodDescTransparencyData;
+
 
 [
 	object,
@@ -381,7 +394,7 @@ interface IXCLRDataProcess3 : IUnknown
 	HRESULT GetMethodDescName([in] CLRDATA_ADDRESS addr, [in] ULONG32 iNameChars, [out, size_is(iNameChars)] LPWSTR pwszName, [out] ULONG32 *strLen) = 0;
 	HRESULT GetMethodDescPtrFromFrame([in] CLRDATA_ADDRESS frameAddr, [out, retval] CLRDATA_ADDRESS *methodDescPtr) = 0;
 	HRESULT GetMethodDescFromToken([in] CLRDATA_ADDRESS moduleAddr, [in] mdToken token, [out, retval] CLRDATA_ADDRESS *mdAddr) = 0;
-	HRESULT GetMethodDescTransparencyData() = 0;
+	HRESULT GetMethodDescTransparencyData([in] CLRDATA_ADDRESS methodDesc, [out, retval] ClrMethodDescTransparencyData *ret) = 0;
 	HRESULT GetCodeHeaderData([in] CLRDATA_ADDRESS ipAddr, [out, retval] ClrCodeHeaderData *ret) = 0;
 	HRESULT GetJitManagerList() = 0;
 	HRESULT GetJitHelperFunctionName() = 0;
@@ -396,7 +409,7 @@ interface IXCLRDataProcess3 : IUnknown
 	HRESULT GetMethodTableData([in] CLRDATA_ADDRESS mtAddr, [out, retval] ClrMethodTableData *ret) = 0;
 	HRESULT GetMethodTableSlot([in] CLRDATA_ADDRESS mtAddr, [in] UINT32 slotNumber, [out, retval] CLRDATA_ADDRESS *ret) = 0;
 	HRESULT GetMethodTableFieldData([in] CLRDATA_ADDRESS mtAddr, [out, retval] ClrMethodTableFieldData *ret) = 0;
-	HRESULT GetMethodTableTransparencyData() = 0;
+	HRESULT GetMethodTableTransparencyData([in] CLRDATA_ADDRESS mtAddr, [out, retval] ClrMethodTableTransparencyData *ret) = 0;
 	HRESULT GetMethodTableForEEClass() = 0;
 	HRESULT GetFieldDescData([in] CLRDATA_ADDRESS fieldAddr, [out, retval] ClrFieldDescData *ret) = 0;
 	HRESULT GetFrameName([in] CLRDATA_ADDRESS addr, [in] ULONG32 iNameChars, [out, size_is(iNameChars)] LPWSTR pwszName, [out] ULONG32 *strLen) = 0;
