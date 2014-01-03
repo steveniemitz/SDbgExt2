@@ -187,5 +187,20 @@ namespace SDbgExt2Tests2
 			ASSERT_SOK(hr);
 			Assert::AreEqual((CLRDATA_ADDRESS)BITNESS_CONDITIONAL(0x02ec4148, 0x0000000002ec5cd8), managedObj);
 		}
+
+		TEST_METHOD(StackRefEnum)
+		{
+			CComPtr<IXCLRDataProcess3> dac;
+			CComPtr<ISOSStackRefEnum> stackEnum;
+			p->GetCorDataAccess(&dac);
+
+			HRESULT hr = dac->GetStackReferences(0x139c, &stackEnum);
+			UINT count;
+			hr = stackEnum->GetCount(&count);
+
+			ClrStackRefData ref[100] = {};
+
+			hr = stackEnum->Next(100, ref, &count);
+		}
 	};
 }

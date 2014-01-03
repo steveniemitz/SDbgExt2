@@ -77,7 +77,7 @@ void HandleObject(WinDbgInterfaces *dbg, ClrObjectData o, WinDbgTableFormatter *
 	UINT len;
 	if (SUCCEEDED(dbg->XCLR->GetMethodTableName(o.MethodTable, ARRAYSIZE(buffer), buffer, &len)))
 	{
-		dwdprintf(dbg->Control, L" %s", buffer);
+		dwdprintf(dbg->Control, L"%s", buffer);
 	}
 	if (o.ObjectType == OBJ_STRING
 		&& SUCCEEDED(dbg->XCLR->GetObjectStringData(o.ObjectAddress, ARRAYSIZE(buffer), buffer, &len)))
@@ -88,24 +88,108 @@ void HandleObject(WinDbgInterfaces *dbg, ClrObjectData o, WinDbgTableFormatter *
 	tf->NewRow();
 }
 
+void DumpStackWithGetStackReferences(WinDbgInterfaces *dbg)
+{
+	CComPtr<IDebugSystemObjects> dso;
+	CComPtr<ISOSStackRefEnum> stackEnum;
+	ULONG threadId = 0;
+
+	dbg->Client->QueryInterface(__uuidof(IDebugSystemObjects), (PVOID*)&dso);
+
+	dso->GetCurrentThreadSystemId(&threadId);
+	
+	if (FAILED(dbg->XCLR->GetStackReferences(threadId, &stackEnum)))
+		return;
+
+	WinDbgTableFormatter tf(dbg->Control);
+	tf.AddPointerColumn(L"StackPointer");
+	tf.AddPointerColumn(L"Addr");
+	
+	ClrStackRefData refs[10];
+	UINT numRefs = 0;
+	CLRDATA_ADDRESS currFrame = 0;
+
+	WCHAR frameName[512] = { 0 };
+	UINT frameNameLen;
+
+	while (stackEnum->Next(ARRAYSIZE(refs), refs, &numRefs) == S_OK)
+	{
+		for (size_t i = 0; i < numRefs; i++)
+		{
+			auto ref = refs[i];
+			if (ref.ChildStackPointer != currFrame)
+			{
+				ClrCodeHeaderData chd = {};
+				HRESULT hr = dbg->XCLR->GetCodeHeaderData(ref.ReturnAddress, &chd);
+				if (FAILED(hr))
+				{
+					hr = dbg->XCLR->GetFrameName(ref.ChildStackPointer, ARRAYSIZE(frameName), frameName, &frameNameLen);
+				}
+				dbg->XCLR->GetMethodDescName(chd.methodDescPtr, ARRAYSIZE(frameName), frameName, &frameNameLen);
+
+				//dbg->XCLR->GetFrameName(ref.StackAddress, ARRAYSIZE(frameName), frameName, &frameNameLen);
+				dwdprintf(dbg->Control, L"Frame @ %p [MD: %p][%s]\r\n", ref.ChildStackPointer, chd.methodDescPtr, frameName);
+			}
+			currFrame = ref.ChildStackPointer;
+
+			if (ref.ObjectRef != NULL)
+			{
+				ClrObjectData od = {};
+				dbg->XCLR->GetObjectData(ref.ObjectRef, &od);
+				od.ObjectAddress = ref.ObjectRef;
+				if (od.MethodTable != NULL)
+				{
+					dwdprintf(dbg->Control, L"   ");
+					tf.Column(L"%p", ref.StackAddress);
+
+					HandleObject(dbg, od, &tf);
+				}
+			}
+		}
+	}
+}
+
 DBG_FUNC(dumpstackobjects)
 {
 	DBG_PREAMBLE;
 	ULONG64 stackLimit = 0;
 	ULONG64 stackBase = 0;
+	BOOL useAltStackMethod = FALSE;
 
 	auto tokens = SPT::Util::Tokenize(args);
 	if (tokens.size() > 0)
 	{
-		if (tokens.size() > 2 || tokens.size() == 1)
+		if (tokens.size() > 3 || tokens.size() == 2)
 		{
-			dwdprintf(dbg.Control, L"Usage: !DumpStackObjects [stackBase [stackLimit]]\r\n");
+			dwdprintf(dbg.Control, L"Usage: !DumpStackObjects [-alt] [stackBase [stackLimit]]\r\n");
 		}
-		else if (tokens.size() == 2)
+		else if (tokens.size() == 1)
 		{
-			stackBase = GetExpression(tokens[0]);
-			stackLimit = GetExpression(tokens[1]);
+			if (_stricmp(tokens[0], "-alt") == 0)
+			{
+				useAltStackMethod = TRUE;
+			}
 		}
+		else if (tokens.size() >= 2)
+		{
+			if (_stricmp(tokens[0], "-alt") == 0)
+			{
+				useAltStackMethod = TRUE;
+				stackBase = GetExpression(tokens[1]);
+				stackLimit = GetExpression(tokens[2]);
+			}
+			else
+			{
+				stackBase = GetExpression(tokens[0]);
+				stackLimit = GetExpression(tokens[1]);
+			}
+		}
+	}
+
+	if (useAltStackMethod)
+	{
+		DumpStackWithGetStackReferences(&dbg);
+		return S_OK;
 	}
 
 	if (stackLimit == 0)

@@ -364,6 +364,36 @@ typedef struct ClrMethodDescTransparencyData
 	DWORD IsSafe;
 } ClrMethodDescTransparencyData;
 
+typedef struct ClrStackRefData
+{
+	DWORD Addr1_DW1;  
+	DWORD Addr2_DW2;
+	DWORD Addr3_DW1;
+		
+	CLRDATA_ADDRESS StackAddress;
+	CLRDATA_ADDRESS ObjectRef;
+	DWORD Addr4_DW1;
+	DWORD Addr5_DW2;
+	CLRDATA_ADDRESS ReturnAddress;
+	CLRDATA_ADDRESS ChildStackPointer;
+} ClrStackRefData;
+
+[
+	object,
+	local,
+	uuid(8fa642bd-9f10-4799-9aa3-512ae78c77ee)
+]
+interface ISOSStackRefEnum : IUnknown
+{
+	// wuuut?
+	HRESULT ApplyEditAndContinue();
+	HRESULT MergeEnd();
+
+	HRESULT GetCount([out, retval] UINT *count);
+	HRESULT Next([in] UINT iArraySize, [out, size_is(iArraySize)] ClrStackRefData stackRef[], [out] UINT *numRefs);
+	HRESULT EnumerateErrors();
+}
+
 
 [
 	object,
@@ -388,7 +418,7 @@ interface IXCLRDataProcess3 : IUnknown
 	HRESULT GetILForModule() = 0;
 	HRESULT GetThreadData([in] CLRDATA_ADDRESS threadAddr, [out, retval] ClrThreadData *ret) = 0;
 	HRESULT GetThreadFromThinlockID() = 0;
-	HRESULT GetStackLimits() = 0;
+	HRESULT GetStackLimits([in] CLRDATA_ADDRESS threadAddr, [out] CLRDATA_ADDRESS *out1, [out] CLRDATA_ADDRESS *out2, [out] CLRDATA_ADDRESS *out3) = 0;
 	HRESULT GetMethodDescData([in] CLRDATA_ADDRESS methodDescAddr, [in] CLRDATA_ADDRESS addr2, [out] ClrMethodDescData *ret, ULONG *out1, [out] ClrRejitData *rejit, ULONG *out2) = 0;
 	HRESULT GetMethodDescPtrFromIP([in] CLRDATA_ADDRESS ip, [out, retval] CLRDATA_ADDRESS *methodDescPtr) = 0;
 	HRESULT GetMethodDescName([in] CLRDATA_ADDRESS addr, [in] ULONG32 iNameChars, [out, size_is(iNameChars)] LPWSTR pwszName, [out] ULONG32 *strLen) = 0;
@@ -448,7 +478,7 @@ interface IXCLRDataProcess3 : IUnknown
 	HRESULT GetCCWData() = 0;
 	HRESULT GetCCWInterfaces() = 0;
 	HRESULT TraverseRCWCleanupList() = 0;
-	HRESULT GetStackReferences() = 0;
+	HRESULT GetStackReferences([in] ULONG threadId, [out, retval] ISOSStackRefEnum **stackRefEnum) = 0;
 	HRESULT GetRegisterName() = 0;
 	HRESULT GetThreadAllocData() = 0;
 	HRESULT GetHeapAllocData() = 0;
