@@ -87,6 +87,9 @@
     <Compile Include="MDbgScriptForm.Designer.cs">
       <DependentUpon>MDbgScriptForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="WinDbg\IPluginMethod.cs" />
+    <Compile Include="WinDbg\Name2EE.cs" />
+    <Compile Include="WinDbg\Stubs.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MDbgScriptForm.resx">

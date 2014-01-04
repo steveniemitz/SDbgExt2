@@ -146,5 +146,8 @@
     <ClCompile Include="DumpMD.cpp">
       <Filter>Source Files\WinDbg</Filter>
     </ClCompile>
+    <ClCompile Include="ClrImplExtensions.cpp">
+      <Filter>Source Files\WinDbg</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

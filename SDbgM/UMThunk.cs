@@ -15,6 +15,7 @@
     along with SDbgExt2.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using SPT.Managed.WinDbg;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,22 +30,52 @@ namespace SPT.Managed
     {
         public static int InitHost(string arg)
         {
-            string entryPoint = arg.Split('|')[0];
-            arg = string.Join("|", arg.Split('|').Skip(1));
+            var args = arg.Split('|').ToArray();
 
-            if (entryPoint == "0")
+            string opCode = args[0];
+            string extAddr = args[1];
+
+            args = args.Skip(2).ToArray();                        
+
+            // Show script form
+            if (opCode == "0")
             {
-                ManualResetEvent initComplete = new ManualResetEvent(false);
-                ThreadStart initMethod = () =>
-                    {
-                        InitMDbgScriptForm(arg, initComplete);
-                    };
+                arg = string.Join("|", args);
 
-                Thread t = new Thread(initMethod);
-                t.SetApartmentState(ApartmentState.STA);
-                t.Start();
+                ManualResetEvent initComplete = new ManualResetEvent(false);
+                var t = RunOnNetSTAThread(() =>
+                {
+                    InitMDbgScriptForm(extAddr, args, initComplete);
+                });
 
                 initComplete.WaitOne();
+                return 1;
+            }
+            // Run method stub in 
+            else if (opCode == "1")
+            {
+                string entryPoint = args[0];
+
+                if (args.Length > 1)
+                {
+                    arg = args[1];
+                }
+                else
+                {
+                    arg = "";
+                }
+
+                var entryStub = typeof(Stubs).GetMethod(entryPoint);
+                if (entryPoint == null)
+                    return 1;
+
+                var t = RunOnNetSTAThread(() =>
+                {
+                    entryStub.Invoke(null, new object[] { GetSptWrapper(extAddr), arg });
+                });
+
+                t.Join();
+
                 return 1;
             }
             else
@@ -53,18 +84,35 @@ namespace SPT.Managed
             }
         }
 
-        private static void InitMDbgScriptForm(string arg, ManualResetEvent initComplete)
+        private static Thread RunOnNetSTAThread(ThreadStart threadStart)
         {
-            string[] args = arg.Split('|');
-            var addrOfExtObject = ulong.Parse(args[0]);
-            var ext = SptWrapper.CreateInProcess(addrOfExtObject);
+            ManualResetEvent initComplete = new ManualResetEvent(false);
+            ThreadStart initMethod = threadStart;
 
-            initComplete.Set();
+            Thread t = new Thread(initMethod);
+            t.SetApartmentState(ApartmentState.STA);
+            t.Start();
+
+            return t;
+        }
+
+        private static void InitMDbgScriptForm(string extAddr, string[] args, ManualResetEvent initComplete)
+        {
+            var ext = GetSptWrapper(extAddr);
 
             MDbgScriptForm tf = new MDbgScriptForm(ext);
             tf.Show();
+
+            initComplete.Set();
                        
             Application.Run(tf);
+        }
+
+        private static SptWrapper GetSptWrapper(string addr)
+        {
+            var addrOfExtObject = ulong.Parse(addr);
+            var ext = SptWrapper.CreateInProcess(addrOfExtObject);
+            return ext;
         }
     }
 }

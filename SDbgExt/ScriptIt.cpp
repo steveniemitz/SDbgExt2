@@ -19,6 +19,7 @@
 #include "WinDbgExt.h"
 #include <metahost.h>
 #include <vector>
+#include <sstream>
 
 BOOL g_ClrLoaded = FALSE;
 CComPtr<ICLRRuntimeHost> g_ClrHost;
@@ -64,24 +65,29 @@ public:
 		return m_ctrl->OutputWide(mask, L"%s", text);
 	}
 
+	STDMETHODIMP GetWinDbgExpression(LPSTR expr, CLRDATA_ADDRESS *addr)
+	{
+		*addr = GetExpression(expr);
+		return S_OK;
+	}
+
 private:
 	CComPtr<IDebugControl4> m_ctrl;
 
 };
 
-DBG_FUNC(scriptit)
+HRESULT ExecuteOpCode(WinDbgInterfaces *dbg, UINT opcode, PCSTR subOpCode, PCSTR args)
 {
-	DBG_PREAMBLE;
-
+	HRESULT hr;
 	if (!g_ClrLoaded)
 	{
 		if (FAILED(hr = InitClr()))
 		{
-			dwdprintf(dbg.Control, L"Unable to initialize the CLR, return code : 0x%08x\r\n", hr);
+			dwdprintf(dbg->Control, L"Unable to initialize the CLR, return code : 0x%08x\r\n", hr);
 			return S_OK;
 		}
 	}
-	
+
 	DWORD returnValue = 0;
 	WCHAR extAddrBuffer[20];
 
@@ -94,38 +100,38 @@ DBG_FUNC(scriptit)
 	};
 
 	CComPtr<IDbgHelper> helper;
-	DbgHelper::CreateInstance(dbg.Control, &helper);
+	DbgHelper::CreateInstance(dbg->Control, &helper);
 
-	InterfaceBuffer ib = { dbg.XCLR, dbg.Process, dbg.Ext, helper };
+	InterfaceBuffer ib = { dbg->XCLR, dbg->Process, dbg->Ext, helper };
 	// Copy the address of the extension object into a string.  
 	// Ref counting isn't a big deal here, we can guarantee that InitHost will AddRef the objects before it returns. 
 	// This will be then marshalled into .NET memory inside of InitHost
 	_ui64tow_s((ULONG64)(void*)(&ib), extAddrBuffer, ARRAYSIZE(extAddrBuffer), 10);
-	
-	std::wstring hostParams(extAddrBuffer);
-	hostParams = L"0|" + hostParams;
-	if (strlen(args) > 0)
+
+	std::wstringstream wss;
+
+	wss << opcode << L"|" << (ULONG64)(void*)(&ib) << L"|";
+	if (subOpCode != nullptr)
 	{
-		hostParams += L"|";
-		
-		std::vector<WCHAR> buffer(strlen(args) + 1);
-		MultiByteToWideChar(CP_ACP, 0, args, (int)strlen(args), buffer.data(), (int)buffer.size());
-		
-		hostParams.append(buffer.data());
+		wss << subOpCode << L"|";
+	}
+	if (args != nullptr && strlen(args) > 0)
+	{
+		wss << args;
 	}
 
 	WCHAR dllPathBuffer[MAX_PATH];
 	GetModuleFileNameW((HINSTANCE)&__ImageBase, dllPathBuffer, ARRAYSIZE(dllPathBuffer));
-	
+
 	std::wstring dllPath(dllPathBuffer);
 	size_t lastSlash = dllPath.rfind('\\');
 	dllPath = dllPath.substr(0, lastSlash);
 	dllPath += L"\\SPTM.dll";
-	
-	hr = g_ClrHost->ExecuteInDefaultAppDomain(dllPath.c_str(), L"SPT.Managed.UMThunk", L"InitHost", hostParams.c_str(), &returnValue);
+
+	hr = g_ClrHost->ExecuteInDefaultAppDomain(dllPath.c_str(), L"SPT.Managed.UMThunk", L"InitHost", wss.str().c_str(), &returnValue);
 	if (FAILED(hr))
 	{
-		dwdprintf(dbg.Control, L"Unable to load SPTM.dll, please make sure it's in the same directory as SPT.dll");
+		dwdprintf(dbg->Control, L"Unable to load SPTM.dll, please make sure it's in the same directory as SPT.dll");
 	}
 
 	if (returnValue != 1)
@@ -133,5 +139,13 @@ DBG_FUNC(scriptit)
 		return E_FAIL;
 	}
 
-	return S_OK;
+	return hr;
+}
+
+DBG_FUNC(scriptit)
+{
+	DBG_PREAMBLE;
+	UNREFERENCED_PARAMETER(hr);
+
+	return ExecuteOpCode(&dbg, 0, nullptr, args);
 }

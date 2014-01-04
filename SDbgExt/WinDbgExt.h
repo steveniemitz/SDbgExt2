@@ -72,3 +72,4 @@ namespace SPT
 // Common debug methods
 HRESULT GetModuleName(IXCLRDataProcess3 *proc, CLRDATA_ADDRESS modAddr, WCHAR buffer[512]);
 void DumpMD_Impl(WinDbgInterfaces *dbg, CLRDATA_ADDRESS mdAddr);
+HRESULT ExecuteOpCode(WinDbgInterfaces *dbg, UINT opcode, PCSTR subOpCode, PCSTR args);

@@ -133,6 +133,11 @@ namespace SPT.Managed
             return adapt.Objects.ToArray();
         }
 
+        public ulong GetExpression(string text)
+        {
+            return _helper.GetWinDbgExpression(text);
+        }
+
         public void DbgOutput(string text)
         {
             _helper.Output(1, text);

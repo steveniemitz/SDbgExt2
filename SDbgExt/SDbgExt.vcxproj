@@ -187,6 +187,7 @@
     <ClInclude Include="WinDbgTableFormatter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ClrImplExtensions.cpp" />
     <ClCompile Include="CSDbgBootstrapper.cpp" />
     <ClCompile Include="DbgEngCLRDataTarget.cpp" />
     <ClCompile Include="DictionaryEnumerator.cpp" />

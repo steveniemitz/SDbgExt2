@@ -1,3 +1,4 @@
-.symfix q:\symcache
-.reload
-.loadby sos clr
+~4s
+.load ${$arg1}
+!name2ee System.Web.dll System.Web.HttpRuntime
+.unload sos
