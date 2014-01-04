@@ -123,6 +123,5 @@ namespace SPT.Managed
         {
             return RunEnum<SqlFactory, IEnumSqlConnectionPoolsCallback, SqlPoolEnumerator>(x => _wrapped.EnumSqlConnectionPools(x, 0));
         }
-
     }
 }

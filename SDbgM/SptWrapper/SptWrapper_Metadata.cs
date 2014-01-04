@@ -17,35 +17,29 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SDbgCore;
+using SPT.Managed.ClrObjects;
 
-namespace SPT.Managed.WinDbg
+namespace SPT.Managed
 {
-    internal static class Stubs
+    public partial class SptWrapper
     {
-        private static bool RunMethod<T>(SptWrapper wrapper, string args)
-            where T : IPluginMethod, new()
+        public string GetMethodDescName(ulong mdAddr)
         {
-            var plugin = new T();
-            return plugin.Run(wrapper, args);
-        }
+            uint nameLen = 0;
+            this.Dac.GetMethodDescName(mdAddr, 0, null, out nameLen);
 
-        public static bool name2ee(SptWrapper wrapper, string args)
-        {
-            using (wrapper)
-            {
-                return RunMethod<Name2EE>(wrapper, args);
-            }
-        }
+            if (nameLen == 0)
+                return "";
 
-        public static bool dumpmd(SptWrapper wrapper, string args)
-        {
-            using (wrapper)
-            {
-                return RunMethod<DumpMD>(wrapper, args);
-            }
+            StringBuilder name = new StringBuilder((int)nameLen);
+            Dac.GetMethodDescName(mdAddr, nameLen, name, out nameLen);
+
+            return name.ToString();
         }
     }
 }

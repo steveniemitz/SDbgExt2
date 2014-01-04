@@ -349,7 +349,39 @@ typedef struct ClrMethodDescData
 
 typedef struct ClrRejitData
 {
+	CLRDATA_ADDRESS Addr0;
 	CLRDATA_ADDRESS Addr1;
+	CLRDATA_ADDRESS Addr2;
+	CLRDATA_ADDRESS Addr3;
+	CLRDATA_ADDRESS Addr4;
+	CLRDATA_ADDRESS Addr5;
+	CLRDATA_ADDRESS Addr6;
+	CLRDATA_ADDRESS Addr7;
+	CLRDATA_ADDRESS Addr8;
+	CLRDATA_ADDRESS Addr9;
+
+	CLRDATA_ADDRESS Addr10;
+	CLRDATA_ADDRESS Addr11;
+	CLRDATA_ADDRESS Addr12;
+	CLRDATA_ADDRESS Addr13;
+	CLRDATA_ADDRESS Addr14;
+	CLRDATA_ADDRESS Addr15;
+	CLRDATA_ADDRESS Addr16;
+	CLRDATA_ADDRESS Addr17;
+	CLRDATA_ADDRESS Addr18;
+	CLRDATA_ADDRESS Addr19;
+
+	CLRDATA_ADDRESS Addr20;
+	CLRDATA_ADDRESS Addr21;
+	CLRDATA_ADDRESS Addr22;
+	CLRDATA_ADDRESS Addr23;
+	CLRDATA_ADDRESS Addr24;
+	CLRDATA_ADDRESS Addr25;
+	CLRDATA_ADDRESS Addr26;
+	CLRDATA_ADDRESS Addr27;
+	CLRDATA_ADDRESS Addr28;
+	CLRDATA_ADDRESS Addr29;
+	
 } ClrRejitData;
 
 typedef struct ClrMethodTableTransparencyData
@@ -419,7 +451,7 @@ interface IXCLRDataProcess3 : IUnknown
 	HRESULT GetThreadData([in] CLRDATA_ADDRESS threadAddr, [out, retval] ClrThreadData *ret) = 0;
 	HRESULT GetThreadFromThinlockID() = 0;
 	HRESULT GetStackLimits([in] CLRDATA_ADDRESS threadAddr, [out] CLRDATA_ADDRESS *out1, [out] CLRDATA_ADDRESS *out2, [out] CLRDATA_ADDRESS *out3) = 0;
-	HRESULT GetMethodDescData([in] CLRDATA_ADDRESS methodDescAddr, [in] CLRDATA_ADDRESS addr2, [out] ClrMethodDescData *ret, ULONG *out1, [out] ClrRejitData *rejit, ULONG *out2) = 0;
+	HRESULT GetMethodDescData([in] CLRDATA_ADDRESS methodDescAddr, [in] CLRDATA_ADDRESS addr2, [out] ClrMethodDescData *ret, [in] ULONG iRejitSize, [out, size_is(iRejitSize)] ClrRejitData rejit[], [out] ULONG *numRejits) = 0;
 	HRESULT GetMethodDescPtrFromIP([in] CLRDATA_ADDRESS ip, [out, retval] CLRDATA_ADDRESS *methodDescPtr) = 0;
 	HRESULT GetMethodDescName([in] CLRDATA_ADDRESS addr, [in] ULONG32 iNameChars, [out, size_is(iNameChars)] LPWSTR pwszName, [out] ULONG32 *strLen) = 0;
 	HRESULT GetMethodDescPtrFromFrame([in] CLRDATA_ADDRESS frameAddr, [out, retval] CLRDATA_ADDRESS *methodDescPtr) = 0;

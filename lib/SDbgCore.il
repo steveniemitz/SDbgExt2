@@ -22,13 +22,13 @@
   .ver 0:0:0:0
 }
 .module SDbgCore.dll
-// MVID: {787E9390-7A14-4E70-8F9F-CF4E9072439F}
+// MVID: {AE92B842-3713-45CB-BB1C-CD2EB6AFCE39}
 .imagebase 0x00400000
 .file alignment 0x00000200
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000001    //  ILONLY
-// Image base: 0x00E80000
+// Image base: 0x00A10000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -261,9 +261,9 @@
           instance void  GetMethodDescData([in] uint64 methodDescAddr,
                                            [in] uint64 Addr2,
                                            [out] valuetype SDbgCore.ClrMethodDescData& 'ret',
-                                           uint32& out1,
-                                           [out] valuetype SDbgCore.ClrRejitData& rejit,
-                                           uint32& out2) runtime managed internalcall
+                                           [in] uint32 iRejitSize,
+                                           [out] valuetype SDbgCore.ClrRejitData[] marshal([+3]) rejit,
+                                           [out] uint32& numRejits) runtime managed internalcall
   {
   } // end of method IXCLRDataProcess3::GetMethodDescData
 
@@ -809,7 +809,36 @@
 {
   .pack 8
   .size 0
+  .field public uint64 Addr0
   .field public uint64 Addr1
+  .field public uint64 Addr2
+  .field public uint64 Addr3
+  .field public uint64 Addr4
+  .field public uint64 Addr5
+  .field public uint64 Addr6
+  .field public uint64 Addr7
+  .field public uint64 Addr8
+  .field public uint64 Addr9
+  .field public uint64 Addr10
+  .field public uint64 Addr11
+  .field public uint64 Addr12
+  .field public uint64 Addr13
+  .field public uint64 Addr14
+  .field public uint64 Addr15
+  .field public uint64 Addr16
+  .field public uint64 Addr17
+  .field public uint64 Addr18
+  .field public uint64 Addr19
+  .field public uint64 Addr20
+  .field public uint64 Addr21
+  .field public uint64 Addr22
+  .field public uint64 Addr23
+  .field public uint64 Addr24
+  .field public uint64 Addr25
+  .field public uint64 Addr26
+  .field public uint64 Addr27
+  .field public uint64 Addr28
+  .field public uint64 Addr29
 } // end of class SDbgCore.ClrRejitData
 
 .class public sequential ansi sealed beforefieldinit SDbgCore.ClrMethodDescTransparencyData

@@ -30,6 +30,8 @@ namespace SPT.Managed
     {
         public static int InitHost(string arg)
         {
+            Thread.CurrentThread.SetApartmentState(ApartmentState.STA);
+
             var args = arg.Split('|').ToArray();
 
             string opCode = args[0];
@@ -69,12 +71,12 @@ namespace SPT.Managed
                 if (entryPoint == null)
                     return 1;
 
-                var t = RunOnNetSTAThread(() =>
-                {
+                //var t = RunOnNetSTAThread(() =>
+                //{
                     entryStub.Invoke(null, new object[] { GetSptWrapper(extAddr), arg });
-                });
+                //});
 
-                t.Join();
+                //t.Join();
 
                 return 1;
             }

@@ -22,7 +22,7 @@ along with SDbgExt2.  If not, see <http://www.gnu.org/licenses/>.
 #include <algorithm>
 #include "WinDbgTableFormatter.h"
 
-DBG_FUNC(dumpmd)
+DBG_FUNC(dumpmd_native)
 {
 	DBG_PREAMBLE;
 	UNREFERENCED_PARAMETER(hr);

@@ -73,6 +73,8 @@
     <Compile Include="ClrObjects\SqlFactory.cs" />
     <Compile Include="ClrObjects\SqlPool.cs" />
     <Compile Include="ClrObjects\SqlPoolGroup.cs" />
+    <Compile Include="SptWrapper\SptWrapper_Metadata.cs" />
+    <Compile Include="SptWrapper\TableWriter.cs" />
     <Compile Include="Util\SuperBitConverter.cs" />
     <Compile Include="Util\UsefulGlobals.cs" />
     <Compile Include="SptWrapper\SptWrapper.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="MDbgScriptForm.Designer.cs">
       <DependentUpon>MDbgScriptForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="WinDbg\DumpMD.cs" />
     <Compile Include="WinDbg\IPluginMethod.cs" />
     <Compile Include="WinDbg\Name2EE.cs" />
     <Compile Include="WinDbg\Stubs.cs" />

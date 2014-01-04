@@ -78,6 +78,8 @@ private:
 
 HRESULT ExecuteOpCode(WinDbgInterfaces *dbg, UINT opcode, PCSTR subOpCode, PCSTR args)
 {
+	CoInitialize(NULL);
+
 	HRESULT hr;
 	if (!g_ClrLoaded)
 	{

@@ -26,3 +26,4 @@ DBG_FUNC(name) {									\
 }
 
 CLR_DBG_EXT(name2ee)
+CLR_DBG_EXT(dumpmd)

@@ -106,7 +106,7 @@ namespace SPT.Managed
         {
             IntPtr targetObject = new IntPtr((long)addrOfExtObject);
             var buffer = (WinDbgBuffer)Marshal.PtrToStructure(targetObject, typeof(WinDbgBuffer));
-            
+
             return new SptWrapper(buffer);
         }
 
@@ -146,6 +146,11 @@ namespace SPT.Managed
         public ObjectProxy GetObject(ulong obj)
         {
             return new ObjectProxy(obj, this);
+        }
+
+        public TableWriter CreateTableWriter()
+        {
+            return new TableWriter(this);
         }
     }
 }
