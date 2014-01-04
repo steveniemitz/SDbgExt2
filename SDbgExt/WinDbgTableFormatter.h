@@ -26,7 +26,7 @@ class WinDbgTableFormatter
 {
 public:
 	WinDbgTableFormatter(IDebugControl4 *ctrl)
-		: m_ctrl(ctrl)
+		: m_ctrl(ctrl), m_currColumn(0)
 	{
 	}
 
@@ -129,7 +129,7 @@ private:
 		BOOL AlignLeft;
 	};
 
-	int m_currColumn = 0;
+	int m_currColumn;
 	std::vector<_Column> m_columns;
 	CComPtr<IDebugControl4> m_ctrl;
 };
