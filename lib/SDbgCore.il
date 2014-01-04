@@ -1,5 +1,5 @@
 
-//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.0.30319.17929
+//  Microsoft (R) .NET Framework IL Disassembler.  Version 4.0.30319.33440
 //  Copyright (c) Microsoft Corporation.  All rights reserved.
 
 
@@ -22,13 +22,13 @@
   .ver 0:0:0:0
 }
 .module SDbgCore.dll
-// MVID: {89D80579-A8FE-4591-B18B-5AF0FAC65455}
+// MVID: {787E9390-7A14-4E70-8F9F-CF4E9072439F}
 .imagebase 0x00400000
 .file alignment 0x00000200
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000001    //  ILONLY
-// Image base: 0x01330000
+// Image base: 0x00E80000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -113,14 +113,19 @@
   {
   } // end of method IClrObject::GetTypeName
 
+  .method public hidebysig newslot abstract virtual 
+          instance void  GetMethodTable([out] uint64& mt) runtime managed internalcall
+  {
+  } // end of method IClrObject::GetMethodTable
+
 } // end of class SDbgCore.IClrObject
 
 .class interface public abstract auto ansi import SDbgCore.IDacMemoryAccess
 {
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 44 36 41 45 36 46 41 46 2D 44 45 45 36   // ..$D6AE6FAF-DEE6
                                                                                                   2D 34 44 35 32 2D 41 42 41 34 2D 32 43 32 33 32   // -4D52-ABA4-2C232
                                                                                                   30 44 42 41 44 42 42 00 00 )                      // 0DBADBB..
-  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
           instance void  ReadVirtual([in] uint64 Offset,
                                      [out] native int buffer,
@@ -245,12 +250,20 @@
   } // end of method IXCLRDataProcess3::GetThreadFromThinlockID
 
   .method public hidebysig newslot abstract virtual 
-          instance void  GetStackLimits() runtime managed internalcall
+          instance void  GetStackLimits([in] uint64 threadAddr,
+                                        [out] uint64& out1,
+                                        [out] uint64& out2,
+                                        [out] uint64& out3) runtime managed internalcall
   {
   } // end of method IXCLRDataProcess3::GetStackLimits
 
   .method public hidebysig newslot abstract virtual 
-          instance void  GetMethodDescData() runtime managed internalcall
+          instance void  GetMethodDescData([in] uint64 methodDescAddr,
+                                           [in] uint64 Addr2,
+                                           [out] valuetype SDbgCore.ClrMethodDescData& 'ret',
+                                           uint32& out1,
+                                           [out] valuetype SDbgCore.ClrRejitData& rejit,
+                                           uint32& out2) runtime managed internalcall
   {
   } // end of method IXCLRDataProcess3::GetMethodDescData
 
@@ -279,7 +292,8 @@
   } // end of method IXCLRDataProcess3::GetMethodDescFromToken
 
   .method public hidebysig newslot abstract virtual 
-          instance void  GetMethodDescTransparencyData() runtime managed internalcall
+          instance valuetype SDbgCore.ClrMethodDescTransparencyData 
+          GetMethodDescTransparencyData([in] uint64 MethodDesc) runtime managed internalcall
   {
   } // end of method IXCLRDataProcess3::GetMethodDescTransparencyData
 
@@ -368,7 +382,8 @@
   } // end of method IXCLRDataProcess3::GetMethodTableFieldData
 
   .method public hidebysig newslot abstract virtual 
-          instance void  GetMethodTableTransparencyData() runtime managed internalcall
+          instance valuetype SDbgCore.ClrMethodTableTransparencyData 
+          GetMethodTableTransparencyData([in] uint64 mtAddr) runtime managed internalcall
   {
   } // end of method IXCLRDataProcess3::GetMethodTableTransparencyData
 
@@ -584,7 +599,9 @@
   } // end of method IXCLRDataProcess3::TraverseRCWCleanupList
 
   .method public hidebysig newslot abstract virtual 
-          instance void  GetStackReferences() runtime managed internalcall
+          instance class SDbgCore.ISOSStackRefEnum 
+          marshal( interface ) 
+          GetStackReferences([in] uint32 threadId) runtime managed internalcall
   {
   } // end of method IXCLRDataProcess3::GetStackReferences
 
@@ -761,6 +778,50 @@
   .field public uint64 ThreadAddress
 } // end of class SDbgCore.ClrThreadData
 
+.class public sequential ansi sealed beforefieldinit SDbgCore.ClrMethodDescData
+       extends [mscorlib]System.ValueType
+{
+  .pack 8
+  .size 0
+  .field public int32 IsJitted
+  .field public uint64 Addr2
+  .field public uint64 CodeAddr
+  .field public uint64 Addr4
+  .field public uint64 MethodDesc
+  .field public uint64 MethodTable
+  .field public uint64 Module
+  .field public uint32 mdToken
+  .field public uint64 Addr9
+  .field public uint64 Addr10
+  .field public uint64 Addr11
+  .field public uint64 Addr12
+  .field public uint64 Addr13
+  .field public uint64 Addr14
+  .field public uint64 Addr15
+  .field public uint64 Addr16
+  .field public uint64 Addr17
+  .field public uint64 Addr18
+  .field public uint64 Addr19
+} // end of class SDbgCore.ClrMethodDescData
+
+.class public sequential ansi sealed beforefieldinit SDbgCore.ClrRejitData
+       extends [mscorlib]System.ValueType
+{
+  .pack 8
+  .size 0
+  .field public uint64 Addr1
+} // end of class SDbgCore.ClrRejitData
+
+.class public sequential ansi sealed beforefieldinit SDbgCore.ClrMethodDescTransparencyData
+       extends [mscorlib]System.ValueType
+{
+  .pack 4
+  .size 0
+  .field public uint32 IsCalculated
+  .field public uint32 IsOpaque
+  .field public uint32 IsSafe
+} // end of class SDbgCore.ClrMethodDescTransparencyData
+
 .class public sequential ansi sealed beforefieldinit SDbgCore.ClrCodeHeaderData
        extends [mscorlib]System.ValueType
 {
@@ -823,6 +884,14 @@
   .field public  marshal( fixed array [12]) uint8[] padding6
 } // end of class SDbgCore.ClrMethodTableFieldData
 
+.class public sequential ansi sealed beforefieldinit SDbgCore.ClrMethodTableTransparencyData
+       extends [mscorlib]System.ValueType
+{
+  .pack 8
+  .size 0
+  .field public uint64 Addr1
+} // end of class SDbgCore.ClrMethodTableTransparencyData
+
 .class public sequential ansi sealed beforefieldinit SDbgCore.ClrFieldDescData
        extends [mscorlib]System.ValueType
 {
@@ -840,6 +909,7 @@
   .field public int32 IsContextLocal
   .field public int32 IsStatic
   .field public uint64 NextField
+  .field public uint64 ThisField
 } // end of class SDbgCore.ClrFieldDescData
 
 .class public sequential ansi sealed beforefieldinit SDbgCore.ClrGcHeapData
@@ -922,6 +992,41 @@
   .field public uint64 FreeMethodTable
 } // end of class SDbgCore.ClrUsefulGlobalsData
 
+.class interface public abstract auto ansi import SDbgCore.ISOSStackRefEnum
+{
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
+  .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 38 46 41 36 34 32 42 44 2D 39 46 31 30   // ..$8FA642BD-9F10
+                                                                                                  2D 34 37 39 39 2D 39 41 41 33 2D 35 31 32 41 45   // -4799-9AA3-512AE
+                                                                                                  37 38 43 37 37 45 45 00 00 )                      // 78C77EE..
+  .method public hidebysig newslot abstract virtual 
+          instance void  ApplyEditAndContinue() runtime managed internalcall
+  {
+  } // end of method ISOSStackRefEnum::ApplyEditAndContinue
+
+  .method public hidebysig newslot abstract virtual 
+          instance void  MergeEnd() runtime managed internalcall
+  {
+  } // end of method ISOSStackRefEnum::MergeEnd
+
+  .method public hidebysig newslot abstract virtual 
+          instance uint32  GetCount() runtime managed internalcall
+  {
+  } // end of method ISOSStackRefEnum::GetCount
+
+  .method public hidebysig newslot abstract virtual 
+          instance void  Next([in] uint32 iArraySize,
+                              [out] valuetype SDbgCore.ClrStackRefData& stackRef,
+                              [out] uint32& numRefs) runtime managed internalcall
+  {
+  } // end of method ISOSStackRefEnum::Next
+
+  .method public hidebysig newslot abstract virtual 
+          instance void  EnumerateErrors() runtime managed internalcall
+  {
+  } // end of method ISOSStackRefEnum::EnumerateErrors
+
+} // end of class SDbgCore.ISOSStackRefEnum
+
 .class public auto ansi sealed SDbgCore.DacpAppDomainDataStage
        extends [mscorlib]System.Enum
 {
@@ -989,6 +1094,22 @@
   .field public uint64 allocContextPtr
   .field public uint64 allocContextLimit
 } // end of class SDbgCore.GcGenerationData
+
+.class public sequential ansi sealed beforefieldinit SDbgCore.ClrStackRefData
+       extends [mscorlib]System.ValueType
+{
+  .pack 8
+  .size 0
+  .field public uint32 Addr1_DW1
+  .field public uint32 Addr2_DW2
+  .field public uint32 Addr3_DW1
+  .field public uint64 StackAddress
+  .field public uint64 ObjectRef
+  .field public uint32 Addr4_DW1
+  .field public uint32 Addr5_DW2
+  .field public uint64 ReturnAddress
+  .field public uint64 ChildStackPointer
+} // end of class SDbgCore.ClrStackRefData
 
 .class interface public abstract auto ansi import SDbgCore.IClrProcess
 {
@@ -1170,6 +1291,17 @@
   {
   } // end of method IClrProcess::GetDelegateInfo
 
+  .method public hidebysig newslot abstract virtual 
+          instance void  EnumFields([in] uint64 obj,
+                                    [in] class SDbgCore.IEnumFieldsCallback  marshal( interface ) cb) runtime managed internalcall
+  {
+  } // end of method IClrProcess::EnumFields
+
+  .method public hidebysig newslot abstract virtual 
+          instance uint32  GetSizeForType([in] uint32 corType) runtime managed preservesig internalcall
+  {
+  } // end of method IClrProcess::GetSizeForType
+
 } // end of class SDbgCore.IClrProcess
 
 .class public sequential ansi sealed beforefieldinit SDbgCore.AppDomainAndValue
@@ -1179,6 +1311,7 @@
   .size 0
   .field public uint64 domain
   .field public uint64 Value
+  .field public int32 IsInitialized
 } // end of class SDbgCore.AppDomainAndValue
 
 .class interface public abstract auto ansi import SDbgCore.IEnumThreadsCallback
@@ -1240,8 +1373,21 @@
   .pack 8
   .size 0
   .field public uint64 Target
-  .field public uint64 methodDesc
+  .field public uint64 MethodDesc
 } // end of class SDbgCore.ClrDelegateInfo
+
+.class interface public abstract auto ansi import SDbgCore.IEnumFieldsCallback
+{
+  .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 31 33 34 46 33 41 39 32 2D 44 37 36 36   // ..$134F3A92-D766
+                                                                                                  2D 34 38 30 41 2D 38 37 41 41 2D 32 39 42 31 37   // -480A-87AA-29B17
+                                                                                                  33 30 42 46 39 42 34 00 00 )                      // 30BF9B4..
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
+  .method public hidebysig newslot abstract virtual 
+          instance void  Callback([in] valuetype SDbgCore.ClrFieldDescData 'field') runtime managed internalcall
+  {
+  } // end of method IEnumFieldsCallback::Callback
+
+} // end of class SDbgCore.IEnumFieldsCallback
 
 .class public auto ansi sealed SDbgCore.ClrDateTimeKind
        extends [mscorlib]System.Enum
@@ -1290,6 +1436,13 @@
   } // end of method ISDbgExt::EnumStackObjectsByThreadObj
 
   .method public hidebysig newslot abstract virtual 
+          instance void  EnumStackObjectsByStackParams([in] uint64 stackBase,
+                                                       [in] uint64 stackLimit,
+                                                       [in] class SDbgCore.IEnumObjectsCallback  marshal( interface ) cb) runtime managed internalcall
+  {
+  } // end of method ISDbgExt::EnumStackObjectsByStackParams
+
+  .method public hidebysig newslot abstract virtual 
           instance void  EnumHeapObjects(class SDbgCore.IEnumObjectsCallback  marshal( interface ) cb) runtime managed internalcall
   {
   } // end of method ISDbgExt::EnumHeapObjects
@@ -1327,10 +1480,10 @@
 
 .class interface public abstract auto ansi import SDbgCore.IEnumObjectsCallback
 {
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 31 30 44 36 39 41 45 34 2D 38 30 41 41   // ..$10D69AE4-80AA
                                                                                                   2D 34 44 38 37 2D 41 46 31 38 2D 38 36 44 44 30   // -4D87-AF18-86DD0
                                                                                                   30 31 30 41 41 38 43 00 00 )                      // 010AA8C..
-  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
           instance void  Callback([in] valuetype SDbgCore.ClrObjectData objData) runtime managed internalcall
   {
@@ -1353,10 +1506,10 @@
 
 .class interface public abstract auto ansi import SDbgCore.IEnumThreadPoolCallback
 {
-  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 30 44 41 45 37 41 45 46 2D 36 36 37 31   // ..$0DAE7AEF-6671
                                                                                                   2D 34 38 41 30 2D 41 42 39 36 2D 44 39 30 39 33   // -48A0-AB96-D9093
                                                                                                   31 38 36 32 38 38 32 00 00 )                      // 1862882..
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
           instance void  Callback([in] valuetype SDbgCore.ThreadPoolWorkItem item) runtime managed internalcall
   {
@@ -1366,10 +1519,10 @@
 
 .class interface public abstract auto ansi import SDbgCore.IEnumSqlConnectionPoolsCallback
 {
+  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .custom instance void [mscorlib]System.Runtime.InteropServices.GuidAttribute::.ctor(string) = ( 01 00 24 36 41 31 37 35 41 37 41 2D 46 39 39 42   // ..$6A175A7A-F99B
                                                                                                   2D 34 45 42 43 2D 41 43 36 44 2D 37 44 31 33 44   // -4EBC-AC6D-7D13D
                                                                                                   39 38 35 33 39 41 32 00 00 )                      // 98539A2..
-  .custom instance void [mscorlib]System.Runtime.InteropServices.InterfaceTypeAttribute::.ctor(valuetype [mscorlib]System.Runtime.InteropServices.ComInterfaceType) = ( 01 00 01 00 00 00 00 00 ) 
   .method public hidebysig newslot abstract virtual 
           instance void  OnFactory([in] uint64 factory) runtime managed internalcall
   {
@@ -1499,6 +1652,11 @@
                                 [in] string  marshal( lpwstr) str) runtime managed internalcall
   {
   } // end of method IDbgHelper::Output
+
+  .method public hidebysig newslot abstract virtual 
+          instance uint64  GetWinDbgExpression([in] string  marshal( lpstr) expr) runtime managed internalcall
+  {
+  } // end of method IDbgHelper::GetWinDbgExpression
 
 } // end of class SDbgCore.IDbgHelper
 
