@@ -143,6 +143,34 @@ namespace SPT.Managed
             _helper.Output(1, text);
         }
 
+        private class ThreadEnumerator : BaseCallbackAdaptor<ClrThreadData>, IEnumThreadsCallback
+        {
+            public void Callback(ClrThreadData threadData)
+            {
+                Objects.Add(threadData);
+            }
+        }
+
+        public ClrThreadData[] GetThreads()
+        {
+            return RunEnum<ClrThreadData, IEnumThreadsCallback, ThreadEnumerator>(x => _proc.EnumThreads(x));
+        }
+
+        //public uint[] GetThreads()
+        //{
+        //    uint[] threads = new uint[0];
+        //    uint numThreads = 0;
+        //    _helper.GetThreads(0, threads, out numThreads);
+
+        //    if (numThreads > 0)
+        //    {
+        //        Array.Resize<uint>(ref threads, (int)numThreads);
+        //        _helper.GetThreads(numThreads, threads, out numThreads);
+        //    }
+
+        //    return threads;
+        //}
+
         public ObjectProxy GetObject(ulong obj)
         {
             return new ObjectProxy(obj, this);

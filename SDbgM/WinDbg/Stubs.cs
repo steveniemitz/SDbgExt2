@@ -29,23 +29,34 @@ namespace SPT.Managed.WinDbg
             where T : IPluginMethod, new()
         {
             var plugin = new T();
-            return plugin.Run(wrapper, args);
+            using (wrapper)
+            {
+                try
+                {
+                    return plugin.Run(wrapper, args);
+                }
+                catch (Exception ex)
+                {
+                    wrapper.DbgOutput(ex.ToString());
+                    return false;
+                }
+            }
         }
 
         public static bool name2ee(SptWrapper wrapper, string args)
         {
-            using (wrapper)
-            {
-                return RunMethod<Name2EE>(wrapper, args);
-            }
+            return RunMethod<Name2EE>(wrapper, args);
         }
 
         public static bool dumpmd(SptWrapper wrapper, string args)
         {
-            using (wrapper)
-            {
-                return RunMethod<DumpMD>(wrapper, args);
-            }
+            return RunMethod<DumpMD>(wrapper, args);
         }
+
+        public static bool threads(SptWrapper wrapper, string args)
+        {
+            return RunMethod<Threads>(wrapper, args);
+        }
+
     }
 }

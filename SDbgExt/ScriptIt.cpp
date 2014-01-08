@@ -71,6 +71,27 @@ public:
 		return S_OK;
 	}
 
+	STDMETHODIMP GetThreads(ULONG iThreadSize, ULONG threads[], DWORD *numThreads)
+	{
+		UNREFERENCED_PARAMETER(iThreadSize);
+		UNREFERENCED_PARAMETER(threads);
+		UNREFERENCED_PARAMETER(numThreads);
+
+		CComQIPtr<IDebugSystemObjects> dso(m_ctrl);
+
+		if (SUCCEEDED(dso->GetNumberThreads(numThreads)))
+		{
+			std::vector<ULONG> osIds(*numThreads);
+			std::vector<ULONG> sysIds(*numThreads);
+			if (SUCCEEDED(dso->GetThreadIdsByIndex(0, *numThreads, osIds.data(), sysIds.data())))
+			{
+				std::copy_n(sysIds.begin(), min(sysIds.size(), iThreadSize), stdext::checked_array_iterator<ULONG*>(threads, iThreadSize));
+			}
+		}
+
+		return S_FALSE;
+	}
+
 private:
 	CComPtr<IDebugControl4> m_ctrl;
 
@@ -91,8 +112,8 @@ HRESULT ExecuteOpCode(WinDbgInterfaces *dbg, UINT opcode, PCSTR subOpCode, PCSTR
 	}
 
 	DWORD returnValue = 0;
-	WCHAR extAddrBuffer[20];
 
+	// This needs to stay in sync w/ the .NET version
 	struct InterfaceBuffer
 	{
 		CComPtr<IXCLRDataProcess3> XCLR;
@@ -104,15 +125,14 @@ HRESULT ExecuteOpCode(WinDbgInterfaces *dbg, UINT opcode, PCSTR subOpCode, PCSTR
 	CComPtr<IDbgHelper> helper;
 	DbgHelper::CreateInstance(dbg->Control, &helper);
 
-	InterfaceBuffer ib = { dbg->XCLR, dbg->Process, dbg->Ext, helper };
+	InterfaceBuffer ib = { dbg->XCLR, dbg->Process, dbg->Ext, helper };	
+	std::wstringstream wss;
+
 	// Copy the address of the extension object into a string.  
 	// Ref counting isn't a big deal here, we can guarantee that InitHost will AddRef the objects before it returns. 
 	// This will be then marshalled into .NET memory inside of InitHost
-	_ui64tow_s((ULONG64)(void*)(&ib), extAddrBuffer, ARRAYSIZE(extAddrBuffer), 10);
-
-	std::wstringstream wss;
-
 	wss << opcode << L"|" << (ULONG64)(void*)(&ib) << L"|";
+
 	if (subOpCode != nullptr)
 	{
 		wss << subOpCode << L"|";

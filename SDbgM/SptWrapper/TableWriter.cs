@@ -29,11 +29,11 @@ namespace SPT.Managed
                 {
                     if (IntPtr.Size == 4)
                     {
-                        return "0x" + ((ulong)arg).ToString("x8");
+                        return ((ulong)arg).ToString("x8");
                     }
                     else 
                     {
-                        return "0x" + ((ulong)arg).ToString("x16");
+                        return ((ulong)arg).ToString("x16");
                     }
 
                 }
@@ -76,14 +76,15 @@ namespace SPT.Managed
             _dbg = wrapper;
         }
 
-        public void AddColumn(int width, bool leftAlign = false)
+        public TableWriter AddColumn(int width, bool leftAlign = false)
         {
             _columns.Add(new ColumnInfo(width, leftAlign));
+            return this;
         }
 
-        public void AddPointerColumn()
+        public TableWriter AddPointerColumn()
         {
-            AddColumn(IntPtr.Size * 2);
+            return AddColumn(IntPtr.Size * 2);
         }
 
         public TableWriter TextColumn(string txt)
@@ -96,6 +97,11 @@ namespace SPT.Managed
             return Column("{0:p}", ptr);
         }
 
+        public TableWriter HexColumn(ulong val)
+        {
+            return Column("{0:x}", val);
+        }
+
         public TableWriter Column(string format, params object[] args)
         {
             var col = _columns[_currCol++];
@@ -106,7 +112,7 @@ namespace SPT.Managed
             {
                 if (ret.Length > col.Width)
                 {
-                    ret = "... " + ret.Substring(ret.Length - col.Width - 3);
+                    ret = "..." + ret.Substring(ret.Length - (col.Width - 3));
                 }
                 else if (ret.Length < col.Width)
                 {

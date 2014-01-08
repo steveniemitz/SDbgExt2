@@ -93,6 +93,7 @@
     <Compile Include="WinDbg\IPluginMethod.cs" />
     <Compile Include="WinDbg\Name2EE.cs" />
     <Compile Include="WinDbg\Stubs.cs" />
+    <Compile Include="WinDbg\Threads.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MDbgScriptForm.resx">

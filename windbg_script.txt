@@ -1,5 +1,6 @@
 ~4s
 .load ${$arg1}
 $$ !name2ee System.Web.dll System.Web.HttpRuntime
-!dumpmd 732c2ee0  
+$$ !dumpmd 732c2ee0  
+!threads
 .unload sos

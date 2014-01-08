@@ -118,6 +118,7 @@ interface IDbgHelper : IUnknown
 {
 	HRESULT Output([in] ULONG Mask, [in, string] LPCWSTR str);
 	HRESULT GetWinDbgExpression([in, string] LPSTR expr, [out, retval] CLRDATA_ADDRESS *addr);
+	HRESULT GetThreads([in] ULONG iThreadSize, [out, size_is(iThreadSize)] ULONG threads[], [out] DWORD *numThreads);
 }
 
 [
