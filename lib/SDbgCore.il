@@ -22,13 +22,13 @@
   .ver 0:0:0:0
 }
 .module SDbgCore.dll
-// MVID: {AE92B842-3713-45CB-BB1C-CD2EB6AFCE39}
+// MVID: {B96551D1-56B0-4C86-8565-E47DC11AE97E}
 .imagebase 0x00400000
 .file alignment 0x00000200
 .stackreserve 0x00100000
 .subsystem 0x0003       // WINDOWS_CUI
 .corflags 0x00000001    //  ILONLY
-// Image base: 0x00A10000
+// Image base: 0x007F0000
 
 
 // =============== CLASS MEMBERS DECLARATION ===================
@@ -1686,6 +1686,13 @@
           instance uint64  GetWinDbgExpression([in] string  marshal( lpstr) expr) runtime managed internalcall
   {
   } // end of method IDbgHelper::GetWinDbgExpression
+
+  .method public hidebysig newslot abstract virtual 
+          instance void  GetThreads([in] uint32 iThreadSize,
+                                    [out] uint32[] marshal([+1]) threads,
+                                    [out] uint32& numThreads) runtime managed internalcall
+  {
+  } // end of method IDbgHelper::GetThreads
 
 } // end of class SDbgCore.IDbgHelper
 
